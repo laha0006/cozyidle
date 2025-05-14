@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { addUser } from "../database/user.js";
 
 const router = Router();
 
@@ -8,7 +9,7 @@ router.get("/", (req, res) => {
 
 router.post("/api/signup", (req, res) => {
     const user = req.body;
-    res.send({ data: user });
+    addUser(user);
 });
 
 export default router;
