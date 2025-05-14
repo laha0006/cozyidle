@@ -10,6 +10,8 @@ app.use(express.json());
 
 import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
+import usersRouter from "./routers/usersRouter.js";
+app.use(usersRouter);
 
 const server = http.createServer(app);
 const io = new Server(server);
