@@ -7,6 +7,9 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
+import authRouter from "./routers/authRouter.js";
+app.use(authRouter);
+
 const server = http.createServer(app);
 const io = new Server(server);
 
@@ -15,4 +18,5 @@ io.on("connection", (socket) => {
 });
 
 const PORT = process.env.PORT || 8080;
+
 server.listen(PORT, console.log(`Server listening on ${PORT}`));
