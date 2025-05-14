@@ -76,4 +76,18 @@ router.post("/api/signup", async (req, res) => {
     res.status(200).send({ data: "test" });
 });
 
+router.post("/api/logout", (req, res) => {
+    res.clearCookie("accessToken", {
+        httpOnlytp: true,
+        secure: false,
+    });
+
+    res.clearCookie("refreshToken", {
+        httpOnlytp: true,
+        secure: false,
+    });
+
+    res.send({ message: "Succesfully logged out!" });
+});
+
 export default router;
