@@ -1,4 +1,3 @@
-import { hashPassword } from "../util/hashing.js";
 import db from "./connection.js";
 
 export async function addUser(user) {
