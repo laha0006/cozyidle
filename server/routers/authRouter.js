@@ -3,6 +3,7 @@ import { addUser, userExists, getUser } from "../database/user.js";
 import { hashPassword } from "../util/hashing.js";
 import { generateTokens } from "../util/jwt.js";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
 const router = Router();
 
@@ -74,6 +75,49 @@ router.post("/api/signup", async (req, res) => {
     });
 
     res.status(200).send({ data: "test" });
+});
+
+router.post("/api/refresh", async (req, res) => {
+    const cookies = req.cookies;
+    if (!cookies.refreshToken) {
+        return res.status(401).send({ message: "No refresh token!" });
+    }
+
+    try {
+        const decoded = jwt.verify(
+            cookies.refreshToken,
+            process.env.REFRESH_TOKEN_SECRET
+        );
+
+        const userFromDatabase = await getUser(decoded);
+        // in theory there should always be a user from the database, so for redundancy
+        if (!userFromDatabase) {
+            return res.status(404).send({
+                status: 404,
+                message: "Failed to find to user",
+            });
+        }
+
+        const { accessToken, refreshToken } = generateTokens(userFromDatabase);
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 15 * 60 * 1000, // 15 minutes in ms
+        });
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: false,
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+        });
+
+        res.send({
+            message: "Successfully refreshed tokens!",
+            user: userFromDatabase,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(403).send({ message: "Could not verify token" });
+    }
 });
 
 router.post("/api/logout", (req, res) => {
