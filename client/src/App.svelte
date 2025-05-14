@@ -5,7 +5,7 @@
 <main>
     <div>
         <img class="logo" src={logo} alt="CozyIdle logo" />
-        <h1 id="commingSoonText">Comming soon!</h1>
+        <h1 id="commingSoonText">Coming soon!</h1>
     </div>
 </main>
 
