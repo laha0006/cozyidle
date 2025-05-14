@@ -1,12 +1,52 @@
 import { Router } from "express";
-import { addUser, userExists } from "../database/user.js";
+import { addUser, userExists, getUser } from "../database/user.js";
 import { hashPassword } from "../util/hashing.js";
 import { generateTokens } from "../util/jwt.js";
+import bcrypt from "bcryptjs";
 
 const router = Router();
 
 router.get("/", (req, res) => {
     res.send({ data: "test" });
+});
+
+router.post("/api/login", async (req, res) => {
+    const user = req.body;
+    const password = user.password;
+
+    const userFromDatabase = await getUser(user);
+    console.log(userFromDatabase);
+    if (!userFromDatabase) {
+        return res
+            .status(404)
+            .send({ status: 404, message: "Incorrect username or password" });
+    }
+    if (!(await bcrypt.compare(password, userFromDatabase.password))) {
+        return res
+            .status(403)
+            .send({ message: "Incorrect username or password" });
+    }
+
+    const { accessToken, refreshToken } = generateTokens(userFromDatabase);
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 15 * 60 * 1000, // 15 minutes in ms
+    });
+    res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
+    });
+
+    res.send({
+        status: 200,
+        message: "Succesfully logged in!",
+        user: {
+            username: userFromDatabase.username,
+            email: userFromDatabase.email,
+        },
+    });
 });
 
 router.post("/api/signup", async (req, res) => {

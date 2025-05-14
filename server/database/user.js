@@ -12,6 +12,17 @@ export async function addUser(user) {
     const res = await db.query(SQL, values);
 }
 
+export async function getUser(user) {
+    const username = user.username;
+
+    const SQL = "SELECT * FROM users WHERE username = $1";
+    const values = [username];
+
+    const res = await db.query(SQL, values);
+
+    return res.rows[0];
+}
+
 export async function userExists(user) {
     const username = user.username;
     const email = user.email;
