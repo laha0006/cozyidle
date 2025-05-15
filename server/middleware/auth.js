@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { getUser } from "../database/user.js";
 
 export function authenticateToken(req, res, next) {
     const cookies = req.cookies;
@@ -9,14 +10,16 @@ export function authenticateToken(req, res, next) {
     jwt.verify(
         cookies.accessToken,
         process.env.ACCESS_TOKEN_SECRET,
-        (err, decoded) => {
+        async (err, decoded) => {
             if (err) {
                 console.log(err);
                 return res.sendStatus(403);
             }
+            const userFromDatabase = await getUser(decoded);
             req.user = {
-                username: decoded.username,
-                email: decoded.email,
+                id: userFromDatabase.id,
+                username: userFromDatabase.username,
+                email: userFromDatabase.email,
             };
             next();
         }

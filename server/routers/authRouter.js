@@ -142,7 +142,9 @@ router.post("/api/refresh", async (req, res) => {
 
 router.post("/api/logout", authenticateToken, (req, res) => {
     const user = req.user;
-    console.log("USER:", user);
+
+    //TODO: revoke / delete refreshToken
+
     res.clearCookie("accessToken", {
         httpOnlytp: true,
         secure: false,
