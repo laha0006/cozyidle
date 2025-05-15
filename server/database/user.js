@@ -41,3 +41,10 @@ export async function insertRefreshToken(userId, jti, expiresAt) {
     const result = await db.query(sql, values);
     return result.rowCount === 1;
 }
+
+export async function deleteAllRefreshTokensByUserId(userId) {
+    const sql = "DELETE FROM refresh_tokens WHERE user_id = $1";
+    const values = [userId];
+    const result = await db.query(sql, values);
+    return result.rowCount > 0;
+}
