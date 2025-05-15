@@ -48,3 +48,10 @@ export async function deleteAllRefreshTokensByUserId(userId) {
     const result = await db.query(sql, values);
     return result.rowCount > 0;
 }
+
+export async function getRefreshTokenByJti(jti) {
+    const sql = "SELECT * FROM refresh_tokens WHERE jti = $1";
+    const values = [jti];
+    const result = await db.query(sql, values);
+    return result.rows[0];
+}

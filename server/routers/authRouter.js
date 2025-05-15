@@ -4,6 +4,8 @@ import {
     userExists,
     getUser,
     insertRefreshToken,
+    deleteAllRefreshTokensByUserId,
+    getRefreshTokenByJti,
 } from "../database/user.js";
 import { hashPassword } from "../util/hashing.js";
 import { generateTokens } from "../util/jwt.js";
@@ -106,12 +108,22 @@ router.post("/api/refresh", async (req, res) => {
         );
 
         const userFromDatabase = await getUser(decoded);
-        // in theory there should always be a user from the database, so for redundancy
         if (!userFromDatabase) {
             return res.status(404).send({
                 status: 404,
                 message: "Failed to find to user",
             });
+        }
+
+        const refreshTokenFromDatabase = await getRefreshTokenByJti(
+            decoded.jti
+        );
+
+        if (!refreshTokenFromDatabase) {
+            return res.status(403).send({ message: "invalid refreshToken" });
+        }
+        if (refreshTokenFromDatabase.revoked) {
+            return res.status(403).send({ message: "invalid refresh token" });
         }
 
         const { accessToken, refreshToken, jti } =
@@ -140,10 +152,11 @@ router.post("/api/refresh", async (req, res) => {
     }
 });
 
-router.post("/api/logout", authenticateToken, (req, res) => {
-    const user = req.user;
+router.post("/api/logout", authenticateToken, async (req, res) => {
+    const userId = req.user.id;
 
-    //TODO: revoke / delete refreshToken
+    //
+    await deleteAllRefreshTokensByUserId(userId);
 
     res.clearCookie("accessToken", {
         httpOnlytp: true,
