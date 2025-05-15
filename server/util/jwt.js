@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { uuid } from "uuid";
+import { v4 as uuidv4 } from "uuid";
 
 export function generateAccessToken(user) {
     const username = user.username;
@@ -16,13 +16,14 @@ export function generateAccessToken(user) {
     );
 }
 
-export function generateRefreshToken(user) {
+export function generateRefreshToken(user, jti) {
     const username = user.username;
     const email = user.email;
     return jwt.sign(
         {
             username,
             email,
+            jti,
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
@@ -33,6 +34,7 @@ export function generateRefreshToken(user) {
 
 export function generateTokens(user) {
     const accessToken = generateAccessToken(user);
-    const refreshToken = generateRefreshToken(user);
-    return { accessToken, refreshToken };
+    const jti = uuidv4();
+    const refreshToken = generateRefreshToken(user, jti);
+    return { accessToken, refreshToken, jti };
 }
