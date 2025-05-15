@@ -1,0 +1,19 @@
+DROP TABLE IF EXISTS refresh_tokens;
+DROP TABLE IF EXISTS users;
+
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY ,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(500) NOT NULL UNIQUE,
+    password VARCHAR(500) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    jti UUID NOT NULL UNIQUE,           -- Store the unique token ID (jti)
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    revoked BOOLEAN DEFAULT FALSE
+);

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { uuid } from "uuid";
 
 export function generateAccessToken(user) {
     const username = user.username;
@@ -10,7 +11,7 @@ export function generateAccessToken(user) {
         },
         process.env.ACCESS_TOKEN_SECRET,
         {
-            expiresIn: "15m",
+            expiresIn: "1m",
         }
     );
 }
@@ -25,7 +26,7 @@ export function generateRefreshToken(user) {
         },
         process.env.REFRESH_TOKEN_SECRET,
         {
-            expiresIn: "15m",
+            expiresIn: "7d",
         }
     );
 }

@@ -27,6 +27,9 @@ router.post("/api/login", async (req, res) => {
             .status(403)
             .send({ message: "Incorrect username or password" });
     }
+    if (!userFromDatabase.is_active) {
+        return res.status(403).send({ message: "Account is suspended" });
+    }
 
     const { accessToken, refreshToken } = generateTokens(userFromDatabase);
     res.cookie("accessToken", accessToken, {

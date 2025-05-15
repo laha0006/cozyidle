@@ -32,3 +32,11 @@ export async function userExists(user) {
     const res = await db.query(sql, values);
     return res.rowCount > 0;
 }
+
+export async function insertRefreshToken(userId, jti, expiresAt) {
+    const sql =
+        "INSERT INTO refresh_tokens(user_id, jti, expires_at) VALUES($1, $2, $3)";
+    const values = [userId, jti, expiresAt];
+    const result = await db.query(sql, values);
+    return result.rowCount === 1;
+}
