@@ -5,11 +5,12 @@ export async function addUser(user) {
     const email = user.email;
     const hashedPassword = user.password;
 
-    const sql = "INSERT INTO users(username, email, password) VALUES($1,$2,$3)";
+    const sql =
+        "INSERT INTO users(username, email, password) VALUES($1,$2,$3) RETURNING *";
     const values = [username, email, hashedPassword];
 
     const res = await db.query(sql, values);
-    return res.rowCount === 1;
+    return res.rows[0];
 }
 
 export async function getUser(user) {

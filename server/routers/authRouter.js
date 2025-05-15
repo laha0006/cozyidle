@@ -1,9 +1,15 @@
 import { Router } from "express";
-import { addUser, userExists, getUser } from "../database/user.js";
+import {
+    addUser,
+    userExists,
+    getUser,
+    insertRefreshToken,
+} from "../database/user.js";
 import { hashPassword } from "../util/hashing.js";
 import { generateTokens } from "../util/jwt.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -31,7 +37,10 @@ router.post("/api/login", async (req, res) => {
         return res.status(403).send({ message: "Account is suspended" });
     }
 
-    const { accessToken, refreshToken } = generateTokens(userFromDatabase);
+    const { accessToken, refreshToken, jti } = generateTokens(userFromDatabase);
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // + 7 days from now
+    await insertRefreshToken(userFromDatabase.id, jti, expiresAt);
+
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false,
@@ -63,9 +72,13 @@ router.post("/api/signup", async (req, res) => {
     }
 
     user.password = await hashPassword(user.password);
-    addUser(user);
+    const userFromDatabase = await addUser(user);
+    console.log(userFromDatabase);
 
-    const { accessToken, refreshToken } = generateTokens(user);
+    const { accessToken, refreshToken, jti } = generateTokens(user);
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // + 7 days from now
+    await insertRefreshToken(userFromDatabase.id, jti, expiresAt);
+
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false,
@@ -101,7 +114,11 @@ router.post("/api/refresh", async (req, res) => {
             });
         }
 
-        const { accessToken, refreshToken } = generateTokens(userFromDatabase);
+        const { accessToken, refreshToken, jti } =
+            generateTokens(userFromDatabase);
+        const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // + 7 days from now
+        await insertRefreshToken(userFromDatabase.id, jti, expiresAt);
+
         res.cookie("accessToken", accessToken, {
             httpOnly: true,
             secure: false,
@@ -123,7 +140,9 @@ router.post("/api/refresh", async (req, res) => {
     }
 });
 
-router.post("/api/logout", (req, res) => {
+router.post("/api/logout", authenticateToken, (req, res) => {
+    const user = req.user;
+    console.log("USER:", user);
     res.clearCookie("accessToken", {
         httpOnlytp: true,
         secure: false,
