@@ -1,25 +1,33 @@
 <script>
-    import logo from "./assets/logo.png";
+    import { Router, Route } from "svelte-tiny-router";
+    import Test from "./components/Test.svelte";
+    import NavBar from "./components/NavBar.svelte";
+
+    function isAuthenticated() {
+        return false;
+    }
+
+    const authGuard = async ({ to, from, next }) => {
+        console.log("from:", from.path);
+        console.log("to:", to.path);
+        if (to.path.startsWith("/test") && !isAuthenticated()) {
+            console.log("uh oh redirect to login!");
+            next({ path: `/?from=${to.path}`, replace: true });
+        } else {
+            next();
+        }
+    };
+
+    const guards = [authGuard];
 </script>
 
-<main>
-    <div>
-        <img class="logo" src={logo} alt="CozyIdle logo" />
-        <h1 id="commingSoonText">Coming soon!</h1>
-    </div>
-</main>
+<Router beforeEach={guards}>
+    <NavBar />
+    <Route path="/">
+        <h1>Home</h1>
+    </Route>
+    <Route path="/test/:id" component={Test} />
+</Router>
 
 <style>
-    .logo {
-        margin-top: -300px;
-        width: 60%;
-        height: 60%;
-    }
-
-    #commingSoonText {
-        top: 0px;
-        margin-top: -100px;
-        color: coral;
-        font-weight: bold;
-    }
 </style>
