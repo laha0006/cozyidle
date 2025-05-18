@@ -1,33 +1,28 @@
 <script>
-    import { Router, Route } from "svelte-tiny-router";
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
+    import { Route, Router, Link } from "svelte-routing";
+    import PrivateRoute from "./components/PrivateRoute/PrivateRoute.svelte";
 
-    function isAuthenticated() {
-        return false;
-    }
-
-    const authGuard = async ({ to, from, next }) => {
-        console.log("from:", from.path);
-        console.log("to:", to.path);
-        if (to.path.startsWith("/test") && !isAuthenticated()) {
-            console.log("uh oh redirect to login!");
-            next({ path: `/?from=${to.path}`, replace: true });
-        } else {
-            next();
-        }
-    };
-
-    const guards = [authGuard];
+    let url = $state("");
 </script>
 
-<Router beforeEach={guards}>
-    <NavBar />
-    <Route path="/">
-        <h1>Home</h1>
-    </Route>
-    <Route path="/test/:id" component={Test} />
-</Router>
+<main>
+    <Router {url}>
+        <nav>
+            <Link to="/">Home</Link>
+            <Link to="/private/10">Private</Link>
+        </nav>
+        <Route path="/">
+            <h1>Home</h1>
+        </Route>
+        <PrivateRoute path="/private/:id" let:params>
+            {#snippet content(params)}
+                <Test name="Tolana" , age={20} {params} />
+            {/snippet}
+        </PrivateRoute>
+    </Router>
+</main>
 
 <style>
 </style>

@@ -1,11 +1,11 @@
 <script>
-    const { path, children } = $props();
+    const { path, content } = $props();
     import { Route } from "svelte-routing";
     import PrivateRouteGuard from "./PrivateRouteGuard.svelte";
 </script>
 
 <Route {path} let:params>
     <PrivateRouteGuard>
-        {@render children(params)}
+        {@render content(params)}
     </PrivateRouteGuard>
 </Route>
