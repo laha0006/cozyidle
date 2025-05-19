@@ -20,9 +20,11 @@
 </script>
 
 <main class="bg-slate-900 text-white h-screen">
-    <div class="flex justify-center text-2xl text-center">
+    <div class="flex justify-center text-2xl text-center flex-col">
         <Router beforeEach={guards}>
-            <NavBar />
+            <div>
+                <NavBar />
+            </div>
             <Route path="/">
                 <h1>Home</h1>
             </Route>
