@@ -4,14 +4,12 @@
     import NavBar from "./components/NavBar.svelte";
 
     function isAuthenticated() {
-        return false;
+        return true;
     }
 
     const authGuard = async ({ to, from, next }) => {
-        console.log("from:", from.path);
-        console.log("to:", to.path);
         if (to.path.startsWith("/test") && !isAuthenticated()) {
-            console.log("uh oh redirect to login!");
+            //TODO: base64 encode from, is probably a good idea
             next({ path: `/?from=${to.path}`, replace: true });
         } else {
             next();
@@ -26,7 +24,7 @@
     <Route path="/">
         <h1>Home</h1>
     </Route>
-    <Route path="/test/:id" component={Test} />
+    <Route path="/test/:id/:userId" component={Test} />
 </Router>
 
 <style>

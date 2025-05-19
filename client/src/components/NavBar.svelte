@@ -7,7 +7,7 @@
     }
 
     function goToTest() {
-        router.navigate("/test/10");
+        router.navigate("/test/10/420");
     }
 </script>
 

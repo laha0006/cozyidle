@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
 
-    const { name, age, id } = $props();
+    const { name, age, id, userId } = $props();
     console.log(name, age, id);
 
     onMount(() => {
@@ -17,5 +17,8 @@
 </div>
 <div>
     {id}
+</div>
+<div>
+    {userId}
 </div>
 <div></div>
