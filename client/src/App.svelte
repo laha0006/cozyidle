@@ -19,13 +19,17 @@
     const guards = [authGuard];
 </script>
 
-<Router beforeEach={guards}>
-    <NavBar />
-    <Route path="/">
-        <h1>Home</h1>
-    </Route>
-    <Route path="/test/:id/:userId" component={Test} />
-</Router>
+<main class="bg-slate-900 text-white h-screen">
+    <div class="flex justify-center text-2xl text-center">
+        <Router beforeEach={guards}>
+            <NavBar />
+            <Route path="/">
+                <h1>Home</h1>
+            </Route>
+            <Route path="/test/:id/:userId" component={Test} />
+        </Router>
+    </div>
+</main>
 
 <style>
 </style>
