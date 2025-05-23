@@ -1,1 +1,21 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant high-contrast (&:where(.high-contrast, .high-contrast *)); 
+
+:root {
+    --bg-test: white;
+}
+
+.dark {
+    --bg-test: black;
+} 
+
+.high-contrast {
+    --bg-test: red;
+}
+
+
+@theme inline {
+  --color-test: var(--bg-test);
+}

@@ -26,7 +26,7 @@
                 <NavBar />
             </div>
             <Route path="/">
-                <h1>Home</h1>
+                <h1 class="bg-test">Home</h1>
             </Route>
             <Route path="/test/:id/:userId" component={Test} />
         </Router>
