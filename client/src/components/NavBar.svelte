@@ -1,5 +1,6 @@
 <script>
     import { useTinyRouter } from "svelte-tiny-router";
+    import { user } from "../stores/userStore.js";
     const router = useTinyRouter();
 
     function goToHome() {
@@ -21,5 +22,7 @@
 
 <button onclick={goToHome}> Home</button>
 <button onclick={goToTest}> Test</button>
-<button onclick={goToLogin}> Login</button>
-<button onclick={goToSignup}> Signup</button>
+{#if !$user}
+    <button onclick={goToLogin}> Login</button>
+    <button onclick={goToSignup}> Signup</button>
+{/if}
