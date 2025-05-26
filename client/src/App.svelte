@@ -24,13 +24,15 @@
 </script>
 
 <main class="bg-slate-900 text-white h-screen">
-    <SvelteToast
-        options={{
-            intro: {
-                y: -64,
-            },
-        }}
-    />
+    <div class="text-center text-2xl font-bold">
+        <SvelteToast
+            options={{
+                intro: {
+                    y: -64,
+                },
+            }}
+        />
+    </div>
     <div class="flex justify-center text-2xl text-center flex-col">
         <Router beforeEach={guards}>
             <div>
