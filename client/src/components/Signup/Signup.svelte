@@ -1,4 +1,6 @@
 <script>
+    import { postFetch } from "../../util/fetch.js";
+
     let formData = {
         username: "",
         email: "",
@@ -9,13 +11,10 @@
 
     async function signup(e) {
         e.preventDefault();
-        const response = await fetch("/api/signup", {
-            method: "POST",
-            headers: {
-                "Content-type": "application/json",
-            },
-            body: JSON.stringify(formData),
-        });
+        console.log(formData);
+        const json = await postFetch("/api/signup", formData);
+        console.log("after postFetch");
+        console.log(json.message);
     }
 </script>
 
