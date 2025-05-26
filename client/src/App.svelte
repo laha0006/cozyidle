@@ -5,6 +5,7 @@
     import NavBar from "./components/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
     import Signup from "./components/Signup/Signup.svelte";
+    import { SvelteToast } from "@zerodevx/svelte-toast";
 
     function isAuthenticated() {
         return true;
@@ -23,6 +24,13 @@
 </script>
 
 <main class="bg-slate-900 text-white h-screen">
+    <SvelteToast
+        options={{
+            intro: {
+                y: -64,
+            },
+        }}
+    />
     <div class="flex justify-center text-2xl text-center flex-col">
         <Router beforeEach={guards}>
             <div>

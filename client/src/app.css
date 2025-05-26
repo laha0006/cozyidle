@@ -5,6 +5,12 @@
 
 :root {
     --bg-test: white;
+
+    --toastContainerTop: 2rem;
+    --toastContainerRight: auto;
+    --toastContainerBottom: auto;
+    --toastContainerLeft: calc(50vw - 16rem);
+    --toastWidth: 32rem;
 }
 
 .dark {
