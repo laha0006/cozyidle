@@ -14,8 +14,13 @@
 
     async function handleSignup(e) {
         e.preventDefault();
-        success("test");
-        const didSignup = await signup(formData);
+        try {
+            const json = await signup(formData);
+            success(json.message);
+        } catch (err) {
+            console.log(err);
+            toast.push(err.message);
+        }
     }
 </script>
 
