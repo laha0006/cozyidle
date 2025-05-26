@@ -18,7 +18,6 @@
         try {
             const json = await signup(formData);
             user.set(json.user);
-            console.log($user);
             success(json.message);
         } catch (err) {
             console.log(err);
