@@ -6,5 +6,5 @@ export async function signup(formData) {
 }
 
 export async function login(formData) {
-    const { response, json } = await postFetch("/api/login", formData);
+    return await postFetch("/api/login", formData);
 }
