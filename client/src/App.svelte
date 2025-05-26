@@ -3,6 +3,7 @@
     import { Router, Route } from "svelte-tiny-router";
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
+    import Login from "./components/Login/Login.svelte";
 
     function isAuthenticated() {
         return true;
@@ -29,6 +30,8 @@
             <Route path="/">
                 <h1 class="bg-test">Home</h1>
             </Route>
+            <Route path="/login" component={Login} />
+            <Route path="/signup" component={Signup} />
             <Route path="/test/:id/:userId" component={Test} />
         </Router>
     </div>
