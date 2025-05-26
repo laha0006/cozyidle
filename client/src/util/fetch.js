@@ -10,11 +10,8 @@ export async function postFetch(url, data) {
         },
         body: JSON.stringify(data),
     });
-
-    console.log("RESPONSE:", response);
-
     const json = await response.json();
-    return json;
+    return { response, json };
 }
 
 export async function postFetchWithRefresh(url, data) {
