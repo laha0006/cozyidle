@@ -13,7 +13,7 @@ export function authenticateToken(req, res, next) {
         async (err, decoded) => {
             if (err) {
                 console.log(err);
-                return res.sendStatus(403);
+                return res.sendStatus(401);
             }
             const userFromDatabase = await getUser(decoded);
             req.user = {
