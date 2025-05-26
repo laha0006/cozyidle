@@ -2,11 +2,12 @@
 import { user } from "../stores/userStore.js";
 
 export async function postFetch(url, data) {
+    console.log("DATA", data);
     let response = await fetch(url, {
         credentials: "include",
         method: "POST",
         headers: {
-            "Content-Tupe": "application/json",
+            "Content-Type": "application/json",
         },
         body: JSON.stringify(data),
     });
