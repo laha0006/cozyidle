@@ -1,30 +1,19 @@
 import { writable } from "svelte/store";
+import {
+    postFetch,
+    postFetchWithRefresh,
+    getFetchWithRefresh,
+} from "../util/fetch";
 
 export const user = writable(null);
-checkAuthAndSetUser();
+checkAuth();
 
-async function checkAuthAndSetUser() {
-    console.log("checking Auth and Setting User Store.");
-    let response = await fetch("/api/users", {
-        credentials: "include",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-    if (!response.ok) {
-        response = await fetch("api/refresh ", {
-            credentials: "include",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-        if (!response.ok) {
-            console.log("no valid refresh token.");
-            return;
-        }
+async function checkAuth() {
+    try {
+        const json = await getFetchWithRefresh("api/users");
+        console.log("JSON:", json);
+        user.set(json.user);
+    } catch (error) {
+        console.log(error.message);
     }
-    const json = await response.json();
-    user.set(json.user);
-    console.log("user has been set!");
 }
