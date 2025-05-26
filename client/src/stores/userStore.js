@@ -6,14 +6,13 @@ import {
 } from "../util/fetch";
 
 export const user = writable(null);
-checkAuth();
 
-async function checkAuth() {
+export async function setUserIfAuthenticated() {
     try {
         const json = await getFetchWithRefresh("api/users");
-        console.log("JSON:", json);
         user.set(json.user);
     } catch (error) {
         console.log(error.message);
+        user.set(null);
     }
 }
