@@ -66,6 +66,7 @@ router.post("/api/login", async (req, res) => {
 
 router.post("/api/signup", async (req, res) => {
     const user = req.body;
+    console.log("USER: ", user);
 
     if (await userExists(user)) {
         return res
