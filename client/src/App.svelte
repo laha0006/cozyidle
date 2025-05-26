@@ -1,32 +1,16 @@
 <script>
-    //svelte imports
     import { onMount } from "svelte";
 
-    //library imports
     import { Router, Route } from "svelte-tiny-router";
     import { SvelteToast } from "@zerodevx/svelte-toast";
 
-    //other imports stores, util etc.
     import { user, setUserIfAuthenticated } from "./stores/userStore.js";
+    import { authGuard } from "./util/guards.js";
 
-    //component imports
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
     import Signup from "./components/Signup/Signup.svelte";
-
-    function isAuthenticated() {
-        return true;
-    }
-
-    const authGuard = async ({ to, from, next }) => {
-        if (to.path.startsWith("/test") && !isAuthenticated()) {
-            //TODO: base64 encode from, is probably a good idea
-            next({ path: `/?from=${to.path}`, replace: true });
-        } else {
-            next();
-        }
-    };
 
     const guards = [authGuard];
 
@@ -60,7 +44,7 @@
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
-            <Route path="/test/:id/:userId" component={Test} />
+            <Route path="/game" component={Test} />
         </Router>
     </div>
 </main>
