@@ -54,38 +54,38 @@ export async function getFetch(url) {
             "Content-Type": "application/json",
         },
     });
-    const json = await response.json();
+    let json;
+    try {
+        json = await response.json();
+    } catch {
+        json = null;
+    }
+
+    if (!response.ok) {
+        const error = new Error(json?.message || "Request failed");
+        error.status = response.status;
+        error.response = response;
+        error.body = json;
+        throw error;
+    }
+
     return json;
 }
 
 export async function getFetchWithRefresh(url) {
-    let response = await getFetch(url);
-    if (response.status === 401) {
-        if (await refreshFetch()) {
-            response = await getFetch(url);
-        } else {
-            const json = await response.json();
-            return false;
+    try {
+        return await getFetch(url);
+    } catch (error) {
+        if (error.status === 401) {
+            try {
+                const json = await posttFetch("/api/refresh");
+                user.set(json.user);
+            } catch (refreshError) {
+                user.set(null);
+                throw error;
+            }
+            return await getFetch(url);
         }
+        throw error;
     }
-    const json = await response.json();
-    return json;
-}
-
-export async function refreshFetch() {
-    console.log("refreshFetch!");
-    const response = await fetch("/api/refresh", {
-        credentials: "include",
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-    if (!response.ok) {
-        user.set(null);
-        return false;
-    }
-    const json = await response.json();
-    user.set(json.user);
-    return true;
 }
