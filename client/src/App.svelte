@@ -4,6 +4,7 @@
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
+    import Signup from "./components/Signup/Signup.svelte";
 
     function isAuthenticated() {
         return true;
