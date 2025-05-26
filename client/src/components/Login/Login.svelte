@@ -1,6 +1,10 @@
 <script>
     import { navigate } from "svelte-tiny-router";
     import { postFetch } from "../../util/fetch";
+    import { login } from "../../api/auth.js";
+    import { toast } from "@zerodevx/svelte-toast";
+    import { success } from "../../util/toasts.js";
+    import { user } from "../../stores/userStore";
     let formData = {
         username: "",
         password: "",
@@ -8,8 +12,13 @@
 
     async function handleLogin(e) {
         e.preventDefault();
-        const json = await postFetch("/api/login", formData);
-        console.log("login json:", json);
+        try {
+            const json = await login(formData);
+            user.set(json.user);
+            success("Sucesffuly logged in!");
+        } catch (error) {
+            toast.push(error.message);
+        }
     }
 </script>
 
