@@ -1,4 +1,5 @@
 <script>
+    import { toast } from "@zerodevx/svelte-toast";
     import { signup } from "../../api/auth.js";
     import { postFetch } from "../../util/fetch.js";
 
@@ -12,7 +13,8 @@
 
     async function handleSignup(e) {
         e.preventDefault();
-        const didSignUp = await signup(formData);
+        toast.push("push it to the limit!");
+        const didSignup = await signup(formData);
     }
 </script>
 
