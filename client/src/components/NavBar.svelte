@@ -7,8 +7,8 @@
         router.navigate("/");
     }
 
-    function goToTest() {
-        router.navigate("/test/10/420");
+    function goToGame() {
+        router.navigate("/game");
     }
 
     function goToLogin() {
@@ -21,7 +21,7 @@
 </script>
 
 <button onclick={goToHome}> Home</button>
-<button onclick={goToTest}> Test</button>
+<button onclick={goToGame}> Game</button>
 {#if !$user}
     <button onclick={goToLogin}> Login</button>
     <button onclick={goToSignup}> Signup</button>
