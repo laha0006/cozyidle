@@ -1,10 +1,16 @@
 <script>
     import { useTinyRouter } from "svelte-tiny-router";
+    import { toast } from "@zerodevx/svelte-toast";
+
     import { user } from "../stores/userStore.js";
     import { logout } from "../api/auth.js";
-    import { toast } from "@zerodevx/svelte-toast";
     import { success } from "../util/toasts.js";
+
     const router = useTinyRouter();
+
+    const currentPath = $derived(router.fullPath);
+
+    $inspect(currentPath); //TODO: active highligt using router.path?
 
     function goToHome() {
         router.navigate("/");
@@ -34,7 +40,12 @@
 </script>
 
 <button onclick={goToHome}> Home</button>
-<button onclick={goToGame}> Game</button>
+<button
+    class={currentPath === "/game" ? "text-green-500" : ""}
+    onclick={goToGame}
+>
+    Game</button
+>
 {#if !$user}
     <button onclick={goToLogin}> Login</button>
     <button onclick={goToSignup}> Signup</button>
