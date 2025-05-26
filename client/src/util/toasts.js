@@ -3,8 +3,9 @@ import { toast } from "@zerodevx/svelte-toast";
 export const success = (m) =>
     toast.push(m, {
         theme: {
-            "--toastBackground": "green",
+            "--toastBackground": "darkgreen",
             "--toastColor": "white",
-            "--toastBarBackground": "olive",
+            "--toastBarBackground": "green",
         },
+        duration: 2000,
     });
