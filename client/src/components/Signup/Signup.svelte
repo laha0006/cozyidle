@@ -1,4 +1,5 @@
 <script>
+    import { signup } from "../../api/auth.js";
     import { postFetch } from "../../util/fetch.js";
 
     let formData = {
@@ -9,12 +10,9 @@
 
     let showPasswordChecked = false;
 
-    async function signup(e) {
+    async function handleSignup(e) {
         e.preventDefault();
-        console.log(formData);
-        const json = await postFetch("/api/signup", formData);
-        console.log("after postFetch");
-        console.log(json.message);
+        const didSignUp = await signup(formData);
     }
 </script>
 
@@ -63,7 +61,7 @@
         </div>
         <div class="flex justify-center">
             <button
-                onclick={signup}
+                onclick={handleSignup}
                 class="bg-green-800 text-black font-bold rounded py-1 px-2"
                 >Sign up</button
             >
