@@ -8,3 +8,7 @@ export async function signup(formData) {
 export async function login(formData) {
     return await postFetch("/api/login", formData);
 }
+
+export async function logout() {
+    return await postFetch("/api/logout");
+}
