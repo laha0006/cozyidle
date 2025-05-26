@@ -1,7 +1,8 @@
+import { get } from "svelte/store";
 import { user } from "../stores/userStore.js";
 
 function isAuthenticated() {
-    return Boolean($user);
+    return Boolean(get(user));
 }
 
 export const authGuard = async ({ to, from, next }) => {
