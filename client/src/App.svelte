@@ -40,6 +40,11 @@
             </div>
             <Route path="/">
                 <h1 class="bg-test">Home</h1>
+                {#if $user}
+                    <h1>{$user.id}</h1>
+                {:else}
+                    <h1>loading..</h1>
+                {/if}
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
