@@ -129,10 +129,10 @@ router.post("/api/refresh", async (req, res) => {
         );
 
         if (!refreshTokenFromDatabase) {
-            return res.status(403).send({ message: "invalid refreshToken" });
+            return res.status(401).send({ message: "invalid refreshToken" });
         }
         if (refreshTokenFromDatabase.revoked) {
-            return res.status(403).send({ message: "invalid refresh token" });
+            return res.status(401).send({ message: "invalid refresh token" });
         }
 
         const { accessToken, refreshToken, jti } =
@@ -157,7 +157,7 @@ router.post("/api/refresh", async (req, res) => {
         });
     } catch (error) {
         console.log(error);
-        res.status(403).send({ message: "Could not verify token" });
+        res.status(401).send({ message: "Could not verify token" });
     }
 });
 
