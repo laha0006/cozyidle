@@ -10,8 +10,19 @@ export async function postFetch(url, data) {
         },
         body: JSON.stringify(data),
     });
-    const json = await response.json();
-    return { response, json };
+
+    let json;
+    try {
+        json = await response.json();
+    } catch {
+        json = null;
+    }
+
+    if (!response.ok) {
+        throw new Error(json?.message || "Request failed");
+    }
+
+    return json;
 }
 
 export async function postFetchWithRefresh(url, data) {
