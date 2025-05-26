@@ -60,6 +60,7 @@ router.post("/api/login", async (req, res) => {
         user: {
             username: userFromDatabase.username,
             email: userFromDatabase.email,
+            id: userFromDatabase.id,
         },
     });
 });
