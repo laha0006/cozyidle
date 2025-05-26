@@ -2,11 +2,8 @@ import { user } from "../stores/userStore.js";
 import { postFetch } from "../util/fetch";
 
 export async function signup(formData) {
-    const { response, json } = await postFetch("/api/signup", formData);
-    if (!response.ok) {
-        return false;
-    }
-    user.set(json.user);
+    const json = await postFetch("/api/signup", formData);
+    return json;
 }
 
 export async function login(formData) {
