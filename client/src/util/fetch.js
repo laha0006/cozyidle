@@ -30,25 +30,19 @@ export async function postFetch(url, data) {
 }
 
 export async function postFetchWithRefresh(url, data) {
-    console.log("first post with refresh attempt");
     try {
         return await postFetch(url, data);
     } catch (error) {
-        console.log("error:", error.status);
         if (error.status === 401) {
             try {
-                console.log("Refresh attempt");
                 const json = await postFetch("/api/refresh");
                 user.set(json.user);
             } catch (refreshError) {
-                console.log("refresh attempt failed");
                 user.set(null);
                 throw error;
             }
-            console.log("retry request");
             return await postFetch(url, data);
         }
-        console.log("OG error");
         throw error;
     }
 }
@@ -66,7 +60,6 @@ export async function getFetch(url) {
     } catch {
         json = null;
     }
-    console.log("get fetch json:", json);
 
     if (!response.ok) {
         const error = new Error(json?.message || "Request failed");
