@@ -1,6 +1,6 @@
 import { user } from "../stores/userStore.js";
 
-function isAutenticated() {
+function isAuthenticated() {
     return Boolean($user);
 }
 
