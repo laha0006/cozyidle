@@ -5,7 +5,7 @@ const router = Router();
 router.use(authenticateToken);
 
 router.get("/api/users", (req, res) => {
-    res.send({ message: "Auth succesful!" });
+    res.send({ message: "Auth succesful!", user: req.user });
 });
 
 export default router;
