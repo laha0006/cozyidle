@@ -19,25 +19,32 @@ export async function postFetch(url, data) {
     }
 
     if (!response.ok) {
-        throw new Error(json?.message || "Request failed");
+        const error = new Error(json?.message || "Request failed");
+        error.status = response.status;
+        error.response = response;
+        error.body = json;
+        throw error;
     }
 
     return json;
 }
 
 export async function postFetchWithRefresh(url, data) {
-    let response = await postFetch(url, data);
-    if (response.status === 401) {
-        if (await refreshFetch()) {
-            response = await postFetch(url, data);
-        } else {
-            const json = await response.json();
-            console.log(json.message);
-            return false;
+    try {
+        return await postFetch(url, data);
+    } catch (error) {
+        if (error.status === 401) {
+            try {
+                const json = await postFetch("/api/refresh");
+                user.set(json.user);
+            } catch (refreshError) {
+                user.set(null);
+                throw error;
+            }
+            return await postFetch(url, data);
         }
+        throw error;
     }
-    const json = await response.json();
-    return json;
 }
 
 export async function getFetch(url) {
