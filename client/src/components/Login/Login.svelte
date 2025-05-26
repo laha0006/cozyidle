@@ -1,5 +1,6 @@
 <script>
     import { navigate } from "svelte-tiny-router";
+    import { postFetch } from "../../util/fetch";
     let formData = {
         username: "",
         password: "",
@@ -7,8 +8,8 @@
 
     async function handleLogin(e) {
         e.preventDefault();
-
-        navigate("/user");
+        const json = await postFetch("/api/login", formData);
+        console.log("login json:", json);
     }
 </script>
 
