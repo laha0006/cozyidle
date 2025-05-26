@@ -3,6 +3,7 @@
     import { signup } from "../../api/auth.js";
     import { postFetch } from "../../util/fetch.js";
     import { success } from "../../util/toasts.js";
+    import { user } from "../../stores/userStore.js";
 
     let formData = {
         username: "",
@@ -16,6 +17,8 @@
         e.preventDefault();
         try {
             const json = await signup(formData);
+            user.set(json.user);
+            console.log($user);
             success(json.message);
         } catch (err) {
             console.log(err);
