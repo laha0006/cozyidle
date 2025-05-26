@@ -1,4 +1,5 @@
 <script>
+    import { user } from "./stores/userStore.js";
     import { Router, Route } from "svelte-tiny-router";
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
