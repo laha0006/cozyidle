@@ -119,8 +119,7 @@ router.post("/api/refresh", async (req, res) => {
         const userFromDatabase = await getUser(decoded);
         if (!userFromDatabase) {
             return res.status(404).send({
-                status: 404,
-                message: "Failed to find to user",
+                message: "Failed to find user",
             });
         }
 
