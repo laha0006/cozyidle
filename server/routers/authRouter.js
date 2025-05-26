@@ -94,7 +94,14 @@ router.post("/api/signup", async (req, res) => {
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
     });
 
-    res.status(200).send({ data: "test" });
+    res.status(200).send({
+        message: "You've succesfully signed up!",
+        user: {
+            id: userFromDatabase.id,
+            username: userFromDatabase.username,
+            email: userFromDatabase.email,
+        },
+    });
 });
 
 router.post("/api/refresh", async (req, res) => {
