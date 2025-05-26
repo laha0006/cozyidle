@@ -7,5 +7,6 @@ export async function signup(formData) {
         //TODO: toast
         return;
     }
+    console.log("succesfully signed up!");
     user.set(json.user);
 }
