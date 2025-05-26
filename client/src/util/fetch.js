@@ -2,8 +2,7 @@
 import { user } from "../stores/userStore.js";
 
 export async function postFetch(url, data) {
-    console.log("DATA", data);
-    let response = await fetch(url, {
+    const response = await fetch(url, {
         credentials: "include",
         method: "POST",
         headers: {
@@ -12,7 +11,15 @@ export async function postFetch(url, data) {
         body: JSON.stringify(data),
     });
 
-    if (!response.ok) {
+    console.log("RESPONSE:", response);
+
+    const json = await response.json();
+    return json;
+}
+
+export async function postFetchWithRefresh(url, data) {
+    let response = await postFetch(url, data);
+    if (response.status === 401) {
         if (await refreshFetch()) {
             response = await postFetch(url, data);
         } else {
@@ -22,28 +29,31 @@ export async function postFetch(url, data) {
         }
     }
     const json = await response.json();
-    console.log(json.message);
     return json;
 }
 
 export async function getFetch(url) {
-    let response = await fetch(url, {
+    const response = await fetch(url, {
         credentials: "include",
         headers: {
             "Content-Type": "application/json",
         },
     });
-    if (!response.ok) {
+    const json = await response.json();
+    return json;
+}
+
+export async function getFetchWithRefresh(url) {
+    let response = await getFetch(url);
+    if (response.status === 401) {
         if (await refreshFetch()) {
             response = await getFetch(url);
         } else {
             const json = await response.json();
-            console.log(json.message);
             return false;
         }
     }
     const json = await response.json();
-    console.log(json.message);
     return json;
 }
 
