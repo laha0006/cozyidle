@@ -1,11 +1,19 @@
 <script>
-    import { user } from "./stores/userStore.js";
+    //svelte imports
+    import { onMount } from "svelte";
+
+    //library imports
     import { Router, Route } from "svelte-tiny-router";
+    import { SvelteToast } from "@zerodevx/svelte-toast";
+
+    //other imports stores, util etc.
+    import { user, setUserIfAuthenticated } from "./stores/userStore.js";
+
+    //component imports
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
     import Signup from "./components/Signup/Signup.svelte";
-    import { SvelteToast } from "@zerodevx/svelte-toast";
 
     function isAuthenticated() {
         return true;
@@ -21,6 +29,10 @@
     };
 
     const guards = [authGuard];
+
+    onMount(() => {
+        setUserIfAuthenticated();
+    });
 </script>
 
 <main class="bg-slate-900 text-white h-screen">
@@ -43,7 +55,7 @@
                 {#if $user}
                     <h1>{$user.id}</h1>
                 {:else}
-                    <h1>loading..</h1>
+                    <h1>No user</h1>
                 {/if}
             </Route>
             <Route path="/login" component={Login} />
