@@ -1,16 +1,32 @@
 import { io } from "socket.io-client";
-import { readable } from "svelte/store";
+import { writable } from "svelte/store";
 
-const socket = io("http://localhost:8080");
+export const socketStore = writable(null);
 
-socket.on("connect", () => {
-    console.log("socket connected!");
-});
+let socket = null;
 
-socket.on("connect_error", (error) => {
-    console.log("error", error);
-});
+export function initSocket() {
+    if (socket) {
+        socket.disconnect();
+    }
 
-console.log("stuff happend");
+    console.log("Initializing socket connection...");
+    socket = io("http://localhost:8080", { withCredentials: true });
 
-export const socketStore = readable(socket);
+    socket.on("connect", () => {
+        console.log("socket connected!");
+    });
+
+    socket.on("connect_error", (error) => {
+        console.log("error", error);
+    });
+    socketStore.set(socket);
+}
+
+export function disconnectSocket() {
+    if (socket) {
+        socket.disconnect();
+        socket = null;
+    }
+    socketStore.set(null);
+}
