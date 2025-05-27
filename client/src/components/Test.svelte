@@ -1,6 +1,6 @@
 <script>
     import { onMount } from "svelte";
-
+    import { socketStore } from "../stores/socketStore.js";
     // const { name, age, id, userId } = $props();
     // console.log(name, age, id);
 
@@ -10,3 +10,4 @@
 </script>
 
 <h1>GAME</h1>
+{$socketStore}
