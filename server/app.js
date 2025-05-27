@@ -16,13 +16,25 @@ app.use(usersRouter);
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*", // Allow all origins
+        origin: "http://localhost:5173", // Allow all origins
+        // origin: "*", // Allow all origins
         methods: ["GET", "POST"],
+        credentials: true,
     },
 });
 
+let socketCount = 0;
+
 io.on("connection", (socket) => {
     console.log("A socket connected", socket.id);
+    socketCount++;
+    console.log("count: ", socketCount);
+
+    socket.on("disconnect", () => {
+        socketCount--;
+        console.log("socket disconnected:", socket.id);
+        console.log("count: ", socketCount);
+    });
 });
 
 const PORT = process.env.PORT || 8080;
