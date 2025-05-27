@@ -6,26 +6,22 @@
 
     import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import { authGuard } from "./util/guards.js";
-    import {
-        socketStore,
-        disconnectSocket,
-        initSocket,
-    } from "./stores/socketStore.js";
 
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
     import Signup from "./components/Signup/Signup.svelte";
+    import { socketStore } from "./stores/socketStore.js";
 
     const guards = [authGuard];
 
-    $effect(() => {
-        if ($user) {
-            initSocket();
-        } else {
-            disconnectSocket();
-        }
-    });
+    // $effect(() => {
+    //     if ($user) {
+    //         initSocket();
+    //     } else {
+    //         disconnectSocket();
+    //     }
+    // });
 
     onMount(() => {
         setUserIfAuthenticated();
@@ -49,6 +45,9 @@
             </div>
             <Route path="/">
                 <h1 class="">Home</h1>
+                {#if $socketStore}
+                    <h1>Derived yay</h1>
+                {/if}
                 {#if $user}
                     <h1>{$user.id}</h1>
                 {:else}
