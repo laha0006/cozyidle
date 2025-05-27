@@ -163,7 +163,6 @@ router.post("/api/refresh", async (req, res) => {
 router.post("/api/logout", authenticateToken, async (req, res) => {
     const userId = req.user.id;
 
-    //
     await deleteAllRefreshTokensByUserId(userId);
 
     res.clearCookie("accessToken", {
