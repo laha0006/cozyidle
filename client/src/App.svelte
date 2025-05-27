@@ -35,7 +35,7 @@
                 <NavBar />
             </div>
             <Route path="/">
-                <h1 class="bg-test">Home</h1>
+                <h1 class="">Home</h1>
                 {#if $user}
                     <h1>{$user.id}</h1>
                 {:else}
