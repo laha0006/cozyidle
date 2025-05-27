@@ -14,7 +14,12 @@ import usersRouter from "./routers/usersRouter.js";
 app.use(usersRouter);
 
 const server = http.createServer(app);
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: "*", // Allow all origins
+        methods: ["GET", "POST"],
+    },
+});
 
 io.on("connection", (socket) => {
     console.log("A socket connected", socket.id);
