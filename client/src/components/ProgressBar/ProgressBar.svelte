@@ -5,7 +5,7 @@
 
     const { duration } = $props();
 
-    let active = true;
+    let repeat = true;
     let count = 0;
 
     const progress = tweened(0, { duration: 2000, easing: linear });
@@ -13,7 +13,7 @@
     function reset() {
         count++;
         if (count === 5) {
-            active = false;
+            repeat = false;
         }
         progress.set(0, { duration: 0 });
         progress.set(1);
@@ -26,10 +26,10 @@
     onMount(() => {
         start();
         const unsubscribe = progress.subscribe((value) => {
-            if (value === 1 && active) {
+            if (value === 1 && repeat) {
                 reset();
             }
-            if (!active) {
+            if (value === 1 && !repeat) {
                 progress.set(0, { duration: 0 });
             }
         });
