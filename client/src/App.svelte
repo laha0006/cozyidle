@@ -13,6 +13,7 @@
     import Signup from "./components/Signup/Signup.svelte";
     import { socketStore } from "./stores/socketStore.js";
     import ProgressBar from "./components/ProgressBar/ProgressBar.svelte";
+    import IdleCard from "./components/IdleCard/IdleCard.svelte";
 
     const guards = [authGuard];
 
@@ -58,7 +59,7 @@
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
-            <Route path="/game" component={ProgressBar} />
+            <Route path="/game" component={IdleCard} />
         </Router>
     </div>
 </main>
