@@ -3,18 +3,14 @@
     import { linear } from "svelte/easing";
     import { onMount } from "svelte";
 
-    const { duration } = $props();
+    const { duration, repeat } = $props();
 
-    let repeat = true;
     let count = 0;
 
-    const progress = tweened(0, { duration: 2000, easing: linear });
+    const progress = tweened(0, { duration: duration, easing: linear });
 
     function reset() {
         count++;
-        if (count === 5) {
-            repeat = false;
-        }
         progress.set(0, { duration: 0 });
         progress.set(1);
     }
@@ -40,6 +36,5 @@
 </script>
 
 <div>
-    <h1>ProgressBar</h1>
     <progress value={$progress}></progress>
 </div>
