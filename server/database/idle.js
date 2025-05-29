@@ -15,5 +15,5 @@ export async function getIdle(userId) {
     const values = [userId];
 
     const res = await db.query(sql, values);
-    return res.rows[0];
+    return res.rows[0].started_unix * 1000;
 }
