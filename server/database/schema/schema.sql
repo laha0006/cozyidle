@@ -17,3 +17,9 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     created_at TIMESTAMP DEFAULT NOW(),
     revoked BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS user_resources (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(ir) ON DELETE CASCADE,
+    count INTEGER DEFAULT 0;
+)
