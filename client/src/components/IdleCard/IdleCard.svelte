@@ -1,25 +1,64 @@
 <script>
+    import { onDestroy, onMount } from "svelte";
     import ProgressBar from "../ProgressBar/ProgressBar.svelte";
     let count = $state(0);
-    let duration = $state(0);
-    let repeat = $state(false);
-    let interval;
+    let progress = $state(0);
+    let lastIncrement = $state(Date.now());
+    let rafLoopId;
+    let rafUpdateId;
+    let running = $state(false);
+    let startTime;
+    let stopTime;
+    let expected = 0;
+
+    function loop() {
+        const now = Date.now();
+        const incrementCount = Math.floor((now - lastIncrement) / 2000);
+        if (incrementCount > 0) {
+            count += incrementCount;
+            lastIncrement = Date.now();
+        }
+        rafLoopId = requestAnimationFrame(loop);
+    }
+
     function start() {
-        console.log("start");
-        duration = 2000;
-        repeat = true;
-        interval = setInterval(() => count++, duration);
+        if (running) return;
+        running = true;
+        lastIncrement = Date.now();
+        startTime = Date.now();
+        loop();
     }
 
     function stop() {
+        if (!running) return;
         console.log("stop");
-        repeat = false;
-        clearTimeout(interval);
+        running = false;
+        stopTime = Date.now();
+        cancelAnimationFrame(rafLoopId);
+        cancelAnimationFrame(rafUpdateId);
+        expected += Math.floor((stopTime - startTime) / 2000);
+        console.log("expected:", expected);
     }
 
-    function increment() {
-        count++;
+    function update() {
+        progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
+        if (running) rafUpdateId = requestAnimationFrame(update);
     }
+
+    $effect(() => {
+        if (!running) {
+            console.log("not running!");
+            progress = 0;
+            return;
+        }
+        console.log("running");
+        rafUpdateId = requestAnimationFrame(update);
+        return () => cancelAnimationFrame(rafUpdateId);
+    });
+
+    onDestroy(() => {
+        stop();
+    });
 </script>
 
 <div>
@@ -27,7 +66,10 @@
     <div>
         {count}
     </div>
-    <ProgressBar {duration} {repeat} />
-    <button onclick={start}>Start</button>
-    <button onclick={stop}>Stop</button>
+    <!-- <ProgressBar {duration} {repeat} /> -->
+    <progress value={progress}></progress>
+    <div>
+        <button onclick={start}>Start</button>
+        <button onclick={stop}>Stop</button>
+    </div>
 </div>
