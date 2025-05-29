@@ -8,5 +8,5 @@ async function executeSqlFile(filePath) {
     await db.end();
     console.log("succesfully ran sql script");
 }
-
+console.log(path.resolve("./database/schema/schema.sql"));
 executeSqlFile("./database/schema/schema.sql");
