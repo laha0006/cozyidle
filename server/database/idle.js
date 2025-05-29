@@ -20,18 +20,28 @@ export async function getIdle(userId) {
 
 export async function updateIdle(userId) {
     const sql = `WITH old AS (
-                SELECT started FROM user_idles WHERE user_id = $1 FOR UPDATE
+                    SELECT started FROM user_idles WHERE user_id = $1 AND active = TRUE FOR UPDATE
                 ),
                 updated AS (
-                UPDATE user_idles 
-                SET started = NOW()
-                WHERE user_id = $1
+                    UPDATE user_idles 
+                    SET started = NOW()
+                    WHERE user_id = $1 AND active = TRUE
+                    RETURNING started
+                ),
+                update_resources AS (
+                    UPDATE user_resources
+                    SET count = count + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM old))) / 2), 0)
+                    WHERE user_id = $1
+                    RETURNING count
                 )
-                UPDATE user_resources
-                SET count = count + FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM old))) / 2)
-                WHERE user_id = $1;`;
+                SELECT
+                    (SELECT started FROM old) as old_started,
+                    (SELECT started FROM updated ) AS new_started,
+                    (SELECT count FROM update_resources ) as new_count;
+                `;
+
     const values = [userId];
 
     const res = await db.query(sql, values);
-    return res;
+    return res.rows[0];
 }
