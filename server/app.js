@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { Server } from "socket.io";
+import { getIdle, startIdle } from "./database/idle.js";
 import http from "http";
 import cookieParser from "cookie-parser";
 
@@ -36,6 +37,10 @@ io.on("connection", (socket) => {
         console.log("count: ", socketCount);
     });
 });
+
+await startIdle(1);
+const res = await getIdle(1);
+console.log("res:", res);
 
 const PORT = process.env.PORT || 8080;
 
