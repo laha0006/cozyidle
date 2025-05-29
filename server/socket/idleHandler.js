@@ -1,14 +1,17 @@
+import { IdleClientEvent } from "./events/idleEvents";
+
 export function idleDispatch(event, data) {
     switch (event) {
-        case "start":
+        case IdleClientEvent.START:
+            {
+                //TODO: implement database stuff
+            }
+            break;
+        case IdleClientEvent.STOP:
             {
             }
             break;
-        case "stop":
-            {
-            }
-            break;
-        case "sync":
+        case IdleClientEvent.SYNC:
             {
             }
             break;
