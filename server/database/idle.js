@@ -9,6 +9,14 @@ export async function startIdle(userId) {
     return res;
 }
 
+export async function stopIdle(userId) {
+    const sql = "UPDATE user_idles SET active = FALSE WHERE user_id = $1";
+    const values = [userId];
+
+    const res = await db.query(sql, values);
+    return res;
+}
+
 export async function getIdle(userId) {
     const sql =
         "SELECT EXTRACT(EPOCH FROM started) AS started_unix FROM user_idles WHERE user_id = $1";
