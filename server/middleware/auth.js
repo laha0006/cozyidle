@@ -27,6 +27,7 @@ export function authenticateToken(req, res, next) {
 }
 
 export function socketAuthenticateToken(socket, next) {
-    console.log("cookies:", socket.request.headers.cookie);
+    console.log("Socket middleware");
+    console.log("cookies:", socket.handshake.headers);
     next();
 }

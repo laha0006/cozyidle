@@ -12,6 +12,10 @@ app.use(express.json());
 import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
 import usersRouter from "./routers/usersRouter.js";
+import {
+    authenticateToken,
+    socketAuthenticateToken,
+} from "./middleware/auth.js";
 app.use(usersRouter);
 
 const server = http.createServer(app);
@@ -25,6 +29,8 @@ const io = new Server(server, {
 });
 
 let socketCount = 0;
+
+io.use(socketAuthenticateToken);
 
 io.on("connection", (socket) => {
     console.log("A socket connected", socket.id);
