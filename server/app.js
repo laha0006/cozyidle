@@ -17,6 +17,7 @@ import {
     socketAuthenticateToken,
 } from "./middleware/auth.js";
 import { idleDispatch } from "./socket/idleHandler.js";
+import { registerIdleHandlers } from "./socket/handlers.js";
 app.use(usersRouter);
 
 const server = http.createServer(app);
@@ -38,6 +39,8 @@ io.on("connection", (socket) => {
     console.log("user id", socket.userId);
     socketCount++;
     console.log("count: ", socketCount);
+
+    registerIdleHandlers(socket);
 
     socket.on("disconnect", () => {
         socketCount--;
