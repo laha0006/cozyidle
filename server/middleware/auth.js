@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { getUser } from "../database/user.js";
+import cookie from "cookie";
 
 export function authenticateToken(req, res, next) {
     const cookies = req.cookies;
@@ -27,7 +28,21 @@ export function authenticateToken(req, res, next) {
 }
 
 export function socketAuthenticateToken(socket, next) {
-    console.log("Socket middleware");
-    console.log("cookies:", socket.handshake.headers);
-    next();
+    const cookieHeader = socket.handshake.headers.cookie;
+    if (!cookieHeader) return next(new Error("no token"));
+    const cookies = cookie.parse(cookieHeader);
+
+    jwt.verify(
+        cookies.accessToken,
+        process.env.ACCESS_TOKEN_SECRET,
+        async (err, decoded) => {
+            if (err) {
+                console.log(err);
+                return next(new Error(err.message));
+            }
+            const userFromDatabase = await getUser(decoded);
+            socket.userId = userFromDatabase.id;
+            next();
+        }
+    );
 }
