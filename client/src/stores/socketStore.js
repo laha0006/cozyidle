@@ -32,9 +32,14 @@ import { refreshUser, setUserIfAuthenticated, user } from "./userStore.js";
 //     socketStore.set(null);
 // }
 
+let socket;
 export const socketStore = derived(user, async ($user, set) => {
-    let socket;
+    console.log("derived right?");
     if ($user) {
+        if (socket) {
+            socket.disconnect();
+        }
+        console.log("user: ", $user);
         console.log("DERIVED YO");
 
         socket = io("http://localhost:8080", { withCredentials: true });
@@ -53,12 +58,17 @@ export const socketStore = derived(user, async ($user, set) => {
         });
     } else {
         console.log("else");
+        if (socket) {
+            console.log("disconnect in else");
+            socket.disconnect();
+        }
         set(null);
     }
     return () => {
         console.log("cleanup");
         if (socket) {
             socket.disconnect();
+            console.log("disconnected");
         }
         set(null);
     };
