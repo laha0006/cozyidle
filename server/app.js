@@ -16,6 +16,7 @@ import {
     authenticateToken,
     socketAuthenticateToken,
 } from "./middleware/auth.js";
+import { idleDispatch } from "./socket/idleHandler.js";
 app.use(usersRouter);
 
 const server = http.createServer(app);
