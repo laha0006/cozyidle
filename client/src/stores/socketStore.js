@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { writable, derived, get } from "svelte/store";
-import { user } from "./userStore.js";
+import { refreshUser, setUserIfAuthenticated, user } from "./userStore.js";
 
 // export const socketStore = writable(null);
 
@@ -32,7 +32,7 @@ import { user } from "./userStore.js";
 //     socketStore.set(null);
 // }
 
-export const socketStore = derived(user, ($user, set) => {
+export const socketStore = derived(user, async ($user, set) => {
     let socket;
     if ($user) {
         console.log("DERIVED YO");
@@ -45,6 +45,11 @@ export const socketStore = derived(user, ($user, set) => {
         });
         socket.on("connect_error", (error) => {
             console.log("Socket error:", error);
+            console.log("msg:", error.message);
+            if (error.message === "jwt expired") {
+                console.log("refreshing user");
+                refreshUser();
+            }
         });
     } else {
         console.log("else");
