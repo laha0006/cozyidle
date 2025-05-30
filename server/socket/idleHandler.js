@@ -1,29 +1,39 @@
-import { getIdle, startIdle } from "../database/idle";
-import { IdleClientEvent } from "./events/idleEvents";
+import { getIdle, startIdle, stopIdle, updateIdle } from "../database/idle";
+import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents";
 
-export function idleDispatch(event, socket, data) {
+export async function idleDispatch(event, socket, data) {
     switch (event) {
         case IdleClientEvent.START:
             {
-                console.log("...");
-                startIdleHandler(socket.userId);
+                const init = await startIdleHandler(socket.userId);
+                socket.emit(IdleServerEvent.INIT, init);
             }
             break;
         case IdleClientEvent.STOP:
             {
+                const stopped = await stopIdleHandler(socket.userId);
+                socket.emit(IdleServerEvent.STOPPED, stopped);
             }
             break;
         case IdleClientEvent.SYNC:
             {
+                const updated = await updateIdleHandler(socket.userId);
+                socket.emit(IdleServerEvent.UPDATE, updated);
             }
             break;
     }
 }
 
 async function startIdleHandler(userId) {
-    startIdle(userId);
+    await startIdle(userId);
+    const init = updateIdle(userId);
+    return init;
 }
 
 async function updateIdleHandler(userId) {
-    console.log(handler);
+    await updateIdle(userId);
+}
+
+async function stopIdleHandler(userId) {
+    await stopIdle(userId);
 }
