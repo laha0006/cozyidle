@@ -5,7 +5,8 @@ export function idleDispatch(event, socket, data) {
     switch (event) {
         case IdleClientEvent.START:
             {
-                //TODO: implement database stuff
+                console.log("...");
+                startIdleHandler(socket.userId);
             }
             break;
         case IdleClientEvent.STOP:
