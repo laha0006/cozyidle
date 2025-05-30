@@ -152,7 +152,11 @@ router.post("/api/refresh", async (req, res) => {
 
         res.send({
             message: "Successfully refreshed tokens!",
-            user: userFromDatabase,
+            user: {
+                id: userFromDatabase.id,
+                username: userFromDatabase.username,
+                email: userFromDatabase.email,
+            },
         });
     } catch (error) {
         console.log(error);
