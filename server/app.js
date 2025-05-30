@@ -34,6 +34,7 @@ io.use(socketAuthenticateToken);
 
 io.on("connection", (socket) => {
     console.log("A socket connected", socket.id);
+    console.log("user id", socket.userId);
     socketCount++;
     console.log("count: ", socketCount);
 
