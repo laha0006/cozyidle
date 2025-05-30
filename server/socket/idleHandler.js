@@ -1,10 +1,11 @@
-import { getIdle, startIdle, stopIdle, updateIdle } from "../database/idle";
-import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents";
+import { getIdle, startIdle, stopIdle, updateIdle } from "../database/idle.js";
+import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
 export async function idleDispatch(event, socket, data) {
     switch (event) {
         case IdleClientEvent.START:
             {
+                console.log("SUCCESS?");
                 const init = await startIdleHandler(socket.userId);
                 socket.emit(IdleServerEvent.INIT, init);
             }
