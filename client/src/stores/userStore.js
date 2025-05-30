@@ -16,3 +16,17 @@ export async function setUserIfAuthenticated() {
         user.set(null);
     }
 }
+
+export async function refreshUser() {
+    try {
+        const json = await postFetch("/api/refresh");
+        user.set(json.user);
+    } catch (error) {
+        user.set(null);
+    }
+}
+console.log("pre");
+user.subscribe((value) => {
+    console.log("changed value?");
+});
+console.log("post");
