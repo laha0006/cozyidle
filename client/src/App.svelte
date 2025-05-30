@@ -27,6 +27,7 @@
 
     onMount(() => {
         setUserIfAuthenticated();
+        console.log("Test!");
     });
 </script>
 
