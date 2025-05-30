@@ -38,6 +38,7 @@ export async function postFetchWithRefresh(url, data) {
                 const json = await postFetch("/api/refresh");
                 user.set(json.user);
             } catch (refreshError) {
+                console.log("refresh error");
                 user.set(null);
                 throw error;
             }
