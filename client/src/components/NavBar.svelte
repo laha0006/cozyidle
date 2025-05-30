@@ -29,9 +29,12 @@
     }
 
     async function handleLogout() {
+        router.navigate("/");
         try {
             const json = await logout();
-            user.set(null);
+            if ($user) {
+                user.set(null);
+            }
             success(json.message);
         } catch (error) {
             toast.push(error.message);
