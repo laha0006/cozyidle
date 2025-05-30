@@ -1,6 +1,7 @@
 <script>
     import { onDestroy, onMount } from "svelte";
     import ProgressBar from "../ProgressBar/ProgressBar.svelte";
+    import { socketStore } from "../../stores/socketStore.js";
     let count = $state(0);
     let progress = $state(0);
     let lastIncrement = $state(Date.now());
@@ -10,6 +11,18 @@
     let startTime;
     let stopTime;
     let expected = 0;
+
+    const IdleServerEvent = Object.freeze({
+        INIT: "idle:server:init",
+        UPDATE: "idle:server:update",
+        STOPPED: "idle:server:stopped",
+    });
+
+    const IdleClientEvent = Object.freeze({
+        START: "idle:client:start",
+        STOP: "idle:client:stop",
+        SYNC: "idle:client:sync",
+    });
 
     function loop() {
         const now = Date.now();
@@ -23,6 +36,7 @@
 
     function start() {
         if (running) return;
+        $socketStore.emit(IdleClientEvent.START);
         running = true;
         lastIncrement = Date.now();
         startTime = Date.now();
@@ -33,11 +47,8 @@
         if (!running) return;
         console.log("stop");
         running = false;
-        stopTime = Date.now();
         cancelAnimationFrame(rafLoopId);
         cancelAnimationFrame(rafUpdateId);
-        expected += Math.floor((stopTime - startTime) / 2000);
-        console.log("expected:", expected);
     }
 
     function update() {
