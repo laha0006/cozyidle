@@ -5,12 +5,15 @@
     import { user } from "../stores/userStore.js";
     import { logout } from "../api/auth.js";
     import { success } from "../util/toasts.js";
+    import { onMount } from "svelte";
 
     const router = useTinyRouter();
 
     const currentPath = $derived(router.fullPath);
 
-    $inspect(currentPath); //TODO: active highligt using router.path?
+    onMount(() => {
+        console.log("Navbar on mount");
+    });
 
     function goToHome() {
         router.navigate("/");

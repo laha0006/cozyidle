@@ -1,4 +1,5 @@
 <script>
+    console.log("App.svelte script loaded");
     import { onMount } from "svelte";
 
     import { Router, Route } from "svelte-tiny-router";
@@ -14,6 +15,7 @@
     import { socketStore } from "./stores/socketStore.js";
     import ProgressBar from "./components/ProgressBar/ProgressBar.svelte";
     import IdleCard from "./components/IdleCard/IdleCard.svelte";
+    import WorkAround from "./components/WorkAround.svelte";
 
     const guards = [authGuard];
 
@@ -25,10 +27,18 @@
     //     }
     // });
 
-    onMount(() => {
-        setUserIfAuthenticated();
-        console.log("Test!");
-    });
+    // $effect(() => {
+    //     if ($user) {
+    //         console.log("APP.svelte EFFECT!!!");
+    //     } else {
+    //         console.log("Tested!");
+    //     }
+    // });
+
+    // onMount(() => {
+    //     console.log(">>>>>>>>>>>>>>>>>>>>>>>> ON MOUNTED");
+    //     setUserIfAuthenticated();
+    // });
 </script>
 
 <main class="bg-slate-900 text-white h-screen">
@@ -41,8 +51,10 @@
             }}
         />
     </div>
-    <div class="flex justify-center text-2xl text-center flex-col">
-        <Router beforeEach={guards}>
+
+    <Router beforeEach={guards}>
+        <WorkAround />
+        <div class="flex justify-center text-2xl text-center flex-col">
             <div>
                 <NavBar />
             </div>
@@ -61,8 +73,8 @@
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
             <Route path="/game" component={IdleCard} />
-        </Router>
-    </div>
+        </div>
+    </Router>
 </main>
 
 <style>

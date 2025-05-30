@@ -7,6 +7,7 @@ export async function idleDispatch(event, socket, data) {
             {
                 console.log("SUCCESS?");
                 const init = await startIdleHandler(socket.userId);
+                console.log("INIT: ", init);
                 socket.emit(IdleServerEvent.INIT, init);
             }
             break;

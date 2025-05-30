@@ -67,6 +67,14 @@
         return () => cancelAnimationFrame(rafUpdateId);
     });
 
+    onMount(() => {
+        console.log("idleCard on mount");
+        console.log($socketStore);
+        $socketStore.on(IdleServerEvent.INIT, (data) => {
+            console.log("STARTED:", data);
+        });
+    });
+
     onDestroy(() => {
         stop();
     });
