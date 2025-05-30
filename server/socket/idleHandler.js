@@ -1,4 +1,4 @@
-import { getIdle } from "../database/idle";
+import { getIdle, startIdle } from "../database/idle";
 import { IdleClientEvent } from "./events/idleEvents";
 
 export function idleDispatch(event, socket, data) {
@@ -19,6 +19,10 @@ export function idleDispatch(event, socket, data) {
     }
 }
 
-async function updateIdle(userId) {
-    update;
+async function startIdleHandler(userId) {
+    startIdle(userId);
+}
+
+async function updateIdleHandler(userId) {
+    console.log(handler);
 }
