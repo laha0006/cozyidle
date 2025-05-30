@@ -20,5 +20,5 @@ export function idleDispatch(event, socket, data) {
 }
 
 async function updateIdle(userId) {
-    const startTime = await getIdle(userId);
+    update;
 }
