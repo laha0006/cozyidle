@@ -30,7 +30,7 @@
         if (incrementCount > 0) {
             count += incrementCount;
             // lastIncrement = Date.now();
-            lastIncrement = now;
+            lastIncrement += incrementCount * 2000;
         }
         rafLoopId = requestAnimationFrame(loop);
     }
@@ -68,12 +68,13 @@
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 console.log("STARTED:", data);
-                const { resource_count } = data;
+                const { started_unix, resource_count } = data;
                 // console.log(new_started * 1000);
                 // console.log(Date.now());
                 // console.log(new_count);
-                // lastIncrement = new_started * 1000;
+                // lastIncrement = started_unix * 1000;
                 lastIncrement = Date.now();
+                startTime = lastIncrement;
                 count = resource_count;
                 running = true;
                 loop();
@@ -84,7 +85,12 @@
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
                 console.log("STOPPED:", data);
                 const { resource_count } = data;
+                console.log("interpolated: ", count);
+                console.log("actual:       ", resource_count);
+                console.log("diff:         ", count - resource_count);
                 count = resource_count;
+                stopTime = Date.now();
+                console.log((stopTime - startTime) / 2000);
             });
         }
     });
