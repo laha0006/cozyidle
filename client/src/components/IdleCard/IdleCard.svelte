@@ -29,7 +29,8 @@
         const incrementCount = Math.floor((now - lastIncrement) / 2000);
         if (incrementCount > 0) {
             count += incrementCount;
-            lastIncrement = Date.now();
+            // lastIncrement = Date.now();
+            lastIncrement = now;
         }
         rafLoopId = requestAnimationFrame(loop);
     }
@@ -37,15 +38,13 @@
     function start() {
         if (running) return;
         $socketStore.emit(IdleClientEvent.START);
-        running = true;
-        lastIncrement = Date.now();
-        startTime = Date.now();
-        loop();
+        // running = true;
+        // loop();
     }
 
     function stop() {
         if (!running) return;
-        console.log("stop");
+        $socketStore.emit(IdleClientEvent.STOP);
         running = false;
         cancelAnimationFrame(rafLoopId);
         cancelAnimationFrame(rafUpdateId);
@@ -53,8 +52,6 @@
 
     function update() {
         progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
-        console.log(lastIncrement);
-        console.log("progress:", progress);
         if (running) rafUpdateId = requestAnimationFrame(update);
     }
 
@@ -71,10 +68,23 @@
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 console.log("STARTED:", data);
-                const { new_started, new_count } = data;
-                console.log(new_started), console.log(new_count);
-                lastIncrement = new_started;
+                const { resource_count } = data;
+                // console.log(new_started * 1000);
+                // console.log(Date.now());
+                // console.log(new_count);
+                // lastIncrement = new_started * 1000;
+                lastIncrement = Date.now();
+                count = resource_count;
+                running = true;
+                loop();
+
                 // count = new_count;
+            });
+
+            $socketStore.on(IdleServerEvent.STOPPED, (data) => {
+                console.log("STOPPED:", data);
+                const { resource_count } = data;
+                count = resource_count;
             });
         }
     });
