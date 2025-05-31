@@ -1,5 +1,4 @@
 <script>
-    console.log("App.svelte script loaded");
     import { onMount } from "svelte";
 
     import { Router, Route } from "svelte-tiny-router";
