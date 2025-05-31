@@ -53,26 +53,34 @@
 
     function update() {
         progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
+        console.log(lastIncrement);
+        console.log("progress:", progress);
         if (running) rafUpdateId = requestAnimationFrame(update);
     }
 
     $effect(() => {
         if (!running) {
-            console.log("not running!");
             progress = 0;
             return;
         }
-        console.log("running");
         rafUpdateId = requestAnimationFrame(update);
         return () => cancelAnimationFrame(rafUpdateId);
     });
 
+    $effect(() => {
+        if ($socketStore) {
+            $socketStore.on(IdleServerEvent.INIT, (data) => {
+                console.log("STARTED:", data);
+                const { new_started, new_count } = data;
+                console.log(new_started), console.log(new_count);
+                lastIncrement = new_started;
+                // count = new_count;
+            });
+        }
+    });
+
     onMount(() => {
-        console.log("idleCard on mount");
-        console.log($socketStore);
-        $socketStore.on(IdleServerEvent.INIT, (data) => {
-            console.log("STARTED:", data);
-        });
+        // console.log($socketStore);
     });
 
     onDestroy(() => {
