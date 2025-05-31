@@ -11,10 +11,6 @@
 
     const currentPath = $derived(router.fullPath);
 
-    onMount(() => {
-        console.log("Navbar on mount");
-    });
-
     function goToHome() {
         router.navigate("/");
     }
