@@ -28,7 +28,7 @@ export async function idleDispatch(event, socket, data) {
 
 async function startIdleHandler(userId) {
     await startIdle(userId);
-    const init = updateIdle(userId);
+    const init = await getIdle(userId);
     return init;
 }
 
@@ -37,5 +37,7 @@ async function updateIdleHandler(userId) {
 }
 
 async function stopIdleHandler(userId) {
+    await updateIdle(userId);
     await stopIdle(userId);
+    return await getIdle(userId);
 }
