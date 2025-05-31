@@ -34,41 +34,34 @@ import { refreshUser, setUserIfAuthenticated, user } from "./userStore.js";
 
 let socket;
 export const socketStore = derived(user, async ($user, set) => {
-    console.log("derived right?");
     if ($user) {
         if (socket) {
             socket.disconnect();
         }
-        console.log("user: ", $user);
-        console.log("DERIVED YO");
 
         socket = io("http://localhost:8080", { withCredentials: true });
         set(socket);
 
         socket.on("connect", () => {
-            console.log("Socket connected!");
+            // console.log("Socket connected!");
         });
         socket.on("connect_error", (error) => {
-            console.log("Socket error:", error);
-            console.log("msg:", error.message);
+            // console.log("Socket error:", error);
+            // console.log("msg:", error.message);
             if (error.message === "jwt expired") {
                 console.log("refreshing user");
                 refreshUser();
             }
         });
     } else {
-        console.log("else");
         if (socket) {
-            console.log("disconnect in else");
             socket.disconnect();
         }
         set(null);
     }
     return () => {
-        console.log("cleanup");
         if (socket) {
             socket.disconnect();
-            console.log("disconnected");
         }
         set(null);
     };
