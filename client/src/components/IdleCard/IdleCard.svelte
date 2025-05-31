@@ -11,6 +11,53 @@
     let startTime;
     let stopTime;
     let expected = 0;
+    let diff = 0;
+    let debugging = $state(false);
+    let foundBug = $state(false);
+
+    // Find the buttons (adjust selectors if needed)
+    let startBtn;
+    let stopBtn;
+
+    // Function to spam start/stop
+    function spamStartStop(times = 20, delay = 50) {
+        let i = 0;
+        function next() {
+            if (i >= times) {
+                debugging = false;
+                return;
+            }
+            // Alternate: even = start, odd = stop
+            if (i % 2 === 0) {
+                startBtn.click();
+            } else {
+                stopBtn.click();
+            }
+            i++;
+            if (diff !== 0) {
+                console.log("WOOPS");
+                console.log("diff: ", diff);
+                stop();
+                running = false;
+                cancelAnimationFrame(rafLoopId);
+                cancelAnimationFrame(rafUpdateId);
+                console.log("end of woops");
+                console.log("i: ", i);
+                debugging = false;
+                foundBug = true;
+                return;
+            }
+            console.log("set time out");
+            setTimeout(next, delay);
+        }
+        console.log("next");
+        next();
+    }
+
+    function debug() {
+        debugging = true;
+        spamStartStop(4000, 85);
+    }
 
     const IdleServerEvent = Object.freeze({
         INIT: "idle:server:init",
@@ -25,6 +72,8 @@
     });
 
     function loop() {
+        if (!running) return;
+        console.log("running:", running);
         const now = Date.now();
         const incrementCount = Math.floor((now - lastIncrement) / 2000);
         if (incrementCount > 0) {
@@ -38,14 +87,14 @@
     function start() {
         if (running) return;
         $socketStore.emit(IdleClientEvent.START);
-        // running = true;
-        // loop();
+        running = true;
+        loop();
     }
 
     function stop() {
         if (!running) return;
+        console.log("stopped function called");
         $socketStore.emit(IdleClientEvent.STOP);
-        running = false;
         cancelAnimationFrame(rafLoopId);
         cancelAnimationFrame(rafUpdateId);
     }
@@ -57,6 +106,7 @@
 
     $effect(() => {
         if (!running) {
+            console.log("not running!");
             progress = 0;
             return;
         }
@@ -67,7 +117,7 @@
     $effect(() => {
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
-                console.log("STARTED:", data);
+                console.log("STARTED");
                 const { started_unix, resource_count } = data;
                 // console.log(new_started * 1000);
                 // console.log(Date.now());
@@ -76,26 +126,33 @@
                 lastIncrement = Date.now();
                 startTime = lastIncrement;
                 count = resource_count;
-                running = true;
-                loop();
+                // running = true;
+                // loop();
 
                 // count = new_count;
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                console.log("STOPPED:", data);
+                // console.log("STOPPED:", data);
                 const { resource_count } = data;
-                console.log("interpolated: ", count);
-                console.log("actual:       ", resource_count);
-                console.log("diff:         ", count - resource_count);
+                running = false;
+                cancelAnimationFrame(rafLoopId);
+                cancelAnimationFrame(rafUpdateId);
+                // console.log("interpolated: ", count);
+                // console.log("actual:       ", resource_count);
+                // console.log("diff:         ", count - resource_count);
+                diff = count - resource_count;
                 count = resource_count;
                 stopTime = Date.now();
-                console.log((stopTime - startTime) / 2000);
+                // console.log((stopTime - startTime) / 2000);
             });
         }
     });
 
     onMount(() => {
+        startBtn = document.getElementById("startBtn");
+        stopBtn = document.getElementById("stopBtn");
+
         // console.log($socketStore);
     });
 
@@ -112,7 +169,21 @@
     <!-- <ProgressBar {duration} {repeat} /> -->
     <progress value={progress}></progress>
     <div>
-        <button onclick={start}>Start</button>
-        <button onclick={stop}>Stop</button>
+        <button id="startBtn" onclick={start}>Start</button>
+        <button id="stopBtn" onclick={stop}>Stop</button>
     </div>
+    <div>
+        <button onclick={debug}>DEBUG</button>
+    </div>
+    {#if debugging}
+        <div>
+            <h3>DEBUGGING ACTIVE</h3>
+        </div>
+    {/if}
+
+    {#if foundBug}
+        <div>
+            <h3>FOUND BUG</h3>
+        </div>
+    {/if}
 </div>

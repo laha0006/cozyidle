@@ -5,14 +5,24 @@ export async function idleDispatch(event, socket, data) {
     switch (event) {
         case IdleClientEvent.START:
             {
-                console.log("SUCCESS?");
+                if (socket.idleState === "active") {
+                    console.log("already active!");
+                    return;
+                }
+                socket.idleState = "active";
+
                 const init = await startIdleHandler(socket.userId);
-                console.log("INIT: ", init);
                 socket.emit(IdleServerEvent.INIT, init);
             }
             break;
         case IdleClientEvent.STOP:
             {
+                if (socket.idleState !== "active") {
+                    console.log("not active!");
+                    return;
+                }
+
+                socket.idleState = "inactive";
                 const stopped = await stopIdleHandler(socket.userId);
                 socket.emit(IdleServerEvent.STOPPED, stopped);
             }
@@ -37,7 +47,6 @@ async function updateIdleHandler(userId) {
 }
 
 async function stopIdleHandler(userId) {
-    await updateIdle(userId);
     await stopIdle(userId);
     return await getIdle(userId);
 }
