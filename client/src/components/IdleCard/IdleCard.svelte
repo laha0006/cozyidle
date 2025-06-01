@@ -59,8 +59,8 @@
 
     function debug() {
         debugging = true;
-        start();
-        // spamStartStop(4000, 85);
+        // start();
+        spamStartStop(4000, 85);
     }
 
     const IdleServerEvent = Object.freeze({
@@ -132,7 +132,7 @@
                 startTime = lastIncrement;
                 count = resource_count;
                 if (debugging) {
-                    stop();
+                    // stop();
                 }
                 // running = true;
                 // loop();
@@ -160,7 +160,7 @@
                 count = resource_count;
                 stopTime = Date.now();
                 if (debugging) {
-                    start();
+                    // start();
                 }
                 // console.log((stopTime - startTime) / 2000);
             });
