@@ -1,17 +1,28 @@
-import { getIdle, startIdle, stopIdle, updateIdle } from "../database/idle.js";
+import {
+    getIdle,
+    setIdleState,
+    startIdle,
+    stopIdle,
+    updateIdle,
+    updateUserIdle,
+} from "../database/idle.js";
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
 export async function idleDispatch(event, socket, data) {
+    const dispatchStart = Date.now();
+    console.log(`${event} dispatch started at:`, dispatchStart);
     switch (event) {
         case IdleClientEvent.START:
             {
-                if (socket.idleState === "active") {
+                if (socket.idleState !== "inactive") {
                     console.log("already active!");
                     return;
                 }
-                socket.idleState = "active";
+                socket.idleState = "starting";
 
-                const init = await startIdleHandler(socket.userId);
+                await setIdleState(socket.userId, true);
+                const init = await getIdle(socket.userId);
+                socket.idleState = "active";
                 socket.emit(IdleServerEvent.INIT, init);
             }
             break;
@@ -22,15 +33,24 @@ export async function idleDispatch(event, socket, data) {
                     return;
                 }
 
+                socket.idleState = "sopping";
+
+                const beforeStop = Date.now();
+                console.log("About to call stopIdle at:", beforeStop);
+
+                const stopped = await stopIdle(socket.userId);
+
                 socket.idleState = "inactive";
-                const stopped = await stopIdleHandler(socket.userId);
+
+                const afterStop = Date.now();
+                console.log("stopIdle completed at:", afterStop);
+                console.log(
+                    "Total dispatch time:",
+                    afterStop - dispatchStart,
+                    "ms"
+                );
+
                 socket.emit(IdleServerEvent.STOPPED, stopped);
-            }
-            break;
-        case IdleClientEvent.SYNC:
-            {
-                const updated = await updateIdleHandler(socket.userId);
-                socket.emit(IdleServerEvent.UPDATE, updated);
             }
             break;
     }

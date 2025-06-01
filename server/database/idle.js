@@ -22,10 +22,19 @@ export async function startIdle(userId) {
 
 export async function stopIdle(userId) {
     console.log("stop idle");
+    console.log("Pool stats before:", {
+        totalCount: db.totalCount,
+        idleCount: db.idleCount,
+        waitingCount: db.waitingCount,
+    });
     stopCalls++;
     console.log("Stop calls:", stopCalls);
     console.log("start calss:", startCalls);
+
+    const startTime = Date.now();
     const client = await db.connect();
+    const connectTime = Date.now();
+    console.log("Connection acquired in:", connectTime - startTime, "ms");
     try {
         await client.query("BEGIN");
 
@@ -48,7 +57,7 @@ export async function stopIdle(userId) {
         WHERE user_id = $1
     )
     SELECT
-        (SELECT count FROM updated_resources) AS new_count,
+        (SELECT count FROM updated_resources) AS resource_count,
         COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
         EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
         EXTRACT(EPOCH FROM NOW()) AS now_unix
@@ -115,6 +124,72 @@ export async function getIdle(userId) {
     return res.rows[0];
 }
 
+export async function updateUserIdle(userId) {
+    const client = await db.connect();
+    try {
+        await client.query("BEGIN");
+
+        const sql = `
+        WITH current_state AS (
+            SELECT 
+                i.active,
+                i.started as started,
+                r.count as current_count,
+                CASE 
+                    WHEN i.active THEN GREATEST(0, EXTRACT(EPOCH FROM (NOW() - i.started)))
+                    ELSE 0 
+                END as seconds_elapsed
+            FROM user_idles i
+            JOIN user_resources r ON r.user_id = i.user_id
+            WHERE i.user_id = $1
+            FOR UPDATE
+        ),
+        updated AS (
+            UPDATE user_resources 
+            SET count = count + FLOOR((SELECT seconds_elapsed FROM current_state) / 2)
+            WHERE user_id = $1
+            RETURNING count
+        ),
+        reset_timer AS (
+            UPDATE user_idles 
+            SET started = NOW()
+            WHERE user_id = $1 AND active = TRUE
+            RETURNING started
+        )
+        SELECT 
+            (SELECT active FROM current_state) as active,
+            (SELECT count FROM updated) as resource_count,
+            FLOOR((SELECT seconds_elapsed FROM current_state) / 2) as increment,
+            (SELECT seconds_elapsed FROM current_state) as seconds_elapsed,
+            EXTRACT(EPOCH FROM (SELECT started FROM current_state)) AS started,
+            EXTRACT(EPOCH FROM (SELECT started FROM reset_timer)) AS updated_time
+        `;
+
+        const { rows } = await client.query(sql, [userId]);
+        await client.query("COMMIT");
+        console.log("update data:", rows);
+
+        return rows[0];
+    } catch (err) {
+        await client.query("ROLLBACK");
+        throw err;
+    } finally {
+        client.release();
+    }
+}
+
+export async function setIdleState(userId, active) {
+    const sql = `
+    UPDATE user_idles 
+    SET active = $2, started = CASE WHEN $2 THEN NOW() ELSE started END
+    WHERE user_id = $1
+    RETURNING active, EXTRACT(EPOCH FROM started) as started_unix
+    `;
+
+    const { rows } = await db.query(sql, [userId, active]);
+    return rows[0];
+}
+
 export async function updateIdle(userId) {
     const client = await db.connect();
     await client.query("BEGIN");
@@ -145,4 +220,24 @@ export async function updateIdle(userId) {
     await client.query("COMMIT");
     client.release();
     return res.rows[0];
+}
+
+let lastTime;
+
+export async function getTime() {
+    const sql = "SELECT NOW() as TIME;";
+    const res = await db.query(sql);
+    const timeFromDb = res.rows[0].time;
+    console.log("timeFromDB:", timeFromDb);
+    console.log("last time :", lastTime);
+    if (!lastTime) {
+        lastTime = timeFromDb;
+        return;
+    }
+    const diff = (timeFromDb - lastTime) / 1000;
+    lastTime = timeFromDb;
+
+    return diff;
+
+    // console.log(res.rows[0]);
 }

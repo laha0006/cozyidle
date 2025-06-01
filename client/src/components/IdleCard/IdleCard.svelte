@@ -22,18 +22,24 @@
     // Function to spam start/stop
     function spamStartStop(times = 20, delay = 50) {
         let i = 0;
-        function next() {
+
+        const interval = setInterval(() => {
+            console.log("i:", i);
             if (i >= times) {
                 debugging = false;
+                clearInterval(interval);
                 return;
             }
+
             // Alternate: even = start, odd = stop
             if (i % 2 === 0) {
                 startBtn.click();
             } else {
                 stopBtn.click();
             }
+
             i++;
+
             if (diff !== 0) {
                 console.log("WOOPS");
                 console.log("diff: ", diff);
@@ -45,18 +51,16 @@
                 console.log("i: ", i);
                 debugging = false;
                 foundBug = true;
+                clearInterval(interval);
                 return;
             }
-            console.log("set time out");
-            setTimeout(next, delay);
-        }
-        console.log("next");
-        next();
+        }, delay);
     }
 
     function debug() {
         debugging = true;
-        spamStartStop(4000, 85);
+        start();
+        // spamStartStop(4000, 85);
     }
 
     const IdleServerEvent = Object.freeze({
@@ -86,6 +90,7 @@
 
     function start() {
         if (running) return;
+        console.log($socketStore);
         $socketStore.emit(IdleClientEvent.START);
         running = true;
         loop();
@@ -126,6 +131,9 @@
                 lastIncrement = Date.now();
                 startTime = lastIncrement;
                 count = resource_count;
+                if (debugging) {
+                    stop();
+                }
                 // running = true;
                 // loop();
 
@@ -142,8 +150,18 @@
                 // console.log("actual:       ", resource_count);
                 // console.log("diff:         ", count - resource_count);
                 diff = count - resource_count;
+                console.log("diff: ", diff);
+                if (diff > 0) {
+                    console.log("ISSUE DETECTED");
+                    debugging = false;
+                    foundBug = true;
+                    stop();
+                }
                 count = resource_count;
                 stopTime = Date.now();
+                if (debugging) {
+                    start();
+                }
                 // console.log((stopTime - startTime) / 2000);
             });
         }
