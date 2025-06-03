@@ -165,7 +165,9 @@
                 console.log("update!");
                 console.log("data:", data);
                 const { new_started, resource_amount } = data;
-                count = resource_amount;
+                console.log("RA:", resource_amount);
+                console.log("||", resource_amount || count);
+                count = resource_amount || count;
                 // lastIncrement = new_started;
             });
         }
