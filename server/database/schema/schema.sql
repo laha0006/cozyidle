@@ -32,20 +32,21 @@ CREATE TABLE IF NOT EXISTS skills (
 CREATE TABLE IF NOT EXISTS resources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    skill INTEGER REFERENCES skills(id)
+    skill_id INTEGER REFERENCES skills(id)
 );
 
 CREATE TABLE IF NOT EXISTS idles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    resource INTEGER REFERENCES resources(id),
-    skill INTEGER REFERENCES skills(id),
+    resource_id INTEGER REFERENCES resources(id),
+    skill_id INTEGER REFERENCES skills(id),
     level INTEGER NOT NULL 
 );
 
 CREATE TABLE IF NOT EXISTS user_idles (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    idle_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     started TIMESTAMP DEFAULT NULL,
     active BOOLEAN DEFAULT FALSE
 );
