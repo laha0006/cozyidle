@@ -178,18 +178,6 @@ export async function updateUserIdle(userId) {
     }
 }
 
-export async function setIdleState(userId, active) {
-    const sql = `
-    UPDATE user_idles 
-    SET active = $2, started = CASE WHEN $2 THEN NOW() ELSE started END
-    WHERE user_id = $1
-    RETURNING active, EXTRACT(EPOCH FROM started) as started_unix
-    `;
-
-    const { rows } = await db.query(sql, [userId, active]);
-    return rows[0];
-}
-
 export async function updateIdle(userId) {
     const client = await db.connect();
     await client.query("BEGIN");
