@@ -34,9 +34,12 @@ export async function idleDispatch(event, socket, data) {
                     console.log("not active!");
                     return;
                 }
-
                 socket.idleState = "sopping";
-                const stopped = await stopIdle(socket.userId);
+
+                const { idleId } = data;
+
+                const stopped = await stopIdle(userId, idleId);
+
                 socket.idleState = "inactive";
 
                 socket.emit(IdleServerEvent.STOPPED, stopped);
@@ -47,12 +50,16 @@ export async function idleDispatch(event, socket, data) {
                 if (socket.idleState !== "active") return;
                 socket.idleState = "updating";
 
-                const update = await updateIdle(socket.userId);
-                const buy = await deductResource(socket.userId, 10);
+                const { idleId } = data;
+
+                const update = await updateIdle(userId, idleId);
+                const buy = await deductResource(userId, idleId, 10);
+                console.log("BUY:", buy);
+
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.UPDATE, {
                     new_started: update.new_started * 1000,
-                    resource_count: buy.resource_count,
+                    resource_amount: buy.resource_amount,
                 });
             }
             break;
