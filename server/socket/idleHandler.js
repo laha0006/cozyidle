@@ -9,6 +9,7 @@ import {
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
 export async function idleDispatch(event, socket, data) {
+    console.log("DATA:", data);
     switch (event) {
         case IdleClientEvent.START:
             {
