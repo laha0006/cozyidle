@@ -107,31 +107,39 @@ export async function getIdle(userId, idleId) {
     return res.rows[0];
 }
 
-export async function updateIdle(userId) {
+export async function updateIdle(userId, idleId) {
     const client = await db.connect();
     await client.query("BEGIN");
     const sql = `WITH old AS (
-                    SELECT started FROM user_idles WHERE user_id = $1 AND active = TRUE FOR UPDATE
+                    SELECT started 
+                        FROM user_idles 
+                    WHERE user_id = $1 
+                        AND idle_id = $2
+                        AND active = TRUE 
+                    FOR UPDATE
                 ),
                 updated AS (
                     UPDATE user_idles 
                     SET started = NOW()
-                    WHERE user_id = $1 AND active = TRUE
+                    WHERE user_id = $1 
+                    AND idle_id = $2
+                    AND active = TRUE
                     RETURNING started
                 ),
                 update_resources AS (
                     UPDATE user_resources
-                    SET count = count + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM old))) / 2), 0)
+                    SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM old))) / 2), 0)
                     WHERE user_id = $1
-                    RETURNING count
+                    AND resource_id = (SELECT resource_id FROM idles WHERE id = $2)
+                    RETURNING amount
                 )
                 SELECT
                     (SELECT started FROM old) as old_started,
                     EXTRACT(EPOCH FROM (SELECT started FROM updated)) AS new_started,
-                    (SELECT count FROM update_resources ) as new_count;
+                    (SELECT amount FROM update_resources ) as new_amount;
                 `;
 
-    const values = [userId];
+    const values = [userId, idleId];
 
     const res = await client.query(sql, values);
     await client.query("COMMIT");
@@ -142,11 +150,11 @@ export async function updateIdle(userId) {
 export async function deductResource(userId, resourceId, amount) {
     const sql = `
     UPDATE user_resources
-    SET count = count - $3
+    SET amount = amount - $3
     WHERE user_id = $1
         AND resource_id = $2
         AND amount >= $3 
-    RETURNING count as resource_count
+    RETURNING amount as resource_amount
     `;
 
     const values = [userId, resourceId, amount];
