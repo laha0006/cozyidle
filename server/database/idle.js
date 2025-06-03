@@ -33,9 +33,12 @@ export async function startIdle(userId, idleId) {
         AND active = FALSE 
         RETURNING active, EXTRACT(EPOCH FROM started) AS started_unix`;
     const values = [userId, idleId];
-
-    const res = await db.query(sql, values);
-    return res;
+    try {
+        const res = await db.query(sql, values);
+        return res;
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export async function stopIdle(userId, idleId) {
@@ -66,7 +69,7 @@ export async function stopIdle(userId, idleId) {
             AND idle_id = $2
         )
         SELECT
-            (SELECT amount FROM updated_resources) AS resource_count,
+            (SELECT amount FROM updated_resources) AS resource_amount,
             COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
             EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
             EXTRACT(EPOCH FROM NOW()) AS now_unix
@@ -100,6 +103,7 @@ export async function getIdle(userId, idleId) {
     const values = [userId, idleId];
 
     const res = await db.query(sql, values);
+    console.log("getIdle res:", res);
     return res.rows[0];
 }
 
