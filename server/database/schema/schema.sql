@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS user_idles (
     idle_id INTEGER REFERENCES idles(id) ON DELETE CASCADE,
     started TIMESTAMP DEFAULT NULL,
     active BOOLEAN DEFAULT FALSE,
+    unlocked BOOLEAN DEFAULT FALSE,
     UNIQUE(user_id, idle_id)
 );
 
