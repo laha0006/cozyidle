@@ -10,8 +10,6 @@ import {
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
 export async function idleDispatch(event, socket, data) {
-    const dispatchStart = Date.now();
-    console.log(`${event} dispatch started at:`, dispatchStart);
     switch (event) {
         case IdleClientEvent.START:
             {
@@ -35,21 +33,8 @@ export async function idleDispatch(event, socket, data) {
                 }
 
                 socket.idleState = "sopping";
-
-                const beforeStop = Date.now();
-                console.log("About to call stopIdle at:", beforeStop);
-
                 const stopped = await stopIdle(socket.userId);
-
                 socket.idleState = "inactive";
-
-                const afterStop = Date.now();
-                console.log("stopIdle completed at:", afterStop);
-                console.log(
-                    "Total dispatch time:",
-                    afterStop - dispatchStart,
-                    "ms"
-                );
 
                 socket.emit(IdleServerEvent.STOPPED, stopped);
             }
