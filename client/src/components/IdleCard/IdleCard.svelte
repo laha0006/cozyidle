@@ -125,11 +125,12 @@
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 console.log("STARTED");
-                const { started_unix, resource_count } = data;
+                console.log("DATA:", data);
+                const { started_unix, resource_amount } = data;
                 // lastIncrement = started_unix * 1000;
                 lastIncrement = Date.now();
                 startTime = lastIncrement;
-                count = resource_count;
+                count = resource_amount;
                 if (debugging) {
                     // stop();
                 }
@@ -140,11 +141,12 @@
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                const { resource_count } = data;
+                const { resource_amount } = data;
+                console.log("DATA FROM STOP:", data);
                 running = false;
                 cancelAnimationFrame(rafLoopId);
                 cancelAnimationFrame(rafUpdateId);
-                diff = count - resource_count;
+                diff = count - resource_amount;
                 console.log("diff: ", diff);
                 if (diff > 0) {
                     console.log("ISSUE DETECTED");
@@ -152,7 +154,7 @@
                     foundBug = true;
                     stop();
                 }
-                count = resource_count;
+                count = resource_amount;
                 stopTime = Date.now();
                 if (debugging) {
                     // start();
