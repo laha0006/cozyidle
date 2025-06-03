@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS idles;
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY ,
@@ -17,6 +18,12 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     created_at TIMESTAMP DEFAULT NOW(),
     revoked BOOLEAN DEFAULT FALSE
 );
+
+CREATE TABLE IF NOT EXISTS resources (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    activity INTEGER REFERENCES activities(id)
+)
 
 CREATE TABLE IF NBOT EXISTS idles (
     id SERIAL PRIMARY KEY,
