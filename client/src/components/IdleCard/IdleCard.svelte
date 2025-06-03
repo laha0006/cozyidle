@@ -89,7 +89,7 @@
 
     function start() {
         if (running) return;
-        $socketStore.emit(IdleClientEvent.START);
+        $socketStore.emit(IdleClientEvent.START, { idleId: 1 });
         running = true;
         loop();
     }
@@ -97,7 +97,7 @@
     function stop() {
         if (!running) return;
         console.log("stopped function called");
-        $socketStore.emit(IdleClientEvent.STOP);
+        $socketStore.emit(IdleClientEvent.STOP, { idleId: 1 });
         cancelAnimationFrame(rafLoopId);
         cancelAnimationFrame(rafUpdateId);
     }
@@ -126,9 +126,6 @@
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 console.log("STARTED");
                 const { started_unix, resource_count } = data;
-                // console.log(new_started * 1000);
-                // console.log(Date.now());
-                // console.log(new_count);
                 // lastIncrement = started_unix * 1000;
                 lastIncrement = Date.now();
                 startTime = lastIncrement;
@@ -143,14 +140,10 @@
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                // console.log("STOPPED:", data);
                 const { resource_count } = data;
                 running = false;
                 cancelAnimationFrame(rafLoopId);
                 cancelAnimationFrame(rafUpdateId);
-                // console.log("interpolated: ", count);
-                // console.log("actual:       ", resource_count);
-                // console.log("diff:         ", count - resource_count);
                 diff = count - resource_count;
                 console.log("diff: ", diff);
                 if (diff > 0) {
