@@ -48,12 +48,19 @@ CREATE TABLE IF NOT EXISTS user_idles (
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     idle_id INTEGER REFERENCES idles(id) ON DELETE CASCADE,
     started TIMESTAMP DEFAULT NULL,
-    active BOOLEAN DEFAULT FALSE
+    active BOOLEAN DEFAULT FALSE,
+    UNIQUE(user_id, idle_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_resources (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
     resource_id INTEGER REFERENCES resources(id) ON DELETE CASCADE,
-    amount INTEGER DEFAULT 0
+    amount INTEGER DEFAULT 0,
+    UNIQUE(user_id, resource_id)
 );
+
+
+INSERT INTO skills(name) VALUES('Fishing');
+INSERT INTO resources (name, skill_id) VALUES('Salmon', 1);
+INSERT INTO idles (name, resource_id, skill_id, level) VALUES('Salmon Fishing', 1, 1, 0);

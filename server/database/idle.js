@@ -1,5 +1,31 @@
 import db from "./connection.js";
 
+export async function initIdleForUser(userId) {
+    const userIdlesSql = `
+            INSERT INTO user_idles (user_id, idle_id)
+            SELECT $1, id FROM idles
+            ON CONFLICT (user_id, idle_id) DO NOTHING;
+    `;
+    const userResourcesSql = `
+            INSERT INTO user_resources (user_id, resource_id)
+            SELECT $1, id FROM resources
+            ON CONFLICT (user_id, idle_id)
+    `;
+
+    const client = await db.connect();
+    try {
+        await client.query("BEGIN");
+        await client.query(userIdlesSql, userId);
+        await client.query(userResourcesSql, userId);
+        await client.query("COMMIT");
+    } catch (err) {
+        console.log(err);
+        await db.query("ROLLBACK");
+    } finally {
+        client.release();
+    }
+}
+
 export async function startIdle(userId, idleId) {
     const sql = `UPDATE user_idles SET started = NOW(), active = TRUE 
         WHERE user_id = $1
@@ -122,24 +148,4 @@ export async function deductResource(userId, resourceId, amount) {
 
     const res = await db.query(sql, values);
     return res.rows[0];
-}
-
-let lastTime;
-
-export async function getTime() {
-    const sql = "SELECT NOW() as TIME;";
-    const res = await db.query(sql);
-    const timeFromDb = res.rows[0].time;
-    console.log("timeFromDB:", timeFromDb);
-    console.log("last time :", lastTime);
-    if (!lastTime) {
-        lastTime = timeFromDb;
-        return;
-    }
-    const diff = (timeFromDb - lastTime) / 1000;
-    lastTime = timeFromDb;
-
-    return diff;
-
-    // console.log(res.rows[0]);
 }
