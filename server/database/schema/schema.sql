@@ -54,5 +54,6 @@ CREATE TABLE IF NOT EXISTS user_idles (
 CREATE TABLE IF NOT EXISTS user_resources (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    count INTEGER DEFAULT 0
+    resource_id INTEGER REFERENCES resources(id) ON DELETE CASCADE,
+    amount INTEGER DEFAULT 0
 );
