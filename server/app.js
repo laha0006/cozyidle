@@ -15,9 +15,9 @@ import { registerIdleHandlers } from "./socket/handlers.js";
 import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
 import usersRouter from "./routers/usersRouter.js";
-app.use(usersRouter);
+app.use("/api/users", usersRouter);
 import userIdlesRouter from "./routers/userIdlesRouter.js";
-app.use(userIdlesRouter);
+app.use("/api/users", userIdlesRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {
