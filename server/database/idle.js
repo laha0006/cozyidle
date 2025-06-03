@@ -9,14 +9,14 @@ export async function initIdleForUser(userId) {
     const userResourcesSql = `
             INSERT INTO user_resources (user_id, resource_id)
             SELECT $1, id FROM resources
-            ON CONFLICT (user_id, idle_id)
+            ON CONFLICT (user_id, resource_id) DO NOTHING;
     `;
 
     const client = await db.connect();
     try {
         await client.query("BEGIN");
-        await client.query(userIdlesSql, userId);
-        await client.query(userResourcesSql, userId);
+        await client.query(userIdlesSql, [userId]);
+        await client.query(userResourcesSql, [userId]);
         await client.query("COMMIT");
     } catch (err) {
         console.log(err);
