@@ -81,7 +81,6 @@
         const incrementCount = Math.floor((now - lastIncrement) / 2000);
         if (incrementCount > 0) {
             count += incrementCount;
-            // lastIncrement = Date.now();
             lastIncrement += incrementCount * 2000;
         }
         rafLoopId = requestAnimationFrame(loop);
@@ -91,6 +90,7 @@
         if (running) return;
         $socketStore.emit(IdleClientEvent.START, { idleId: 1 });
         running = true;
+        lastIncrement = Date.now();
         loop();
     }
 
@@ -100,10 +100,6 @@
         $socketStore.emit(IdleClientEvent.STOP, { idleId: 1 });
         cancelAnimationFrame(rafLoopId);
         cancelAnimationFrame(rafUpdateId);
-    }
-
-    function buy() {
-        $socketStore.emit(IdleClientEvent.SYNC, { idleId: 1 });
     }
 
     function update() {
@@ -124,60 +120,20 @@
     $effect(() => {
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
-                console.log("STARTED");
-                console.log("DATA:", data);
                 const { started_unix, resource_amount } = data;
-                // lastIncrement = started_unix * 1000;
-                lastIncrement = Date.now();
-                startTime = lastIncrement;
                 count = resource_amount;
-                if (debugging) {
-                    // stop();
-                }
                 // running = true;
                 // loop();
-
-                // count = new_count;
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
                 const { resource_amount } = data;
-                console.log("DATA FROM STOP:", data);
                 running = false;
                 cancelAnimationFrame(rafLoopId);
                 cancelAnimationFrame(rafUpdateId);
-                diff = count - resource_amount;
-                console.log("diff: ", diff);
-                if (diff > 0) {
-                    console.log("ISSUE DETECTED");
-                    debugging = false;
-                    foundBug = true;
-                    stop();
-                }
                 count = resource_amount;
-                stopTime = Date.now();
-                if (debugging) {
-                    // start();
-                }
-                // console.log((stopTime - startTime) / 2000);
-            });
-            $socketStore.on(IdleServerEvent.UPDATE, (data) => {
-                console.log("update!");
-                console.log("data:", data);
-                const { new_started, resource_amount } = data;
-                console.log("RA:", resource_amount);
-                console.log("||", resource_amount || count);
-                count = resource_amount || count;
-                // lastIncrement = new_started;
             });
         }
-    });
-
-    onMount(() => {
-        startBtn = document.getElementById("startBtn");
-        stopBtn = document.getElementById("stopBtn");
-
-        // console.log($socketStore);
     });
 
     onDestroy(() => {
@@ -196,21 +152,4 @@
         <button id="startBtn" onclick={start}>Start</button>
         <button id="stopBtn" onclick={stop}>Stop</button>
     </div>
-    <div>
-        <button onclick={buy}>Purchase</button>
-    </div>
-    <div>
-        <button onclick={debug}>DEBUG</button>
-    </div>
-    {#if debugging}
-        <div>
-            <h3>DEBUGGING ACTIVE</h3>
-        </div>
-    {/if}
-
-    {#if foundBug}
-        <div>
-            <h3>FOUND BUG</h3>
-        </div>
-    {/if}
 </div>
