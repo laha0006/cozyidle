@@ -11,7 +11,7 @@ export async function addUser(user) {
     const values = [username, email, hashedPassword];
 
     const res = await db.query(sql, values);
-    // await initIdleForUser(res.rows[0].id);
+    await initIdleForUser(res.rows[0].id);
     console.log("result:", res.rows[0]);
     return res.rows[0];
 }
