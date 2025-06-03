@@ -124,60 +124,6 @@ export async function getIdle(userId) {
     return res.rows[0];
 }
 
-export async function updateUserIdle(userId) {
-    const client = await db.connect();
-    try {
-        await client.query("BEGIN");
-
-        const sql = `
-        WITH current_state AS (
-            SELECT 
-                i.active,
-                i.started as started,
-                r.count as current_count,
-                CASE 
-                    WHEN i.active THEN GREATEST(0, EXTRACT(EPOCH FROM (NOW() - i.started)))
-                    ELSE 0 
-                END as seconds_elapsed
-            FROM user_idles i
-            JOIN user_resources r ON r.user_id = i.user_id
-            WHERE i.user_id = $1
-            FOR UPDATE
-        ),
-        updated AS (
-            UPDATE user_resources 
-            SET count = count + FLOOR((SELECT seconds_elapsed FROM current_state) / 2)
-            WHERE user_id = $1
-            RETURNING count
-        ),
-        reset_timer AS (
-            UPDATE user_idles 
-            SET started = NOW()
-            WHERE user_id = $1 AND active = TRUE
-            RETURNING started
-        )
-        SELECT 
-            (SELECT active FROM current_state) as active,
-            (SELECT count FROM updated) as resource_count,
-            FLOOR((SELECT seconds_elapsed FROM current_state) / 2) as increment,
-            (SELECT seconds_elapsed FROM current_state) as seconds_elapsed,
-            EXTRACT(EPOCH FROM (SELECT started FROM current_state)) AS started,
-            EXTRACT(EPOCH FROM (SELECT started FROM reset_timer)) AS updated_time
-        `;
-
-        const { rows } = await client.query(sql, [userId]);
-        await client.query("COMMIT");
-        console.log("update data:", rows);
-
-        return rows[0];
-    } catch (err) {
-        await client.query("ROLLBACK");
-        throw err;
-    } finally {
-        client.release();
-    }
-}
-
 export async function updateIdle(userId) {
     const client = await db.connect();
     await client.query("BEGIN");
