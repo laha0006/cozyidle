@@ -9,16 +9,15 @@ const app = express();
 app.use(cookieParser());
 app.use(express.json());
 
+import { socketAuthenticateToken } from "./middleware/auth.js";
+import { registerIdleHandlers } from "./socket/handlers.js";
+
 import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
 import usersRouter from "./routers/usersRouter.js";
-import {
-    authenticateToken,
-    socketAuthenticateToken,
-} from "./middleware/auth.js";
-import { idleDispatch } from "./socket/idleHandler.js";
-import { registerIdleHandlers } from "./socket/handlers.js";
 app.use(usersRouter);
+import userIdlesRouter from "./routers/userIdlesRouter.js";
+app.use(userIdlesRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {
