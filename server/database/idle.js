@@ -1,11 +1,12 @@
 import db from "./connection.js";
 
-export async function startIdle(userId) {
+export async function startIdle(userId, idleId) {
     const sql = `UPDATE user_idles SET started = NOW(), active = TRUE 
-        WHERE user_id = $1 
+        WHERE user_id = $1
+        AND idle_id = $2
         AND active = FALSE 
         RETURNING active, EXTRACT(EPOCH FROM started) AS started_unix`;
-    const values = [userId];
+    const values = [userId, idleId];
 
     const res = await db.query(sql, values);
     return res;
