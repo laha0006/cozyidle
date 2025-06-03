@@ -36,7 +36,7 @@ CREATE TABLE IF NBOT EXISTS idles (
     name VARCHAR(255) NOT NULL,
     resource INTEGER REFERENCES resources(id),
     skill INTEGER REFERENCES skills(id),
-    level INTEGER NOT NULL, 
+    level INTEGER NOT NULL 
 )
 
 CREATE TABLE IF NOT EXISTS user_idles (
