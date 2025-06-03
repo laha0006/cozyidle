@@ -2,8 +2,9 @@ import db from "./connection.js";
 
 export async function initIdleForUser(userId) {
     const userIdlesSql = `
-            INSERT INTO user_idles (user_id, idle_id)
-            SELECT $1, id FROM idles
+            INSERT INTO user_idles (user_id, idle_id, unlocked)
+            SELECT $1, id, CASE WHEN LEVEL = 0 THEN TRUE ELSE FALSE END 
+            FROM idles
             ON CONFLICT (user_id, idle_id) DO NOTHING;
     `;
     const userResourcesSql = `
