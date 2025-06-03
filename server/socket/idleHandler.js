@@ -53,6 +53,16 @@ export async function idleDispatch(event, socket, data) {
                 socket.emit(IdleServerEvent.STOPPED, stopped);
             }
             break;
+        case IdleClientEvent.SYNC:
+            {
+                if (socket.idleState !== active) return;
+                socket.idleState = "updating";
+
+                const update = await updateIdle(socket.userId);
+                socket.idleState = "active";
+                socket.emit(IdleServerEvent.UPDATE, update);
+            }
+            break;
     }
 }
 
