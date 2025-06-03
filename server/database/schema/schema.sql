@@ -69,5 +69,6 @@ INSERT INTO resources (name, skill_id) VALUES('Salmon', 1);
 INSERT INTO resources (name, skill_id) VALUES('Boar', 2);
 INSERT INTO resources (name, skill_id) VALUES('Oak', 3);
 INSERT INTO idles (name, resource_id, skill_id, level) VALUES('Salmon Fishing', 1, 1, 0);
+INSERT INTO idles (name, resource_id, skill_id, level) VALUES('Salmon Golden Fishing', 1, 1, 0);
 INSERT INTO idles (name, resource_id, skill_id, level) VALUES('Boar Hunting', 2, 2, 0);
 INSERT INTO idles (name, resource_id, skill_id, level) VALUES('Oak Logging', 3, 3, 0);
