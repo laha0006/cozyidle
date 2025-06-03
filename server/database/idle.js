@@ -222,6 +222,21 @@ export async function updateIdle(userId) {
     return res.rows[0];
 }
 
+export async function deductResource(userId, amount) {
+    const sql = `
+    UPDATE user_resources
+    SET count = count - $2
+    WHERE user_id = $1
+        AND count >= $2 
+    RETURNING count as resource_count
+    `;
+
+    const values = [userId, amount];
+
+    const res = await db.query(sql, values);
+    return res.rows[0];
+}
+
 let lastTime;
 
 export async function getTime() {
