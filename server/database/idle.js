@@ -56,23 +56,23 @@ export async function stopIdle(userId, idleId) {
             UPDATE user_resources
             SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
             WHERE user_id = $1
-            AND idle_id = $2
+            AND resource_id = (SELECT resource_id FROM idles WHERE id = $2)
             RETURNING amount
         ),
         set_inactive AS (
             UPDATE user_idles
             SET active = FALSE
             WHERE user_id = $1
-            AND idleid = $2
+            AND idle_id = $2
         )
         SELECT
-            (SELECT count FROM updated_resources) AS resource_count,
+            (SELECT amount FROM updated_resources) AS resource_count,
             COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
             EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
             EXTRACT(EPOCH FROM NOW()) AS now_unix
         `;
 
-        const { rows } = await client.query(sql, [userId]);
+        const { rows } = await client.query(sql, [userId, idleId]);
         await client.query("COMMIT");
         console.log("STOP IDLE DATA: ", rows[0]);
         return rows[0];
@@ -82,7 +82,6 @@ export async function stopIdle(userId, idleId) {
         throw err;
     } finally {
         console.log("finally");
-        stopCalls--;
         client.release();
     }
 }
@@ -93,7 +92,9 @@ export async function getIdle(userId, idleId) {
         EXTRACT(EPOCH FROM started) AS started_unix,
         r.amount AS resource_amount
     FROM user_idles i
-    JOIN user_resources r ON r.user_id = i.user_id AND r.resource_id = i.resource_id
+    JOIN user_resources r 
+        ON r.user_id = i.user_id 
+        AND r.id = (SELECT resource_id FROM idles WHERE i.id = id)
     WHERE i.user_id = $1
     AND i.idle_id = $2`;
     const values = [userId, idleId];
