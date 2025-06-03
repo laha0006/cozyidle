@@ -19,18 +19,24 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     revoked BOOLEAN DEFAULT FALSE
 );
 
+
+CREATE TABLE IF NOT EXISTS skills (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+)
+
 CREATE TABLE IF NOT EXISTS resources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    activity INTEGER REFERENCES skills(id)
+    skill INTEGER REFERENCES skills(id)
 )
 
 CREATE TABLE IF NBOT EXISTS idles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    yield INTEGER REFERENCES resources(id),
-    exp INTEGER REFERENCES skills(id)
-
+    resource INTEGER REFERENCES resources(id),
+    skill INTEGER REFERENCES skills(id),
+    level INTEGER NOT NULL, 
 )
 
 CREATE TABLE IF NOT EXISTS user_idles (
