@@ -21,70 +21,35 @@ export async function startIdle(userId) {
 }
 
 export async function stopIdle(userId) {
-    console.log("stop idle");
-    console.log("Pool stats before:", {
-        totalCount: db.totalCount,
-        idleCount: db.idleCount,
-        waitingCount: db.waitingCount,
-    });
-    stopCalls++;
-    console.log("Stop calls:", stopCalls);
-    console.log("start calss:", startCalls);
-
-    const startTime = Date.now();
     const client = await db.connect();
-    const connectTime = Date.now();
-    console.log("Connection acquired in:", connectTime - startTime, "ms");
     try {
         await client.query("BEGIN");
 
         const sql = `
-    WITH locked AS (
-        SELECT started
-        FROM user_idles
-        WHERE user_id = $1 AND active = TRUE
-        FOR UPDATE
-    ),
-    updated_resources AS (
-        UPDATE user_resources
-        SET count = count + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
-        WHERE user_id = $1
-        RETURNING count
-    ),
-    set_inactive AS (
-        UPDATE user_idles
-        SET active = FALSE
-        WHERE user_id = $1
-    )
-    SELECT
-        (SELECT count FROM updated_resources) AS resource_count,
-        COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
-        EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
-        EXTRACT(EPOCH FROM NOW()) AS now_unix
-`;
+        WITH locked AS (
+            SELECT started
+            FROM user_idles
+            WHERE user_id = $1 AND active = TRUE
+            FOR UPDATE
+        ),
+        updated_resources AS (
+            UPDATE user_resources
+            SET count = count + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
+            WHERE user_id = $1
+            RETURNING count
+        ),
+        set_inactive AS (
+            UPDATE user_idles
+            SET active = FALSE
+            WHERE user_id = $1
+        )
+        SELECT
+            (SELECT count FROM updated_resources) AS resource_count,
+            COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
+            EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
+            EXTRACT(EPOCH FROM NOW()) AS now_unix
+        `;
 
-        // const sql = `
-        //     WITH locked AS (
-        //         SELECT started
-        //         FROM user_idles
-        //         WHERE user_id = $1 AND active = TRUE
-        //         FOR UPDATE
-        //     ),
-        //     updated_resources AS (
-        //         UPDATE user_resources
-        //         SET count = count + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
-        //         WHERE user_id = $1
-        //         RETURNING count
-        //     ),
-        //     set_inactive AS (
-        //         UPDATE user_idles
-        //         SET active = FALSE
-        //         WHERE user_id = $1
-        //     )
-        //     SELECT
-        //         (SELECT count FROM updated_resources) AS new_count,
-        //         COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment
-        // `;
         const { rows } = await client.query(sql, [userId]);
         await client.query("COMMIT");
         console.log("STOP IDLE DATA: ", rows[0]);
@@ -98,16 +63,6 @@ export async function stopIdle(userId) {
         stopCalls--;
         client.release();
     }
-
-    // const client = await db.connect();
-    // const sql = "UPDATE user_idles SET active = FALSE WHERE user_id = $1";
-    // const values = [userId];
-
-    // await client.query("BEGIN");
-    // const res = await db.query(sql, values);
-    // await client.query("COMMIT");
-    // client.release();
-    // return res;
 }
 
 export async function getIdle(userId, idleId) {
