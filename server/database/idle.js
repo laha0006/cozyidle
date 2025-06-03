@@ -152,7 +152,10 @@ export async function deductResource(userId, resourceId, amount) {
     `;
 
     const values = [userId, resourceId, amount];
-
-    const res = await db.query(sql, values);
-    return res.rows[0];
+    try {
+        const res = await db.query(sql, values);
+        return res.rows[0];
+    } catch (error) {
+        console.log(error);
+    }
 }

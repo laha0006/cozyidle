@@ -53,13 +53,14 @@ export async function idleDispatch(event, socket, data) {
                 const { idleId } = data;
 
                 const update = await updateIdle(userId, idleId);
+                console.log("UPDATE: ", update);
                 const buy = await deductResource(userId, idleId, 10);
                 console.log("BUY:", buy);
 
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.UPDATE, {
                     new_started: update.new_started * 1000,
-                    resource_amount: buy.resource_amount,
+                    resource_amount: buy?.resource_amount || undefined,
                 });
             }
             break;
