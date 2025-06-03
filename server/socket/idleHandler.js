@@ -22,7 +22,8 @@ export async function idleDispatch(event, socket, data) {
                 const { idleId } = data;
 
                 await startIdle(userId, idleId);
-                const init = await getIdle(socket.userId);
+                const init = await getIdle(userId, idleId);
+                console.log("INIT:", init);
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.INIT, init);
             }
