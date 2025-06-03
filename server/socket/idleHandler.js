@@ -5,7 +5,6 @@ import {
     startIdle,
     stopIdle,
     updateIdle,
-    updateUserIdle,
 } from "../database/idle.js";
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
