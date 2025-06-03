@@ -1,7 +1,6 @@
 import {
     deductResource,
     getIdle,
-    setIdleState,
     startIdle,
     stopIdle,
     updateIdle,
@@ -10,6 +9,7 @@ import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
 export async function idleDispatch(event, socket, data) {
     console.log("DATA:", data);
+    const userId = socket.userId;
     switch (event) {
         case IdleClientEvent.START:
             {
@@ -19,7 +19,9 @@ export async function idleDispatch(event, socket, data) {
                 }
                 socket.idleState = "starting";
 
-                await setIdleState(socket.userId, true);
+                const { idleId } = data;
+
+                await startIdle(userId, idleId);
                 const init = await getIdle(socket.userId);
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.INIT, init);
