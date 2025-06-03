@@ -77,7 +77,6 @@
 
     function loop() {
         if (!running) return;
-        console.log("running:", running);
         const now = Date.now();
         const incrementCount = Math.floor((now - lastIncrement) / 2000);
         if (incrementCount > 0) {
@@ -90,7 +89,6 @@
 
     function start() {
         if (running) return;
-        console.log($socketStore);
         $socketStore.emit(IdleClientEvent.START);
         running = true;
         loop();
@@ -104,6 +102,10 @@
         cancelAnimationFrame(rafUpdateId);
     }
 
+    function buy() {
+        $socketStore.emit(IdleClientEvent.SYNC);
+    }
+
     function update() {
         progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
         if (running) rafUpdateId = requestAnimationFrame(update);
@@ -111,7 +113,7 @@
 
     $effect(() => {
         if (!running) {
-            console.log("not running!");
+            // console.log("not running!");
             progress = 0;
             return;
         }
@@ -164,6 +166,13 @@
                 }
                 // console.log((stopTime - startTime) / 2000);
             });
+            $socketStore.on(IdleServerEvent.UPDATE, (data) => {
+                console.log("update!");
+                console.log("data:", data);
+                const { new_started, resource_count } = data;
+                count = resource_count;
+                // lastIncrement = new_started;
+            });
         }
     });
 
@@ -189,6 +198,9 @@
     <div>
         <button id="startBtn" onclick={start}>Start</button>
         <button id="stopBtn" onclick={stop}>Stop</button>
+    </div>
+    <div>
+        <button onclick={buy}>Purchase</button>
     </div>
     <div>
         <button onclick={debug}>DEBUG</button>
