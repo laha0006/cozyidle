@@ -15,6 +15,7 @@
     import ProgressBar from "./components/ProgressBar/ProgressBar.svelte";
     import IdleCard from "./components/IdleCard/IdleCard.svelte";
     import WorkAround from "./components/WorkAround.svelte";
+    import IdleOverview from "./components/IdleOverview/IdleOverview.svelte";
 
     const guards = [authGuard];
 
@@ -71,7 +72,7 @@
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
-            <Route path="/game" component={IdleCard} />
+            <Route path="/game" component={IdleOverview} />
         </div>
     </Router>
 </main>
