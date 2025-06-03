@@ -20,7 +20,7 @@ export async function startIdle(userId) {
     return res;
 }
 
-export async function stopIdle(userId) {
+export async function stopIdle(userId, idleId) {
     const client = await db.connect();
     try {
         await client.query("BEGIN");
@@ -29,19 +29,23 @@ export async function stopIdle(userId) {
         WITH locked AS (
             SELECT started
             FROM user_idles
-            WHERE user_id = $1 AND active = TRUE
+            WHERE user_id = $1 
+            AND idle_id = $2
+            AND active = TRUE
             FOR UPDATE
         ),
         updated_resources AS (
             UPDATE user_resources
-            SET count = count + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
+            SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
             WHERE user_id = $1
-            RETURNING count
+            AND idle_id = $2
+            RETURNING amount
         ),
         set_inactive AS (
             UPDATE user_idles
             SET active = FALSE
             WHERE user_id = $1
+            AND idleid = $2
         )
         SELECT
             (SELECT count FROM updated_resources) AS resource_count,
