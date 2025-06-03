@@ -110,15 +110,16 @@ export async function stopIdle(userId) {
     // return res;
 }
 
-export async function getIdle(userId) {
+export async function getIdle(userId, idleId) {
     const sql = `
     SELECT 
         EXTRACT(EPOCH FROM started) AS started_unix,
-        r.count AS resource_count
+        r.amount AS resource_amount
     FROM user_idles i
-    JOIN user_resources r ON r.user_id = i.user_id
-    WHERE i.user_id = $1`;
-    const values = [userId];
+    JOIN user_resources r ON r.user_id = i.user_id AND r.resource_id = i.resource_id
+    WHERE i.user_id = $1
+    AND i.idle_id = $2`;
+    const values = [userId, idleId];
 
     const res = await db.query(sql, values);
     return res.rows[0];
