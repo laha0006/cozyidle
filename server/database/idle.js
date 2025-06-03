@@ -12,17 +12,11 @@ export async function initIdleForUser(userId) {
             ON CONFLICT (user_id, resource_id) DO NOTHING;
     `;
 
-    const client = await db.connect();
     try {
-        await client.query("BEGIN");
-        await client.query(userIdlesSql, [userId]);
-        await client.query(userResourcesSql, [userId]);
-        await client.query("COMMIT");
+        await db.query(userIdlesSql, [userId]);
+        await db.query(userResourcesSql, [userId]);
     } catch (err) {
         console.log(err);
-        await db.query("ROLLBACK");
-    } finally {
-        client.release();
     }
 }
 
