@@ -1,7 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import { Server } from "socket.io";
-import { getIdle, getTime, startIdle, updateIdle } from "./database/idle.js";
+import { getIdle, startIdle, updateIdle } from "./database/idle.js";
 import http from "http";
 import cookieParser from "cookie-parser";
 
