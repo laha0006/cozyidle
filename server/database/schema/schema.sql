@@ -22,14 +22,14 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 CREATE TABLE IF NOT EXISTS resources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
-    activity INTEGER REFERENCES activities(id)
+    activity INTEGER REFERENCES skills(id)
 )
 
 CREATE TABLE IF NBOT EXISTS idles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     yield INTEGER REFERENCES resources(id),
-    exp INTEGER REFERENCES activities(id)
+    exp INTEGER REFERENCES skills(id)
 
 )
 
