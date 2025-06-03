@@ -103,7 +103,7 @@
     }
 
     function buy() {
-        $socketStore.emit(IdleClientEvent.SYNC);
+        $socketStore.emit(IdleClientEvent.SYNC, { idleId: 1 });
     }
 
     function update() {
@@ -164,8 +164,8 @@
             $socketStore.on(IdleServerEvent.UPDATE, (data) => {
                 console.log("update!");
                 console.log("data:", data);
-                const { new_started, resource_count } = data;
-                count = resource_count;
+                const { new_started, resource_amount } = data;
+                count = resource_amount;
                 // lastIncrement = new_started;
             });
         }
