@@ -1,4 +1,5 @@
 import {
+    deductResource,
     getIdle,
     setIdleState,
     startIdle,
@@ -55,12 +56,16 @@ export async function idleDispatch(event, socket, data) {
             break;
         case IdleClientEvent.SYNC:
             {
-                if (socket.idleState !== active) return;
+                if (socket.idleState !== "active") return;
                 socket.idleState = "updating";
 
                 const update = await updateIdle(socket.userId);
+                const buy = await deductResource(socket.userId, 10);
                 socket.idleState = "active";
-                socket.emit(IdleServerEvent.UPDATE, update);
+                socket.emit(IdleServerEvent.UPDATE, {
+                    new_started: update.new_started * 1000,
+                    resource_count: buy.resource_count,
+                });
             }
             break;
     }
