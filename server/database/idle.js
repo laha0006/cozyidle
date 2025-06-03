@@ -1,13 +1,6 @@
 import db from "./connection.js";
 
-let stopCalls = 0;
-let startCalls = 0;
-
 export async function startIdle(userId) {
-    startCalls++;
-    console.log("start idle");
-    console.log("startCalls:", startCalls);
-    console.log("stopCalls:", stopCalls);
     const sql = `UPDATE user_idles SET started = NOW(), active = TRUE 
         WHERE user_id = $1 
         AND active = FALSE 
@@ -15,8 +8,6 @@ export async function startIdle(userId) {
     const values = [userId];
 
     const res = await db.query(sql, values);
-    console.log("start:", res.rows[0]);
-    startCalls--;
     return res;
 }
 
