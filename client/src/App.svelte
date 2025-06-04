@@ -7,11 +7,13 @@
     import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import { authGuard } from "./util/guards.js";
 
+    import { idleStore } from "./stores/idleStore.js";
+    import { socketStore } from "./stores/socketStore.js";
+
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
     import Signup from "./components/Signup/Signup.svelte";
-    import { socketStore } from "./stores/socketStore.js";
     import ProgressBar from "./components/ProgressBar/ProgressBar.svelte";
     import IdleCard from "./components/IdleCard/IdleCard.svelte";
     import WorkAround from "./components/WorkAround.svelte";

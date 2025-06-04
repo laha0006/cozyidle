@@ -29,6 +29,6 @@ export async function refreshUser() {
         user.set(null);
     }
 }
-user.subscribe((value) => {
-    console.log("changed value:", value);
-});
+// user.subscribe((value) => {
+//     console.log("changed value:", value);
+// });

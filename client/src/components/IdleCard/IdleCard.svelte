@@ -4,7 +4,8 @@
     import { socketStore } from "../../stores/socketStore.js";
 
     let count = $state(0);
-    let progress = $state(0);
+    // let progress = $state(0);
+    let { progress } = $props();
     let lastIncrement = $state(Date.now());
     let running = $state(false);
 
