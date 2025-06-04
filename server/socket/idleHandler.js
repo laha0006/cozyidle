@@ -50,7 +50,8 @@ export async function idleDispatch(event, socket, data) {
 
                 socket.emit(IdleServerEvent.STOPPED, {
                     idleId,
-                    ...stopped,
+                    resourceId: stopped.resource_id,
+                    resource_amount: stopped.resource_amount,
                 });
             }
             break;
