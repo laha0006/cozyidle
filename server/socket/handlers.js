@@ -8,15 +8,16 @@ export function registerIdleHandlers(socket) {
     const userId = socket.userId;
 
     if (!userLocks.get(userId)) {
+        console.log("set false");
         userLocks.set(userId, false);
     }
-    if (userLocks.get(userId)) {
-        console.log(">>>>>>>>>>>>>> DROPPED <<<<<<<<<<<<<<<");
-        return;
-    }
-    socket.idleState = "inactive";
     events.forEach((event) => {
         socket.on(event, async (...args) => {
+            if (userLocks.get(userId)) {
+                console.log(">>>>>>>>>>>>>> DROPPED <<<<<<<<<<<<<<<");
+                return;
+            }
+            userLocks.set(userId, true);
             await idleDispatch(event, socket, ...args); // });
             userLocks.set(userId, false);
         });
