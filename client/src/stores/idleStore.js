@@ -42,6 +42,7 @@ function createIdleStore() {
                 lastIncrement: +idle.started,
                 progress: 0,
             }));
+            console.log("idles: ", idles);
             set(idles);
             loop();
         } else {
