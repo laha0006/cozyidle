@@ -1,4 +1,4 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import {
     postFetch,
     postFetchWithRefresh,
@@ -8,9 +8,13 @@ import {
 export const user = writable(null);
 
 export async function setUserIfAuthenticated() {
+    console.log("setUserIf");
     try {
-        const json = await getFetchWithRefresh("api/users");
-        user.set(json.user);
+        const json = await getFetchWithRefresh("/api/users");
+        if (!get(user)) {
+            console.log("SETTING USER");
+            user.set(json.user);
+        }
     } catch (error) {
         console.log(error.message);
         user.set(null);
@@ -25,6 +29,6 @@ export async function refreshUser() {
         user.set(null);
     }
 }
-// user.subscribe((value) => {
-//     console.log("changed value:", value);
-// });
+user.subscribe((value) => {
+    console.log("changed value:", value);
+});
