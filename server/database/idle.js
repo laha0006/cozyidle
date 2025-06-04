@@ -88,7 +88,8 @@ export async function getIdle(userId, idleId) {
     const sql = `
     SELECT 
         EXTRACT(EPOCH FROM started) AS started_unix,
-        r.amount AS resource_amount
+        r.amount AS resource_amount,
+        r.id AS resource_id
     FROM user_idles i
     JOIN user_resources r 
         ON r.user_id = i.user_id 
