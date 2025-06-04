@@ -3,13 +3,7 @@
     import ProgressBar from "../ProgressBar/ProgressBar.svelte";
     import { socketStore } from "../../stores/socketStore.js";
 
-    let count = $state(0);
-    // let progress = $state(0);
-    let { progress } = $props();
-    let lastIncrement = $state(Date.now());
-    let running = $state(false);
-
-    let rafLoopId;
+    let { value, progress } = $props();
 
     const IdleServerEvent = Object.freeze({
         INIT: "idle:server:init",
@@ -24,7 +18,6 @@
     });
 
     function loop() {
-        if (!running) return;
         progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
         const now = Date.now();
         const incrementCount = Math.floor((now - lastIncrement) / 2000);
@@ -36,27 +29,14 @@
     }
 
     function start() {
-        if (running) return;
         $socketStore.emit(IdleClientEvent.START, { idleId: 1 });
         running = true;
         lastIncrement = Date.now();
-        loop();
     }
 
     function stop() {
-        if (!running) return;
-        progress = 0;
         $socketStore.emit(IdleClientEvent.STOP, { idleId: 1 });
-        cancelAnimationFrame(rafLoopId);
     }
-
-    $effect(() => {
-        if (!running) {
-            stop();
-        } else {
-            start();
-        }
-    });
 
     $effect(() => {
         if ($socketStore) {
@@ -66,8 +46,8 @@
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
+                console.log("STOPPED?");
                 const { resource_amount } = data;
-                running = false;
                 cancelAnimationFrame(rafLoopId);
                 count = resource_amount;
             });
@@ -84,7 +64,7 @@
 <div>
     <h1>IdleCard</h1>
     <div>
-        {count}
+        {value}
     </div>
     <!-- <ProgressBar {duration} {repeat} /> -->
     <progress value={progress}></progress>
