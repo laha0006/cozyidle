@@ -61,7 +61,9 @@ function createIdleStore() {
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                const { idleId, resource_amount } = data;
+                console.log("stopped:", data);
+                const { idleId, resourceId, resource_amount } = data;
+                resources.set(resourceId, resource_amount);
             });
         }
     });
