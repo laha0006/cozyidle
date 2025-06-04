@@ -18,8 +18,8 @@
 </script>
 
 <h1>IdleOverview</h1>
-{#each $idleStore as idle}
-    {#if idle.active}
+{#if $idleStore}
+    {#each $idleStore as idle}
         <IdleCard {idle} />
-    {/if}
-{/each}
+    {/each}
+{/if}
