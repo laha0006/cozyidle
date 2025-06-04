@@ -20,10 +20,11 @@ export async function idleDispatch(event, socket, data) {
                 socket.idleState = "starting";
 
                 const { idleId } = data;
+                console.log("idleId:", idleId);
 
                 await startIdle(userId, idleId);
                 const init = await getIdle(userId, idleId);
-                // console.log("INIT:", init);
+                console.log("INIT:", init);
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.INIT, init);
             }
@@ -37,6 +38,7 @@ export async function idleDispatch(event, socket, data) {
                 socket.idleState = "sopping";
 
                 const { idleId } = data;
+                console.log("idleId:", idleId);
 
                 const stopped = await stopIdle(userId, idleId);
 
