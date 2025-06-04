@@ -55,7 +55,7 @@ export async function stopIdle(userId, idleId) {
             SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
             WHERE user_id = $1
             AND resource_id = (SELECT resource_id FROM idles WHERE id = $2)
-            RETURNING amount
+            RETURNING amount, resource_id
         ),
         set_inactive AS (
             UPDATE user_idles
@@ -67,7 +67,8 @@ export async function stopIdle(userId, idleId) {
             (SELECT amount FROM updated_resources) AS resource_amount,
             COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
             EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
-            EXTRACT(EPOCH FROM NOW()) AS now_unix
+            EXTRACT(EPOCH FROM NOW()) AS now_unix,
+            (SELECT resource_id FROM updated_resources)
         `;
 
         const { rows } = await client.query(sql, [userId, idleId]);
