@@ -4,16 +4,12 @@
     import { socketStore } from "../../stores/socketStore.js";
     import { idleStore } from "../../stores/idleStore.js";
 
-    // let { value, progress, idleId } = $props();
     const { idle } = $props();
-    // let { progress, amount } = $derived(
-    //     $idleStore.find((idle) => {
-    //         console.log("FINDING");
-    //         return idle.idle_id === idleId;
-    //     })
-    // );
 
-    onMount(() => {});
+    onMount(() => {
+        console.log("idle:", idle);
+        console.log("acitve:", idle.active);
+    });
 
     const IdleServerEvent = Object.freeze({
         INIT: "idle:server:init",
@@ -27,51 +23,36 @@
         SYNC: "idle:client:sync",
     });
 
-    // function loop() {
-    //     progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
-    //     const now = Date.now();
-    //     const incrementCount = Math.floor((now - lastIncrement) / 2000);
-    //     if (incrementCount > 0) {
-    //         count += incrementCount;
-    //         lastIncrement += incrementCount * 2000;
-    //     }
-    //     rafLoopId = requestAnimationFrame(loop);
-    // }
-
     function start() {
-        $socketStore.emit(IdleClientEvent.START, { idleId: idle.idle_id });
+        idleStore.start(idle.idle_id);
     }
 
     function stop() {
-        $socketStore.emit(IdleClientEvent.STOP, { idleId: idle.idle_id });
+        idleStore.stop(idle.idle_id);
     }
 
     $effect(() => {
         if ($socketStore) {
-            $socketStore.on(IdleServerEvent.INIT, (data) => {
-                console.log("STARTED:", data);
-            });
-
-            $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                console.log("STOPPED:", data);
-            });
         }
     });
 
-    // onDestroy(() => {
-    //     $socketStore.off(IdleServerEvent.INIT);
-    //     $socketStore.off(IdleServerEvent.STOPPED);
-    // });
+    onDestroy(() => {
+        $socketStore.off(IdleServerEvent.INIT);
+        $socketStore.off(IdleServerEvent.STOPPED);
+    });
 </script>
 
-<div>
+<div class="my-5">
     <h1>{idle.idle}</h1>
     <div>
         {idle.amount}
     </div>
     <progress value={idle.progress}></progress>
     <div>
-        <button onclick={start}>Start</button>
-        <button onclick={stop}>Stop</button>
+        {#if idle.active}
+            <button onclick={stop}>Stop</button>
+        {:else}
+            <button onclick={start}>Start</button>
+        {/if}
     </div>
 </div>
