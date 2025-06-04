@@ -24,7 +24,6 @@
 {/if}
 {#each $idleStore as idle}
     {#if idle.active}
-        {idle.amount}
-        <IdleCard progress={idle.progress} />
+        <IdleCard value={idle.amount} progress={idle.progress} />
     {/if}
 {/each}
