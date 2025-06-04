@@ -5,6 +5,10 @@
     import IdleCard from "../IdleCard/IdleCard.svelte";
     import { idleStore } from "../../stores/idleStore.js";
 
+    function test() {
+        idleStore.start(100);
+    }
+
     $effect(() => {
         // console.log($idleStore);
         // if ($idleStore) {
@@ -16,11 +20,11 @@
 <h1>IdleOverview</h1>
 {#if $idleStore}
     <h1>IDLE STORE!</h1>
+    <button onclick={test}>test</button>
 {/if}
-<!-- {#each $idleStore as idle}
-    {idle}
-{/each} -->
-{#if $idleStore && $idleStore.length > 0}
-    {$idleStore[0].amount}
-    <IdleCard progress={$idleStore[0].progress}></IdleCard>
-{/if}
+{#each $idleStore as idle}
+    {#if idle.active}
+        {idle.amount}
+        <IdleCard progress={idle.progress} />
+    {/if}
+{/each}
