@@ -8,8 +8,8 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
     const { userId } = req.params;
     const sql = `
         SELECT i.name AS idle,
-            i.id as idleId,
-            r.id as resourceId,
+            i.id as idle_id,
+            r.id as resource_id,
             s.name AS skill,
             r.name AS resource,
             ur.amount AS amount,
