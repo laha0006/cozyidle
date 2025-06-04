@@ -2,8 +2,18 @@
     import { onDestroy, onMount } from "svelte";
     import ProgressBar from "../ProgressBar/ProgressBar.svelte";
     import { socketStore } from "../../stores/socketStore.js";
+    import { idleStore } from "../../stores/idleStore.js";
 
-    let { value, progress } = $props();
+    // let { value, progress, idleId } = $props();
+    const { idle } = $props();
+    // let { progress, amount } = $derived(
+    //     $idleStore.find((idle) => {
+    //         console.log("FINDING");
+    //         return idle.idle_id === idleId;
+    //     })
+    // );
+
+    onMount(() => {});
 
     const IdleServerEvent = Object.freeze({
         INIT: "idle:server:init",
@@ -17,59 +27,51 @@
         SYNC: "idle:client:sync",
     });
 
-    function loop() {
-        progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
-        const now = Date.now();
-        const incrementCount = Math.floor((now - lastIncrement) / 2000);
-        if (incrementCount > 0) {
-            count += incrementCount;
-            lastIncrement += incrementCount * 2000;
-        }
-        rafLoopId = requestAnimationFrame(loop);
-    }
+    // function loop() {
+    //     progress = Math.min((Date.now() - lastIncrement) / 2000, 1);
+    //     const now = Date.now();
+    //     const incrementCount = Math.floor((now - lastIncrement) / 2000);
+    //     if (incrementCount > 0) {
+    //         count += incrementCount;
+    //         lastIncrement += incrementCount * 2000;
+    //     }
+    //     rafLoopId = requestAnimationFrame(loop);
+    // }
 
     function start() {
-        $socketStore.emit(IdleClientEvent.START, { idleId: 1 });
-        running = true;
-        lastIncrement = Date.now();
+        $socketStore.emit(IdleClientEvent.START, { idleId: idle.idle_id });
     }
 
     function stop() {
-        $socketStore.emit(IdleClientEvent.STOP, { idleId: 1 });
+        $socketStore.emit(IdleClientEvent.STOP, { idleId: idle.idle_id });
     }
 
     $effect(() => {
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
-                const { started_unix, resource_amount } = data;
-                count = resource_amount;
+                console.log("STARTED:", data);
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                console.log("STOPPED?");
-                const { resource_amount } = data;
-                cancelAnimationFrame(rafLoopId);
-                count = resource_amount;
+                console.log("STOPPED:", data);
             });
         }
     });
 
-    onDestroy(() => {
-        $socketStore.off(IdleServerEvent.INIT);
-        $socketStore.off(IdleServerEvent.STOPPED);
-        stop();
-    });
+    // onDestroy(() => {
+    //     $socketStore.off(IdleServerEvent.INIT);
+    //     $socketStore.off(IdleServerEvent.STOPPED);
+    // });
 </script>
 
 <div>
-    <h1>IdleCard</h1>
+    <h1>{idle.idle}</h1>
     <div>
-        {value}
+        {idle.amount}
     </div>
-    <!-- <ProgressBar {duration} {repeat} /> -->
-    <progress value={progress}></progress>
+    <progress value={idle.progress}></progress>
     <div>
-        <button id="startBtn" onclick={start}>Start</button>
-        <button id="stopBtn" onclick={stop}>Stop</button>
+        <button onclick={start}>Start</button>
+        <button onclick={stop}>Stop</button>
     </div>
 </div>
