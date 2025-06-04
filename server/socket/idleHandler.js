@@ -8,32 +8,32 @@ import {
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
 export async function idleDispatch(event, socket, data) {
-    console.log("DATA:", data);
+    // console.log("DATA:", data);
     const userId = socket.userId;
     switch (event) {
         case IdleClientEvent.START:
             {
-                if (socket.idleState !== "inactive") {
-                    console.log("already active!");
-                    return;
-                }
+                // if (socket.idleState !== "inactive") {
+                //     console.log("already active!");
+                //     return;
+                // }
                 socket.idleState = "starting";
 
                 const { idleId } = data;
 
                 await startIdle(userId, idleId);
                 const init = await getIdle(userId, idleId);
-                console.log("INIT:", init);
+                // console.log("INIT:", init);
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.INIT, init);
             }
             break;
         case IdleClientEvent.STOP:
             {
-                if (socket.idleState !== "active") {
-                    console.log("not active!");
-                    return;
-                }
+                // if (socket.idleState !== "active") {
+                //     console.log("not active!");
+                //     return;
+                // }
                 socket.idleState = "sopping";
 
                 const { idleId } = data;
