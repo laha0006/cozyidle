@@ -18,12 +18,8 @@
 </script>
 
 <h1>IdleOverview</h1>
-{#if $idleStore}
-    <h1>IDLE STORE!</h1>
-    <button onclick={test}>test</button>
-{/if}
 {#each $idleStore as idle}
     {#if idle.active}
-        <IdleCard value={idle.amount} progress={idle.progress} />
+        <IdleCard {idle} />
     {/if}
 {/each}
