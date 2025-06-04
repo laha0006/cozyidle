@@ -26,7 +26,11 @@ export async function idleDispatch(event, socket, data) {
                 const init = await getIdle(userId, idleId);
                 console.log("INIT:", init);
                 socket.idleState = "active";
-                socket.emit(IdleServerEvent.INIT, init);
+                socket.emit(IdleServerEvent.INIT, {
+                    idleId,
+                    resourceId: init.resource_id,
+                    resource_amount: init.resource_amount,
+                });
             }
             break;
         case IdleClientEvent.STOP:
@@ -44,7 +48,10 @@ export async function idleDispatch(event, socket, data) {
 
                 socket.idleState = "inactive";
 
-                socket.emit(IdleServerEvent.STOPPED, stopped);
+                socket.emit(IdleServerEvent.STOPPED, {
+                    idleId,
+                    ...stopped,
+                });
             }
             break;
         case IdleClientEvent.SYNC:
@@ -61,6 +68,7 @@ export async function idleDispatch(event, socket, data) {
 
                 socket.idleState = "active";
                 socket.emit(IdleServerEvent.UPDATE, {
+                    idleId,
                     new_started: update.new_started * 1000,
                     resource_amount: buy?.resource_amount || undefined,
                 });
