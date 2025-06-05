@@ -47,7 +47,7 @@
     <div>
         {idle.amount}
     </div>
-    <progress value={idle.progress}></progress>
+    <progress class="progress-bar" value={idle.progress}></progress>
     <div>
         {#if idle.active}
             <button onclick={stop}>Stop</button>
@@ -56,3 +56,9 @@
         {/if}
     </div>
 </div>
+
+<style>
+    .progress-bar {
+        transition: width 0.1s linear;
+    }
+</style>
