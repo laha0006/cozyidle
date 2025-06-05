@@ -30,6 +30,8 @@ export async function idleDispatch(event, socket, data) {
                     idleId,
                     resourceId: init.resource_id,
                     resource_amount: init.resource_amount,
+                    speed: init.speed,
+                    level: init.level,
                 });
             }
             break;
