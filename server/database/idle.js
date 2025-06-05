@@ -53,18 +53,36 @@ export async function stopIdle(userId, idleId) {
 
         const sql = `
         WITH locked AS (
-            SELECT started
+            SELECT started, level
             FROM user_idles
             WHERE user_id = $1 
             AND idle_id = $2
             AND active = TRUE
             FOR UPDATE
         ),
+        factors AS (
+            SELECT il.speed_seconds AS speed, i.resource_id
+            FROM idle_levels il
+            JOIN idles i ON i.id = $2
+            WHERE il.idle_id = $2
+            AND il.level = (SELECT level FROM locked)
+        ),
+        calculations AS (
+            SELECT 
+                l.started,
+                f.speed,
+                f.resource_id,
+                COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0) AS increment,
+                EXTRACT(EPOCH FROM l.started) AS started_unix,
+                EXTRACT(EPOCH FROM NOW()) AS now_unix
+            FROM locked l
+            CROSS JOIN factors f
+        ),
         updated_resources AS (
             UPDATE user_resources
-            SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0)
+            SET amount = amount + (SELECT increment FROM calculations)
             WHERE user_id = $1
-            AND resource_id = (SELECT resource_id FROM idles WHERE id = $2)
+            AND resource_id = (SELECT resource_id FROM calculations)
             RETURNING amount, resource_id
         ),
         set_inactive AS (
@@ -74,12 +92,49 @@ export async function stopIdle(userId, idleId) {
             AND idle_id = $2
         )
         SELECT
-            (SELECT amount FROM updated_resources) AS resource_amount,
-            COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
-            EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
-            EXTRACT(EPOCH FROM NOW()) AS now_unix,
-            (SELECT resource_id FROM updated_resources)
-        `;
+            ur.amount AS resource_amount,
+            c.increment,
+            c.started_unix,
+            c.now_unix,
+            ur.resource_id
+        FROM updated_resources ur
+        CROSS JOIN calculations c;`;
+
+        // const sql = `
+        // WITH locked AS (
+        //     SELECT started, level
+        //     FROM user_idles
+        //     WHERE user_id = $1
+        //     AND idle_id = $2
+        //     AND active = TRUE
+        //     FOR UPDATE
+        // ),
+        // factors AS (
+        //     SELECT speed_seconnds AS speed
+        //     FROM idle_levels
+        //     WHERE idle_id = $2
+        //     AND level = (SELECT level FROM locked)
+        // ),
+        // updated_resources AS (
+        //     UPDATE user_resources
+        //     SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / (SELECT speed FROM factors)), 0)
+        //     WHERE user_id = $1
+        //     AND resource_id = (SELECT resource_id FROM idles WHERE id = $2)
+        //     RETURNING amount, resource_id
+        // ),
+        // set_inactive AS (
+        //     UPDATE user_idles
+        //     SET active = FALSE
+        //     WHERE user_id = $1
+        //     AND idle_id = $2
+        // )
+        // SELECT
+        //     (SELECT amount FROM updated_resources) AS resource_amount,
+        //     COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM locked))) / 2), 0) AS increment,
+        //     EXTRACT(EPOCH FROM (SELECT started FROM locked)) AS started_unix,
+        //     EXTRACT(EPOCH FROM NOW()) AS now_unix,
+        //     (SELECT resource_id FROM updated_resources)
+        // `;
 
         const { rows } = await client.query(sql, [userId, idleId]);
         await client.query("COMMIT");
@@ -97,16 +152,20 @@ export async function stopIdle(userId, idleId) {
 
 export async function getIdle(userId, idleId) {
     const sql = `
-    SELECT 
-        EXTRACT(EPOCH FROM started) AS started_unix,
-        r.amount AS resource_amount,
-        r.id AS resource_id
-    FROM user_idles i
-    JOIN user_resources r 
-        ON r.user_id = i.user_id 
-        AND r.id = (SELECT resource_id FROM idles WHERE i.id = id)
-    WHERE i.user_id = $1
-    AND i.idle_id = $2`;
+        SELECT EXTRACT(EPOCH FROM started) AS started_unix,
+            r.amount                    AS resource_amount,
+            r.id                        AS resource_id,
+            l.speed_seconds             AS speed,
+            i.level                     AS level
+        FROM user_idles i
+            JOIN user_resources r
+                ON r.user_id = i.user_id
+                    AND r.id = (SELECT resource_id FROM idles WHERE i.id = id)
+            JOIN idle_levels l
+                ON l.idle_id = i.idle_id
+                    AND l.level = i.level
+        WHERE i.user_id = $1
+        AND i.idle_id = $2`;
     const values = [userId, idleId];
 
     const res = await db.query(sql, values);
