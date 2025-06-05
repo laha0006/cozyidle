@@ -16,14 +16,16 @@ export async function initIdleForUser(userId) {
     const userExperiencesSql = ` 
             INSERT INTO user_experiences (user_id, skill_id)
             SELECT $1, id FROM skills
-            ON CONFLICT (user_id, resource_id) DO NOTHING;
+            ON CONFLICT (user_id, skill_id) DO NOTHING;
     `;
 
     console.log("init idle for user");
     try {
         await db.query(userIdlesSql, [userId]);
         await db.query(userResourcesSql, [userId]);
+        console.log("user experiences start");
         await db.query(userExperiencesSql, [userId]);
+        console.log("user experiences end");
     } catch (err) {
         console.log(err);
     }
