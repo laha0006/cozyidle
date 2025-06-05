@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS idles (
     name VARCHAR(255) NOT NULL,
     resource_id INTEGER REFERENCES resources(id),
     skill_id INTEGER REFERENCES skills(id),
-    level INTEGER NOT NULL 
+    level_requirement INTEGER NOT NULL 
 );
 
 CREATE TABLE IF NOT EXISTS user_idles (
