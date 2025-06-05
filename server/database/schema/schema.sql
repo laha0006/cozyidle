@@ -40,8 +40,16 @@ CREATE TABLE IF NOT EXISTS idles (
     name VARCHAR(255) NOT NULL,
     resource_id INTEGER REFERENCES resources(id),
     skill_id INTEGER REFERENCES skills(id),
-    level_requirement INTEGER NOT NULL 
 );
+
+CREATE TABLE IF NOT EXISTS idle_levels (
+    id SERIAL PRIMARY KEY,
+    idle_id INTEGER REFERENCES idels(id),
+    level INTEGER NOT NULL,
+    level_requirement INTEGER NOT NULL,
+    speed_seconds INTEGER NOT NULL,
+    price INTEGER NOT NULL
+)
 
 CREATE TABLE IF NOT EXISTS user_idles (
     id SERIAL PRIMARY KEY,
@@ -50,6 +58,7 @@ CREATE TABLE IF NOT EXISTS user_idles (
     started TIMESTAMP DEFAULT NULL,
     active BOOLEAN DEFAULT FALSE,
     unlocked BOOLEAN DEFAULT FALSE,
+    level INTEGER, 
     UNIQUE(user_id, idle_id)
 );
 
