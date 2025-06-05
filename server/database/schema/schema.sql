@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS user_resources;
 DROP TABLE IF EXISTS user_idles;
 DROP TABLE IF EXISTS idle_levels;
+DROP TABLE IF EXISTS user_experiences;
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS idles;
@@ -75,9 +76,10 @@ CREATE TABLE IF NOT EXISTS user_resources (
 CREATE TABLE IF NOT EXISTS user_experiences (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-    skill_id INTEGER REFRENCES skills(id),
-    experience INTEGER DEFAULT 0
-)
+    skill_id INTEGER REFERENCES skills(id),
+    experience INTEGER DEFAULT 0,
+    UNIQUE(user_id, skill_id)
+);
 
 
 INSERT INTO skills(name) VALUES('Fishing');
