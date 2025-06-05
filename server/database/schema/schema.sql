@@ -2,6 +2,7 @@ DROP TABLE IF EXISTS user_resources;
 DROP TABLE IF EXISTS user_idles;
 DROP TABLE IF EXISTS idle_levels;
 DROP TABLE IF EXISTS user_experiences;
+DROP TABLE IF EXISTS skill_levels;
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS idles;
@@ -29,6 +30,13 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
 CREATE TABLE IF NOT EXISTS skills (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS skill_levels (
+    id SERIAL PRIMARY KEY,
+    skill_id INTEGER REFERENCES skills(id),
+    level INTEGER NOT NULL,
+    experience_required INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS resources (
@@ -94,3 +102,27 @@ INSERT INTO idles (name, resource_id, skill_id) VALUES('Oak Logging', 3, 3);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,1,0,60,0,2);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,1,0,60,0,3);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,1,10);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,2,25);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,3,45);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,4,85);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,5,145);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,6,245);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(1,7,390);
+
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,1,10);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,2,25);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,3,45);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,4,85);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,5,145);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,6,245);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(2,7,390);
+
+
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,1,10);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,2,25);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,3,45);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,4,85);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,5,145);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,6,245);
+INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,7,390);
