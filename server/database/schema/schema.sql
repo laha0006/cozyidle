@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS user_resources;
 DROP TABLE IF EXISTS user_idles;
+DROP TABLE IF EXISTS idle_levels;
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS idles;
@@ -48,7 +49,8 @@ CREATE TABLE IF NOT EXISTS idle_levels (
     level INTEGER NOT NULL,
     level_requirement INTEGER NOT NULL,
     speed_seconds INTEGER NOT NULL,
-    price INTEGER NOT NULL
+    price INTEGER NOT NULL,
+    resource_id INTEGER REFERENCES resources(id)
 );
 
 CREATE TABLE IF NOT EXISTS user_idles (
