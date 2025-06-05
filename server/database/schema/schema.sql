@@ -39,17 +39,17 @@ CREATE TABLE IF NOT EXISTS idles (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     resource_id INTEGER REFERENCES resources(id),
-    skill_id INTEGER REFERENCES skills(id),
+    skill_id INTEGER REFERENCES skills(id)
 );
 
 CREATE TABLE IF NOT EXISTS idle_levels (
     id SERIAL PRIMARY KEY,
-    idle_id INTEGER REFERENCES idels(id),
+    idle_id INTEGER REFERENCES idles(id),
     level INTEGER NOT NULL,
     level_requirement INTEGER NOT NULL,
     speed_seconds INTEGER NOT NULL,
     price INTEGER NOT NULL
-)
+);
 
 CREATE TABLE IF NOT EXISTS user_idles (
     id SERIAL PRIMARY KEY,
@@ -77,7 +77,7 @@ INSERT INTO skills(name) VALUES('Logging');
 INSERT INTO resources (name, skill_id) VALUES('Salmon', 1);
 INSERT INTO resources (name, skill_id) VALUES('Boar', 2);
 INSERT INTO resources (name, skill_id) VALUES('Oak', 3);
-INSERT INTO idles (name, resource_id, skill_id, level_requirement) VALUES('Salmon Fishing', 1, 1, 0);
-INSERT INTO idles (name, resource_id, skill_id, level_requirement) VALUES('Salmon Golden Fishing', 1, 1, 0);
-INSERT INTO idles (name, resource_id, skill_id, level_requirement) VALUES('Boar Hunting', 2, 2, 0);
-INSERT INTO idles (name, resource_id, skill_id, level_requirement) VALUES('Oak Logging', 3, 3, 0);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 1, 1);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Golden Fishing', 1, 1);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Boar Hunting', 2, 2);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Oak Logging', 3, 3);
