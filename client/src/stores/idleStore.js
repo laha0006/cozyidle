@@ -56,6 +56,7 @@ function createIdleStore() {
         if ($socketStore) {
             console.log("SOCKET STORE IN IDLE STORE INIT <<<");
             $socketStore.on(IdleServerEvent.INIT, (data) => {
+                console.log("INIT:", data);
                 const { idleId, resourceId, resource_amount } = data;
                 resources.set(resourceId, resource_amount);
             });
