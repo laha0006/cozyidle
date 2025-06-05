@@ -31,19 +31,20 @@ function createIdleStore() {
                     return { ...idle, amount: resource };
                 } else {
                     const now = Date.now();
+                    const speed = idle.speed * 1000;
                     const progress = Math.min(
-                        (now - idle.lastIncrement) / 2000,
+                        (now - idle.lastIncrement) / speed,
                         1
                     );
                     const incrementCount = Math.floor(
-                        (now - idle.lastIncrement) / 2000
+                        (now - idle.lastIncrement) / speed
                     );
                     resources.set(resourceId, resource + incrementCount);
                     return {
                         ...idle,
                         amount: resource + incrementCount,
                         lastIncrement:
-                            idle.lastIncrement + incrementCount * 2000,
+                            idle.lastIncrement + incrementCount * speed,
                         progress,
                     };
                 }
