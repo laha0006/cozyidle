@@ -6,8 +6,7 @@ const router = Router();
 
 router.get("/:userId/idles", authenticateToken, async (req, res) => {
     const { userId } = req.params;
-    const sql = `
-        SELECT i.name AS idle,
+    const sql = `SELECT i.name AS idle,
             i.id as idle_id,
             r.id as resource_id,
             s.name AS skill,
@@ -15,6 +14,8 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
             ur.amount AS amount,
             ui.unlocked AS unlocked,
             ui.active AS active,
+            il.speed_seconds AS speed,
+            ui.level AS level,
             EXTRACT(EPOCH FROM ui.started)*1000 AS started
         FROM user_idles ui
             JOIN idles i
@@ -25,8 +26,9 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
                 ON s.id = i.skill_id
             JOIN user_resources ur
                 ON ur.resource_id = r.id AND ur.user_id = $1
-        WHERE ui.user_id = $1;
-    `;
+            JOIN idle_levels il
+                ON il.level = ui.level AND il.idle_id = ui.idle_id
+        WHERE ui.user_id = $1`;
 
     const { rows } = await db.query(sql, [userId]);
     res.send({ data: rows });
