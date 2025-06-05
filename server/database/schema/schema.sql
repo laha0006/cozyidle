@@ -72,6 +72,13 @@ CREATE TABLE IF NOT EXISTS user_resources (
     UNIQUE(user_id, resource_id)
 );
 
+CREATE TABLE IF NOT EXISTS user_experiences (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    skill_id INTEGER REFRENCES skills(id),
+    experience INTEGER DEFAULT 0
+)
+
 
 INSERT INTO skills(name) VALUES('Fishing');
 INSERT INTO skills(name) VALUES('Hunting');
