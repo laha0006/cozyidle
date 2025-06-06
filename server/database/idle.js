@@ -186,39 +186,82 @@ export async function getIdle(userId, idleId) {
     return res.rows[0];
 }
 
-export async function updateIdle(userId, idleId) {
+export async function updateIdles(userId) {
     const client = await db.connect();
     await client.query("BEGIN");
-    const sql = `WITH old AS (
-                    SELECT started 
-                        FROM user_idles 
-                    WHERE user_id = $1 
-                        AND idle_id = $2
-                        AND active = TRUE 
-                    FOR UPDATE
-                ),
-                updated AS (
-                    UPDATE user_idles 
-                    SET started = NOW()
-                    WHERE user_id = $1 
-                    AND idle_id = $2
-                    AND active = TRUE
-                    RETURNING started
-                ),
-                update_resources AS (
-                    UPDATE user_resources
-                    SET amount = amount + COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - (SELECT started FROM old))) / 2), 0)
-                    WHERE user_id = $1
-                    AND resource_id = (SELECT resource_id FROM idles WHERE id = $2)
-                    RETURNING amount
-                )
-                SELECT
-                    (SELECT started FROM old) as old_started,
-                    EXTRACT(EPOCH FROM (SELECT started FROM updated)) AS new_started,
-                    (SELECT amount FROM update_resources ) as new_amount;
-                `;
+    const sql = `
+        WITH locked AS (
+            SELECT ui.started AS started,
+                   ui.active AS  active,
+                   i.resource_id AS resource_id,
+                   ui.level AS idle_level,
+                   ui.idle_id as idle_id
+            FROM user_idles ui
+            JOIN idles i ON i.id = ui.idle_id
+            WHERE user_id = $1
+            AND active = TRUE
+            FOR UPDATE
+        ),
+        user_skill_level AS (
+           SELECT DISTINCT ON (sl.skill_id)
+            sl.level AS skill_level,
+                sl.skill_id AS skill_id
+            FROM user_experiences ue
+            JOIN skill_levels sl
+            ON sl.skill_id = ue.skill_id
+            WHERE ue.user_id = $1
+            AND sl.experience_required <= ue.experience
+            ORDER BY sl.skill_id ,sl.level DESC
+        ),
+        factors AS (
+            SELECT
+                GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed,
+                i.resource_id,
+                l.idle_id
+            FROM idle_levels il
+            JOIN idles i ON i.id = il.idle_id
+            JOIN locked l ON l.idle_id = i.id AND l.idle_level = il.level
+            JOIN user_skill_level usl ON usl.skill_id = i.skill_id
+        ),
+        calculations AS (
+            SELECT
+                l.started,
+                f.speed,
+                l.idle_id As idle_id,
+                f.resource_id AS resource_id,
+                COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0) AS increment,
+                EXTRACT(EPOCH FROM l.started) AS started_unix,
+                EXTRACT(EPOCH FROM NOW()) AS now_unix
+            FROM locked l
+            JOIN factors f ON f.idle_id = l.idle_id
+        ),
+        update_started AS (
+            UPDATE user_idles ui
+            SET started = NOW()
+            FROM calculations c
+            WHERE ui.user_id = 1
+            AND ui.idle_id = c.idle_id
+            AND ui.active = TRUE
+            AND c.increment > 0
+        ),
+        updated_resources AS (
+            UPDATE user_resources ur
+            SET amount = amount + c.increment
+            FROM calculations c
+            WHERE user_id = $1
+            AND ur.resource_id = c.resource_id
+            RETURNING ur.amount, ur.resource_id, c.idle_id
+        )
+        SELECT
+            ur.amount AS resource_amount,
+            c.increment,
+            c.started_unix,
+            c.now_unix,
+            ur.resource_id
+        FROM updated_resources ur
+        LEFT JOIN calculations c ON c.idle_id = ur.idle_id`;
 
-    const values = [userId, idleId];
+    const values = [userId];
 
     const res = await client.query(sql, values);
     await client.query("COMMIT");
