@@ -3,7 +3,7 @@ import {
     getIdle,
     startIdle,
     stopIdle,
-    updateIdle,
+    updateIdles,
 } from "../database/idle.js";
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
