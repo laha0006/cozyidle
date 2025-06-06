@@ -13,19 +13,9 @@ export async function idleDispatch(event, socket, data) {
     switch (event) {
         case IdleClientEvent.START:
             {
-                // if (socket.idleState !== "inactive") {
-                //     console.log("already active!");
-                //     return;
-                // }
-                socket.idleState = "starting";
-
                 const { idleId } = data;
-                console.log("idleId:", idleId);
-
                 await startIdle(userId, idleId);
                 const init = await getIdle(userId, idleId);
-                console.log("INIT:", init);
-                socket.idleState = "active";
                 socket.emit(IdleServerEvent.INIT, {
                     idleId,
                     resourceId: init.resource_id,
@@ -38,18 +28,9 @@ export async function idleDispatch(event, socket, data) {
             break;
         case IdleClientEvent.STOP:
             {
-                // if (socket.idleState !== "active") {
-                //     console.log("not active!");
-                //     return;
-                // }
-                socket.idleState = "sopping";
-
                 const { idleId } = data;
-                console.log("idleId:", idleId);
 
                 const stopped = await stopIdle(userId, idleId);
-
-                socket.idleState = "inactive";
 
                 socket.emit(IdleServerEvent.STOPPED, {
                     idleId,
