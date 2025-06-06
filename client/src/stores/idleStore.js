@@ -85,17 +85,21 @@ function createIdleStore() {
 
     let userUnsub = user.subscribe(async ($user) => {
         if ($user) {
+            const preFetchTime = Date.now();
             const init = await getFetchWithRefresh(
                 "/api/users/" + $user.id + "/idles"
             );
 
             const clientNow = Date.now();
+            const latency = (clientNow - preFetchTime) / 2;
+            console.log("latency: ", latency);
 
             const idles = init.data.map((idle) => {
                 const startedTime = Math.floor(+idle.started);
                 const serverNow = Math.floor(+idle.now_unix);
                 const timeDiff = serverNow - clientNow;
-                const clientAdjustTime = startedTime - timeDiff;
+                console.log("timeDiff:", timeDiff);
+                const clientAdjustTime = startedTime - (timeDiff + latency);
                 return {
                     ...idle,
                     lastIncrement: clientAdjustTime,
