@@ -25,6 +25,7 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
     init AS (
         SELECT i.name AS idle,
             i.id as idle_id,
+            EXTRACT(EPOCH FROM NOW())*1000 as now_unix,
             usl.skill_level AS skill_level,
             r.id as resource_id,
             s.name AS skill,
@@ -61,7 +62,8 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
             active,
             speed,
             started,
-            level
+            level,
+            now_unix
         FROM init`;
 
     const { rows } = await db.query(sql, [userId]);
