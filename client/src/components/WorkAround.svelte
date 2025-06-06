@@ -9,7 +9,7 @@
     });
 
     onMount(() => {
-        console.log(">>>> WORK AROUND MOUNTED");
+        // console.log(">>>> WORK AROUND MOUNTED");
         setUserIfAuthenticated();
     });
 </script>

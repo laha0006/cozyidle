@@ -5,7 +5,7 @@ import { refreshUser, setUserIfAuthenticated, user } from "./userStore.js";
 let socket;
 export const socketStore = derived(user, async ($user, set) => {
     if ($user) {
-        console.log("socketSTore init");
+        // console.log("socketSTore init");
         if (socket) {
             socket.disconnect();
         }
@@ -20,7 +20,7 @@ export const socketStore = derived(user, async ($user, set) => {
             // console.log("Socket error:", error);
             // console.log("msg:", error.message);
             if (error.message === "jwt expired") {
-                console.log("refreshing user");
+                // console.log("refreshing user");
                 refreshUser();
             }
         });

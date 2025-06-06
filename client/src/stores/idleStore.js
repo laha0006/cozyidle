@@ -3,7 +3,7 @@ import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
 import { socketStore } from "./socketStore.js";
 
-console.log("idleStore script");
+// console.log("idleStore script");
 
 const IdleServerEvent = Object.freeze({
     INIT: "idle:server:init",
@@ -55,17 +55,33 @@ function createIdleStore() {
 
     let socketUnsub = socketStore.subscribe(async ($socketStore) => {
         if ($socketStore) {
-            console.log("SOCKET STORE IN IDLE STORE INIT <<<");
             $socketStore.on(IdleServerEvent.INIT, (data) => {
-                console.log("INIT:", data);
-                const { idleId, resourceId, resource_amount } = data;
+                const { idleId, resourceId, resource_amount, started } = data;
+                const startedTime = Math.floor(+started);
                 resources.set(resourceId, resource_amount);
+                update((idles) => {
+                    return idles.map((idle) => {
+                        if (idle.idle_id !== idleId) return idle;
+                        return {
+                            ...idle,
+                            started: startedTime,
+                            active: true,
+                            lastIncrement: Date.now(),
+                        };
+                    });
+                });
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                console.log("stopped:", data);
+                // console.log("stopped:", data);
                 const { idleId, resourceId, resource_amount } = data;
                 resources.set(resourceId, resource_amount);
+                update((idles) => {
+                    return idles.map((idle) => {
+                        if (idle.idle_id !== idleId) return idle;
+                        return { ...idle, active: false, progress: 0 };
+                    });
+                });
             });
         }
     });
@@ -75,11 +91,13 @@ function createIdleStore() {
             const init = await getFetchWithRefresh(
                 "/api/users/" + $user.id + "/idles"
             );
-            const idles = init.data.map((idle) => ({
-                ...idle,
-                lastIncrement: Date.now(),
-                progress: 0,
-            }));
+            const idles = init.data.map((idle) => {
+                return {
+                    ...idle,
+                    lastIncrement: Date.now(),
+                    progress: 0,
+                };
+            });
             idles.forEach((idle) => {
                 if (resources.get(idle.resource_id)) return;
                 resources.set(idle.resource_id, idle.amount);
@@ -99,33 +117,12 @@ function createIdleStore() {
         subscribe,
         set,
         start: async (idleId) => {
-            console.log("idle start:", idleId);
             const socket = get(socketStore);
             socket.emit(IdleClientEvent.START, { idleId: idleId });
-            update((idles) => {
-                return idles.map((idle) => {
-                    if (idle.idle_id !== idleId) return idle;
-                    console.log("update local from start");
-                    return {
-                        ...idle,
-                        started: Date.now(),
-                        active: true,
-                        lastIncrement: Date.now(),
-                    };
-                });
-            });
         },
         stop: async (idleId) => {
-            console.log("idle stop:", idleId);
             const socket = get(socketStore);
             socket.emit(IdleClientEvent.STOP, { idleId: idleId });
-            update((idles) => {
-                return idles.map((idle) => {
-                    if (idle.idle_id !== idleId) return idle;
-                    console.log("idle:", idle);
-                    return { ...idle, active: false, progress: 0 };
-                });
-            });
         },
     };
 }

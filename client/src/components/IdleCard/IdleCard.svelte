@@ -7,8 +7,8 @@
     const { idle } = $props();
 
     onMount(() => {
-        console.log("idle:", idle);
-        console.log("acitve:", idle.active);
+        // console.log("idle:", idle);
+        // console.log("acitve:", idle.active);
     });
 
     const IdleServerEvent = Object.freeze({
