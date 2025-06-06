@@ -85,7 +85,7 @@ export async function stopIdle(userId, idleId) {
                 l.started,
                 f.speed,
                 f.resource_id,
-                COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0) AS increment,
+                GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
                 EXTRACT(EPOCH FROM NOW()) AS now_unix
             FROM locked l
@@ -115,14 +115,14 @@ export async function stopIdle(userId, idleId) {
 
         const { rows } = await client.query(sql, [userId, idleId]);
         await client.query("COMMIT");
-        console.log("STOP IDLE DATA: ", rows[0]);
+        // console.log("STOP IDLE DATA: ", rows[0]);
         return rows[0];
     } catch (err) {
         console.log("ROLLBACK?");
         await client.query("ROLLBACK");
         throw err;
     } finally {
-        console.log("finally");
+        // console.log("finally");
         client.release();
     }
 }
@@ -193,7 +193,7 @@ export async function updateIdles(userId) {
                 f.speed,
                 l.idle_id As idle_id,
                 f.resource_id AS resource_id,
-                COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0) AS increment,
+                GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
                 EXTRACT(EPOCH FROM NOW()) AS now_unix
             FROM locked l
