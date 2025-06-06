@@ -8,7 +8,7 @@ export function registerIdleHandlers(socket) {
     const userId = socket.userId;
 
     if (!userLocks.get(userId)) {
-        console.log("set false");
+        // console.log("set false");
         userLocks.set(userId, false);
     }
     events.forEach((event) => {
@@ -18,7 +18,9 @@ export function registerIdleHandlers(socket) {
                 return;
             }
             userLocks.set(userId, true);
+            console.log(event, socket.id, socket.userId);
             await idleDispatch(event, socket, ...args); // });
+            console.log(event, socket.id, socket.userId);
             userLocks.set(userId, false);
         });
     });
