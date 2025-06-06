@@ -1,11 +1,15 @@
 import { Router } from "express";
 import db from "../database/connection.js";
 import { authenticateToken } from "../middleware/auth.js";
+import { updateIdles } from "../database/idle.js";
 
 const router = Router();
 
 router.get("/:userId/idles", authenticateToken, async (req, res) => {
     const { userId } = req.params;
+
+    await updateIdles(userId);
+
     const sql = `
     WITH user_skill_level AS (
         SELECT DISTINCT ON (sl.skill_id)
