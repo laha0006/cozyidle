@@ -53,17 +53,30 @@ export async function stopIdle(userId, idleId) {
 
         const sql = `
         WITH locked AS (
-            SELECT started, level
+            SELECT started, level AS idle_level
             FROM user_idles
             WHERE user_id = $1 
             AND idle_id = $2
             AND active = TRUE
             FOR UPDATE
         ),
+        user_skill_level AS (
+            SELECT sl.level AS skill_level
+            FROM user_experiences ue
+            JOIN skill_levels sl ON sl.skill_id = ue.skill_id
+            WHERE ue.user_id = $1
+            AND ue.skill_id = $2
+            AND sl.experience_required <= ue.experience
+            ORDER BY sl.level DESC
+            LIMIT 1
+        ),
         factors AS (
-            SELECT il.speed_seconds AS speed, i.resource_id
+            SELECT 
+                il.speed_seconds * POWER(0.98, usl.skill_level) AS speed, 
+                i.resource_id
             FROM idle_levels il
             JOIN idles i ON i.id = $2
+            JOIN user_skill_level usl ON TRUE
             WHERE il.idle_id = $2
             AND il.level = (SELECT level FROM locked)
         ),
