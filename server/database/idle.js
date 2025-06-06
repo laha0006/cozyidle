@@ -165,7 +165,7 @@ export async function stopIdle(userId, idleId) {
 
 export async function getIdle(userId, idleId) {
     const sql = `
-        SELECT EXTRACT(EPOCH FROM started) AS started_unix,
+        SELECT EXTRACT(EPOCH FROM started) * 1000 AS started_unix,
             r.amount                    AS resource_amount,
             r.id                        AS resource_id,
             l.speed_seconds             AS speed,

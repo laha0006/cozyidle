@@ -30,7 +30,7 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
             ui.active AS active,
             GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))),2) AS speed,
             ui.level AS level,
-            EXTRACT(EPOCH FROM ui.started)*1000 AS started
+            EXTRACT(EPOCH FROM ui.started) * 1000 AS started
         FROM user_idles ui
             JOIN idles i
                 ON ui.idle_id = i.id
@@ -56,10 +56,12 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
             unlocked,
             active,
             speed,
+            started,
             level
         FROM init`;
 
     const { rows } = await db.query(sql, [userId]);
+    rows.started = Number(rows.started);
     res.send({ data: rows });
 });
 
