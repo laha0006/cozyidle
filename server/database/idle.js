@@ -72,7 +72,7 @@ export async function stopIdle(userId, idleId) {
         ),
         factors AS (
             SELECT 
-                il.speed_seconds * POWER(0.98, usl.skill_level) AS speed, 
+                GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed, 
                 i.resource_id
             FROM idle_levels il
             JOIN idles i ON i.id = $2
