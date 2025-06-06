@@ -6,15 +6,29 @@ const router = Router();
 
 router.get("/:userId/idles", authenticateToken, async (req, res) => {
     const { userId } = req.params;
-    const sql = `SELECT i.name AS idle,
+    const sql = `
+    WITH user_skill_level AS (
+        SELECT DISTINCT ON (sl.skill_id)
+            sl.level AS skill_level,
+                sl.skill_id AS skill_id
+        FROM user_experiences ue
+        JOIN skill_levels sl
+        ON sl.skill_id = ue.skill_id
+        WHERE ue.user_id = 1
+        AND sl.experience_required <= ue.experience
+        ORDER BY sl.skill_id ,sl.level DESC
+    ),
+    init AS (
+        SELECT i.name AS idle,
             i.id as idle_id,
+            usl.skill_level AS skill_level,
             r.id as resource_id,
             s.name AS skill,
             r.name AS resource,
             ur.amount AS amount,
             ui.unlocked AS unlocked,
             ui.active AS active,
-            il.speed_seconds AS speed,
+            GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))),2) AS speed,
             ui.level AS level,
             EXTRACT(EPOCH FROM ui.started)*1000 AS started
         FROM user_idles ui
@@ -28,7 +42,22 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
                 ON ur.resource_id = r.id AND ur.user_id = $1
             JOIN idle_levels il
                 ON il.level = ui.level AND il.idle_id = ui.idle_id
-        WHERE ui.user_id = $1`;
+            JOIN user_skill_level usl
+                ON usl.skill_id = s.id
+        WHERE ui.user_id = $1)
+        SELECT
+            idle,
+            skill_level,
+            idle_id,
+            resource_id,
+            skill,
+            resource,
+            amount,
+            unlocked,
+            active,
+            speed,
+            level
+        FROM init`;
 
     const { rows } = await db.query(sql, [userId]);
     res.send({ data: rows });
