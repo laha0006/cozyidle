@@ -3,8 +3,6 @@ import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
 import { socketStore } from "./socketStore.js";
 
-// console.log("idleStore script");
-
 const IdleServerEvent = Object.freeze({
     INIT: "idle:server:init",
     UPDATE: "idle:server:update",
@@ -73,7 +71,6 @@ function createIdleStore() {
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                // console.log("stopped:", data);
                 const { idleId, resourceId, resource_amount } = data;
                 resources.set(resourceId, resource_amount);
                 update((idles) => {
@@ -91,10 +88,17 @@ function createIdleStore() {
             const init = await getFetchWithRefresh(
                 "/api/users/" + $user.id + "/idles"
             );
+
+            const clientNow = Date.now();
+
             const idles = init.data.map((idle) => {
+                const startedTime = Math.floor(+idle.started);
+                const serverNow = Math.floor(+idle.now_unix);
+                const timeDiff = serverNow - clientNow;
+                const clientAdjustTime = startedTime - timeDiff;
                 return {
                     ...idle,
-                    lastIncrement: Date.now(),
+                    lastIncrement: clientAdjustTime,
                     progress: 0,
                 };
             });
