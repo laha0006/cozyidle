@@ -37,7 +37,10 @@ function createIdleStore() {
                     const incrementCount = Math.floor(
                         (now - idle.lastIncrement) / speed
                     );
-                    resources.set(resourceId, resource + incrementCount);
+                    resources.set(
+                        resourceId,
+                        resource + incrementCount * idle.increment
+                    );
                     return {
                         ...idle,
                         amount: resource + incrementCount,
