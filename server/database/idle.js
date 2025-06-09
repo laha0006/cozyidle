@@ -53,7 +53,7 @@ export async function stopIdle(userId, idleId) {
 
         const sql = `
         WITH locked AS (
-            SELECT started, level AS idle_level
+            SELECT started, level AS idle_level 
             FROM user_idles
             WHERE user_id = $1 
             AND idle_id = $2
@@ -92,7 +92,8 @@ export async function stopIdle(userId, idleId) {
             SELECT 
                 l.started,
                 f.speed,
-                f.resource_id,
+                ib.skill_id AS skill_id,
+                f.resource_id AS resource_id,
                 ib.bonus + 1 AS bonus,
                 GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
@@ -102,11 +103,19 @@ export async function stopIdle(userId, idleId) {
             CROSS JOIN item_bonus ib
         ),
         updated_resources AS (
-            UPDATE user_resources
-            SET amount = amount + (SELECT increment FROM calculations) * (SELECT bonus FROM calculations ) 
+            UPDATE user_resources ur
+            SET amount = ur.amount + (c.increment * c.bonus) 
+            FROM calculations c
             WHERE user_id = $1
-            AND resource_id = (SELECT resource_id FROM calculations)
-            RETURNING amount, resource_id
+            AND ur.resource_id = c.resource_Id
+            RETURNING ur.amount, ur.resource_id
+        ),
+        update_experiences AS (
+            UPDATE user_experiences ue
+            SET experience = experience + (c.increment * c.bonus )
+            FROM calculations c
+            WHERE user_id = $1
+            AND ue.skill_id = c.skill_id
         ),
         set_inactive AS (
             UPDATE user_idles
@@ -199,7 +208,8 @@ export async function updateIdles(userId) {
                 GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed,
                 i.resource_id,
                 l.idle_id,
-                ib.bonus AS bonus
+                ib.bonus AS bonus,
+                i.skill_id
             FROM idle_levels il
             JOIN idles i ON i.id = il.idle_id
             JOIN locked l ON l.idle_id = i.id AND l.idle_level = il.level
@@ -210,7 +220,8 @@ export async function updateIdles(userId) {
             SELECT
                 l.started,
                 f.speed,
-                f.bonus AS bonus,
+                f.skill_id,
+                f.bonus + 1 AS bonus,
                 l.idle_id As idle_id,
                 f.resource_id AS resource_id,
                 GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
@@ -230,11 +241,18 @@ export async function updateIdles(userId) {
         ),
         updated_resources AS (
             UPDATE user_resources ur
-            SET amount = amount + (c.increment * (c.bonus+1))
+            SET amount = amount + (c.increment * c.bonus)
             FROM calculations c
             WHERE user_id = $1
             AND ur.resource_id = c.resource_id
             RETURNING ur.amount, ur.resource_id, c.idle_id
+        ),
+        update_experiences AS (
+            UPDATE user_experiences ue
+            SET experience = ue.experience + (c.increment * c.bonus)
+            FROM calculations c
+            WHERE user_id = $1
+            AND ue.skill_id = c.skill_id
         )
         SELECT
             ur.amount AS resource_amount,
