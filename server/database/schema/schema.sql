@@ -3,10 +3,12 @@ DROP TABLE IF EXISTS user_idles;
 DROP TABLE IF EXISTS idle_levels;
 DROP TABLE IF EXISTS user_experiences;
 DROP TABLE IF EXISTS skill_levels;
+DROP TABLE IF EXISTS user_items;
 DROP TABLE IF EXISTS refresh_tokens;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS idles;
 DROP TABLE IF EXISTS resources;
+DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS skills;
 
 CREATE TABLE IF NOT EXISTS users (
@@ -50,6 +52,20 @@ CREATE TABLE IF NOT EXISTS idles (
     name VARCHAR(255) NOT NULL,
     resource_id INTEGER REFERENCES resources(id),
     skill_id INTEGER REFERENCES skills(id)
+);
+
+CREATE TABLE IF NOT EXISTS items (
+    id SERIAL PRIMARY KEY,
+    name VARChAR(255) NOT NULL,
+    skill_id INTEGER REFERENCES skills(id),
+    bonus INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS user_items (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER references users(id),
+    item_id INTEGER references items(id),
+    equipped BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS idle_levels (
