@@ -5,7 +5,7 @@ import { updateIdles } from "../database/idle.js";
 
 const router = Router();
 
-router.get("/:userId/idles", authenticateToken, async (req, res) => {
+router.get("/:userId/idles", async (req, res) => {
     const { userId } = req.params;
 
     await updateIdles(userId);
