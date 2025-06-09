@@ -22,6 +22,13 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
         AND sl.experience_required <= ue.experience
         ORDER BY sl.skill_id ,sl.level DESC
     ),
+    item_bonus AS (
+        SELECT i.bonus AS bonus, i.skill_id AS skill_id
+        FROM items i
+        JOIN user_items ui ON ui.item_id = i.id
+        WHERE user_id = $1
+        AND ui.equipped IS TRUE
+    ),
     init AS (
         SELECT i.name AS idle,
             i.id as idle_id,
@@ -35,6 +42,7 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
             ui.active AS active,
             GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))),2) AS speed,
             ui.level AS level,
+            ib.bonus AS bonus,
             EXTRACT(EPOCH FROM ui.started) * 1000 AS started
         FROM user_idles ui
             JOIN idles i
@@ -49,6 +57,8 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
                 ON il.level = ui.level AND il.idle_id = ui.idle_id
             JOIN user_skill_level usl
                 ON usl.skill_id = s.id
+            LEFT JOIN item_bonus ib
+                ON ib.skill_id = s.id
         WHERE ui.user_id = $1)
         SELECT
             idle,
@@ -61,6 +71,7 @@ router.get("/:userId/idles", authenticateToken, async (req, res) => {
             unlocked,
             active,
             speed,
+            bonus+1 AS increment,
             started,
             level,
             now_unix

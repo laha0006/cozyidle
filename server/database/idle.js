@@ -91,7 +91,7 @@ export async function stopIdle(userId, idleId) {
         calculations AS (
             SELECT 
                 l.started,
-                f.speed,
+                f.speed
                 f.resource_id,
                 ib.bonus + 1 AS bonus,
                 GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
