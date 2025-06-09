@@ -35,11 +35,6 @@
         if ($socketStore) {
         }
     });
-
-    onDestroy(() => {
-        $socketStore.off(IdleServerEvent.INIT);
-        $socketStore.off(IdleServerEvent.STOPPED);
-    });
 </script>
 
 <div class="my-5">
