@@ -70,6 +70,13 @@ export async function stopIdle(userId, idleId) {
             ORDER BY sl.level DESC
             LIMIT 1
         ),
+        item_bonus AS (
+            SELECT i.bonus AS bonus, i.skill_id AS skill_id
+            FROM items i
+            JOIN user_items ui ON ui.item_id = i.id
+            WHERE user_id = $1
+            AND ui.equipped IS TRUE
+        ),
         factors AS (
             SELECT 
                 GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed, 
@@ -77,6 +84,7 @@ export async function stopIdle(userId, idleId) {
             FROM idle_levels il
             JOIN idles i ON i.id = $2
             JOIN user_skill_level usl ON TRUE
+            JOIN item_bonus ib ON ib.skill_id = i.skill_id
             WHERE il.idle_id = $2
             AND il.level = (SELECT level FROM locked)
         ),
@@ -85,15 +93,17 @@ export async function stopIdle(userId, idleId) {
                 l.started,
                 f.speed,
                 f.resource_id,
+                ib.bonus + 1 AS bonus,
                 GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
                 EXTRACT(EPOCH FROM NOW()) AS now_unix
             FROM locked l
             CROSS JOIN factors f
+            CROSS JOIN item_bonus ib
         ),
         updated_resources AS (
             UPDATE user_resources
-            SET amount = amount + (SELECT increment FROM calculations)
+            SET amount = amount + (SELECT increment FROM calculations) * (SELECT bonus FROM calculations ) 
             WHERE user_id = $1
             AND resource_id = (SELECT resource_id FROM calculations)
             RETURNING amount, resource_id
