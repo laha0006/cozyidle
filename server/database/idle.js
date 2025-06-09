@@ -177,20 +177,30 @@ export async function updateIdles(userId) {
             AND sl.experience_required <= ue.experience
             ORDER BY sl.skill_id ,sl.level DESC
         ),
+        item_bonus AS (
+            SELECT i.bonus AS bonus, i.skill_id AS skill_id
+            FROM items i
+            JOIN user_items ui ON ui.item_id = i.id
+            WHERE user_id = $1
+            AND ui.equipped IS TRUE
+        ),
         factors AS (
             SELECT
                 GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed,
                 i.resource_id,
-                l.idle_id
+                l.idle_id,
+                ib.bonus AS bonus
             FROM idle_levels il
             JOIN idles i ON i.id = il.idle_id
             JOIN locked l ON l.idle_id = i.id AND l.idle_level = il.level
             JOIN user_skill_level usl ON usl.skill_id = i.skill_id
-        ),
+            JOIN item_bonus ib ON ib.skill_id = i.skill_id
+        ), 
         calculations AS (
             SELECT
                 l.started,
                 f.speed,
+                f.bonus AS bonus,
                 l.idle_id As idle_id,
                 f.resource_id AS resource_id,
                 GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
@@ -210,7 +220,7 @@ export async function updateIdles(userId) {
         ),
         updated_resources AS (
             UPDATE user_resources ur
-            SET amount = amount + c.increment
+            SET amount = amount + (c.increment * (c.bonus+1))
             FROM calculations c
             WHERE user_id = $1
             AND ur.resource_id = c.resource_id
