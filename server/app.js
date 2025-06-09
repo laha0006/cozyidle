@@ -59,13 +59,6 @@ io.on("connection", (socket) => {
     });
 });
 
-// await startIdle(1);
-// const res = await getIdle(1);
-// console.log("res:", res);
-// const res = await updateIdle(1);
-// console.log("EVEN MORE?");
-// console.log("RES:", res);
-// console.log("tst");
 const PORT = process.env.PORT || 8080;
 
 server.listen(PORT, console.log(`Server listening on ${PORT}`));

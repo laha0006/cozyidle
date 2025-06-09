@@ -289,3 +289,37 @@ export async function deductResource(userId, resourceId, amount) {
         console.log(error);
     }
 }
+
+export async function equipItem(userId, itemId) {
+    const checkEquippedSql = `
+        SELECT ui.equipped 
+        FROM user_items ui
+        JOIN items i ON i.id = ui.item_id
+        WHERE user_id = $1
+        AND i.skill_id = (SELECT skill_id FROM items i WHERE i.id = $2)`;
+    const equipItemSql = `
+        UPDATE user_items ui
+        SET equipped = TRUE
+        WHERE user_id = $1
+        AND ui.item_id = $2
+    `;
+
+    const client = await db.connect();
+    const values = [userId, itemId];
+    try {
+        client.query("BEGIN");
+        const res = await client.query(checkEquippedSql, values);
+        console.log("check rows:", res.rows);
+        if (res.rows.length > 0 && res.rows[0].equipped) {
+            throw new Error("Item for this skill is already equipped");
+        }
+        const equipRes = await client.query(equipItemSql, values);
+        client.query("COMMIT");
+        return equipRes;
+    } catch (error) {
+        client.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
+    }
+}
