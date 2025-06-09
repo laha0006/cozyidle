@@ -201,7 +201,7 @@ export async function updateIdles(userId) {
         ),
         update_started AS (
             UPDATE user_idles ui
-            SET started = NOW()
+            SET started = ui.started + (c.increment * c.speed || ' seconds')::interval 
             FROM calculations c
             WHERE ui.user_id = 1
             AND ui.idle_id = c.idle_id
