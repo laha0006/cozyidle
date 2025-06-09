@@ -54,7 +54,7 @@ function createIdleStore() {
         rafLoopId = requestAnimationFrame(loop);
     }
 
-    let socketUnsub = socketStore.subscribe(async ($socketStore) => {
+    const socketUnsub = socketStore.subscribe(async ($socketStore) => {
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 const { idleId, resourceId, resource_amount, started } = data;
@@ -86,7 +86,7 @@ function createIdleStore() {
         }
     });
 
-    let userUnsub = user.subscribe(async ($user) => {
+    const userUnsub = user.subscribe(async ($user) => {
         if ($user) {
             const preFetchTime = Date.now();
             const init = await getFetchWithRefresh(
