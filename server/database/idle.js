@@ -163,7 +163,6 @@ export async function getIdle(userId, idleId) {
     const values = [userId, idleId];
 
     const res = await db.query(sql, values);
-    // console.log("getIdle res:", res);
     return res.rows[0];
 }
 
