@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS user_idles (
     started TIMESTAMP DEFAULT NULL,
     active BOOLEAN DEFAULT FALSE,
     unlocked BOOLEAN DEFAULT FALSE,
-    level INTEGER DEFAULT 0, 
+    level INTEGER DEFAULT 1, 
     UNIQUE(user_id, idle_id)
 );
 
