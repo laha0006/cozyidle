@@ -134,14 +134,12 @@ export async function stopIdle(userId, idleId) {
 
         const { rows } = await client.query(sql, [userId, idleId]);
         await client.query("COMMIT");
-        // console.log("STOP IDLE DATA: ", rows[0]);
         return rows[0];
     } catch (err) {
         console.log("ROLLBACK?");
         await client.query("ROLLBACK");
         throw err;
     } finally {
-        // console.log("finally");
         client.release();
     }
 }
