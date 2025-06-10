@@ -3,6 +3,18 @@ import { user } from "./userStore.js";
 import { socketStore } from "./socketStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
 
+export const ItemClientEvent = Object.freeze({
+    EQUIP: "item:client:equip",
+    UNEQIUP: "item:client:unequip",
+    BUY: "item:client:buy",
+});
+
+export const ItemServerEvent = Object.freeze({
+    EQUIPPED: "item:server:equipped",
+    UNEQUIPPED: "item:server:unequipped",
+    BOUGHT: "item:server:bought",
+});
+
 function createUserItemStore() {
     const { subscribe, set, update } = writable([]);
 
@@ -11,7 +23,7 @@ function createUserItemStore() {
             const userItems = await getFetchWithRefresh(
                 "/api/users/" + $user.id + "/items"
             );
-            set(userItems);
+            set(userItems.data);
             console.log("items:", userItems);
         }
     });
@@ -30,10 +42,13 @@ function createUserItemStore() {
         set,
         equip: async (itemId) => {
             const socket = get(socketStore);
-            socket.emit("equip", { itemId });
+            socket.emit(ItemClientEvent.EQUIP, { itemId });
         },
-        unquip: async (itemID) => {},
+        unquip: async (itemId) => {
+            const socket = get(socketStore);
+            socket.emit(ItemClientEvent.UNEQIUP, { itemId });
+        },
     };
 }
 
-export const userItemStore = createItemStore();
+export const userItemStore = createUserItemStore();
