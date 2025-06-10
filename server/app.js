@@ -17,6 +17,8 @@ import usersRouter from "./routers/usersRouter.js";
 app.use("/api/users", usersRouter);
 import userIdlesRouter from "./routers/userIdlesRouter.js";
 app.use("/api/users", userIdlesRouter);
+import itemsRouter from "./routers/itemsRouter.js";
+app.use("/api", itemsRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {
