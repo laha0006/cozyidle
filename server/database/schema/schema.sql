@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS items (
     id SERIAL PRIMARY KEY,
     name VARChAR(255) NOT NULL,
     skill_id INTEGER REFERENCES skills(id),
-    skill__requirement INTEGER NOT NULL,
+    skill_requirement INTEGER NOT NULL,
     price INTEGER NOT NULL,
     bonus INTEGER NOT NULL
 );
@@ -148,3 +148,9 @@ INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,4,85);
 INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,5,145);
 INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,6,245);
 INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(3,7,390);
+
+
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Fishing Rod',1,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Bow',2,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Axe',3,1,100,1);
+                                   
