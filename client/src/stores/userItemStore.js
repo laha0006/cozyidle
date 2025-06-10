@@ -32,6 +32,7 @@ function createUserItemStore() {
             const socket = get(socketStore);
             socket.emit("equip", { itemId });
         },
+        unquip: async (itemID) => {},
     };
 }
 
