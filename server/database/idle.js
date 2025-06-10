@@ -333,6 +333,7 @@ export async function equipItem(userId, itemId) {
         SET equipped = TRUE
         WHERE user_id = $1
         AND ui.item_id = $2
+        RETURNING ui.item_id
     `;
 
     const client = await db.connect();
