@@ -344,9 +344,9 @@ export async function equipItem(userId, itemId) {
             throw new Error("Item for this skill is already equipped");
         } else if (res.rows.length > 0 && !res.rows[0].equipped) {
             console.log("sucess!");
-            const equipRes = await client.query(equipItemSql, values);
+            await client.query(equipItemSql, values);
             client.query("COMMIT");
-            return equipRes;
+            return true;
         } else {
             throw Error("You cannot equip an item you do not own.");
         }
