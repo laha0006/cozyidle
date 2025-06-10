@@ -58,6 +58,8 @@ CREATE TABLE IF NOT EXISTS items (
     id SERIAL PRIMARY KEY,
     name VARChAR(255) NOT NULL,
     skill_id INTEGER REFERENCES skills(id),
+    skill__requirement INTEGER NOT NULL,
+    price INTEGER NOT NULL,
     bonus INTEGER NOT NULL
 );
 
