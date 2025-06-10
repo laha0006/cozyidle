@@ -31,8 +31,30 @@ function createUserItemStore() {
     const socketUnsub = socketStore.subscribe(async ($socket) => {
         console.log("!!");
         if ($socket) {
-            $socket.on("equipped");
-            $socket.on("unequipped");
+            $socket.on(ItemServerEvent.EQUIPPED, (data) => {
+                console.log("equipped:", data);
+                update((items) => {
+                    return items.map((item) => {
+                        if (item.item_id !== data.itemId) return item;
+                        return {
+                            ...item,
+                            equipped: true,
+                        };
+                    });
+                });
+            });
+            $socket.on(ItemServerEvent.UNEQUIPPED, (data) => {
+                console.log("unequip", data);
+                update((items) => {
+                    return items.map((item) => {
+                        if (item.item_id !== data.itemId) return item;
+                        return {
+                            ...item,
+                            equipped: false,
+                        };
+                    });
+                });
+            });
             $socket.on("purchased");
         }
     });
