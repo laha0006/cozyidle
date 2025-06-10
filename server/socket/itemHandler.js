@@ -10,7 +10,7 @@ export async function itemDispatch(event, socket, data) {
                 const { itemId } = data;
                 try {
                     await equipItem(userId, itemId);
-                    socket.emit(ItemServerEvent.EQUIPPED);
+                    socket.emit(ItemServerEvent.EQUIPPED, { itemId });
                 } catch (error) {
                     console.log(error);
                 }
@@ -22,7 +22,7 @@ export async function itemDispatch(event, socket, data) {
                 const { itemId } = data;
                 try {
                     await unequipItem(userId, itemId);
-                    socket.emit(ItemServerEvent.UNEQUIPPED);
+                    socket.emit(ItemServerEvent.UNEQUIPPED, { itemId });
                 } catch (error) {
                     console.log(error);
                 }
