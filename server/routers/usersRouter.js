@@ -11,7 +11,21 @@ router.get("/", (req, res) => {
 
 router.get("/:userId/items", async (req, res) => {
     const { userId } = req.params;
-
+    const allItemsSql = `
+    SELECT
+        i.name AS name,
+        s.name AS skill,
+        i.bonus AS bonus,
+        i.price,
+        i.skill_requirement AS requirement,
+        ui.equipped,
+        i.id AS item_id,
+        s.id AS skill_id,
+        CASE WHEN ui.user_id IS NULL THEN false ELSE true END AS owned
+    FROM items i
+    JOIN skills s ON s.id = i.skill_id
+    LEFT JOIN user_items ui
+        ON ui.item_id = i.id AND ui.user_id = $1`;
     const sql = `
     SELECT 
         i.name AS name,
@@ -28,7 +42,7 @@ router.get("/:userId/items", async (req, res) => {
     WHERE ui.user_id = $1
     `;
 
-    const { rows } = await db.query(sql, [userId]);
+    const { rows } = await db.query(allItemsSql, [userId]);
     res.send({ data: rows });
 });
 
