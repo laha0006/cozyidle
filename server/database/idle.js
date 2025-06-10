@@ -287,6 +287,40 @@ export async function deductResource(userId, resourceId, amount) {
     }
 }
 
+export async function unequipItem(userId, itemId) {
+    const checkEquippedSql = `
+        SELECT ui.equipped 
+        FROM user_items ui
+        JOIN items i ON i.id = ui.item_id
+        WHERE user_id = $1
+        AND i.skill_id = (SELECT skill_id FROM items i WHERE i.id = $2)`;
+
+    const unequipItemSql = `
+        UPDATE user_items ui
+        SET equipped = FALSE
+        WHERE user_id = $1
+        AND ui.item_id = $2
+    `;
+
+    const values = [userId, itemId];
+    const client = await db.connect();
+    try {
+        const res = await db.query(checkEquippedSql, values);
+        if (res.rows.length > 0 && !res.rows[0].equipped) {
+            throw Error("You cannot unequip an item that is not equipped");
+        } else if (res.rows.length > 0 && res.rows[0].equipped) {
+            const unequipRes = db.query(unequipItemSql, values);
+            db.query("commit");
+            return unequipRes;
+        }
+    } catch (error) {
+        db.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 export async function equipItem(userId, itemId) {
     const checkEquippedSql = `
         SELECT ui.equipped 
@@ -306,13 +340,16 @@ export async function equipItem(userId, itemId) {
     try {
         client.query("BEGIN");
         const res = await client.query(checkEquippedSql, values);
-        console.log("check rows:", res.rows);
         if (res.rows.length > 0 && res.rows[0].equipped) {
             throw new Error("Item for this skill is already equipped");
+        } else if (res.rows.length > 0 && !res.rows[0].equipped) {
+            console.log("sucess!");
+            const equipRes = await client.query(equipItemSql, values);
+            client.query("COMMIT");
+            return equipRes;
+        } else {
+            throw Error("You cannot equip an item you do not own.");
         }
-        const equipRes = await client.query(equipItemSql, values);
-        client.query("COMMIT");
-        return equipRes;
     } catch (error) {
         client.query("ROLLBACK");
         throw error;
