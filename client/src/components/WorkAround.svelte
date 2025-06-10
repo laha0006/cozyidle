@@ -4,13 +4,11 @@
     import { idleStore } from "../stores/idleStore.js";
     import { socketStore } from "../stores/socketStore.js";
     import { userItemStore } from "../stores/userItemStore.js";
-
-    $effect(() => {
-        $socketStore, $idleStore;
-    });
+    import { itemsStore, unownedItems } from "../stores/itemsStore.js";
 
     onMount(() => {
         // console.log(">>>> WORK AROUND MOUNTED");
+        $socketStore, $idleStore, $userItemStore, $itemsStore, $unownedItems;
         setUserIfAuthenticated();
     });
 </script>
