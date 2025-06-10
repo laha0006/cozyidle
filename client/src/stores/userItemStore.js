@@ -1,9 +1,9 @@
 import { writable } from "svelte/store";
 import { user } from "./userStore.js";
 import { socketStore } from "./socketStore.js";
-import { getFetchWithRefresh } from "../util/fetch";
+import { getFetchWithRefresh } from "../util/fetch.js";
 
-function createItemStore() {
+function createUserItemStore() {
     const { subscribe, set, update } = writable([]);
 
     const userUnsub = user.subscribe(async ($user) => {
@@ -22,4 +22,4 @@ function createItemStore() {
     };
 }
 
-export const itemStore = createItemStore();
+export const userItemStore = createItemStore();
