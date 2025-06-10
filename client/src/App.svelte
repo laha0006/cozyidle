@@ -19,6 +19,7 @@
     import WorkAround from "./components/WorkAround.svelte";
     import IdleOverview from "./components/IdleOverview/IdleOverview.svelte";
     import ItemOverview from "./components/ItemOverview/ItemOverview.svelte";
+    import ItemStore from "./components/ItemStore/ItemStore.svelte";
 
     const guards = [authGuard];
 
@@ -77,6 +78,7 @@
             <Route path="/signup" component={Signup} />
             <Route path="/game" component={IdleOverview} />
             <Route path="/item" component={ItemOverview} />
+            <Route path="/store" component={ItemStore} />
         </div>
     </Router>
 </main>
