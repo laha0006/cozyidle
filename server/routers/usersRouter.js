@@ -13,10 +13,15 @@ router.get("/:userId/items", async (req, res) => {
     const { userId } = req.params;
 
     const sql = `
-    SELECT i.name ,
-       s.name AS  skill,
-       i.bonus, ui.equipped,
-       i.id AS item_id, s.id AS skill_id
+    SELECT 
+        i.name AS name,
+        s.name AS  skill,
+        i.bonus AS bonus,
+        i.price,
+        i.skill_requirement AS requirement,
+        ui.equipped,
+        i.id AS item_id, 
+        s.id AS skill_id
     FROM user_items ui
     JOIN items i ON i.id = ui.item_id
     JOIN skills s ON s.id = i.skill_id
