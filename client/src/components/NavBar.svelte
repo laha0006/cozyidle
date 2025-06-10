@@ -27,6 +27,10 @@
         router.navigate("/signup");
     }
 
+    function goToItem() {
+        router.navigate("/item");
+    }
+
     async function handleLogout() {
         router.navigate("/");
         try {
@@ -48,6 +52,7 @@
 >
     Game</button
 >
+<button onclick={goToItem}>Item</button>
 {#if !$user}
     <button onclick={goToLogin}> Login</button>
     <button onclick={goToSignup}> Signup</button>
