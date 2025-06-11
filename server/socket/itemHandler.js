@@ -35,6 +35,7 @@ export async function itemDispatch(event, socket, data) {
                     const bought = await buyItem(userId, itemId);
                     socket.emit(ItemServerEvent.BOUGHT, { itemId });
                 } catch (error) {
+                    socket.emit("error", { message: error.message });
                     console.log(error);
                 }
             }
