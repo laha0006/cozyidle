@@ -53,9 +53,9 @@ export async function stopIdle(userId, idleId) {
 
         const sql = `
         WITH locked AS (
-            SELECT started, level AS idle_level 
+            SELECT started, level AS idle_level
             FROM user_idles
-            WHERE user_id = $1 
+            WHERE user_id = $1
             AND idle_id = $2
             AND active = TRUE
             FOR UPDATE
@@ -65,7 +65,7 @@ export async function stopIdle(userId, idleId) {
             FROM user_experiences ue
             JOIN skill_levels sl ON sl.skill_id = ue.skill_id
             WHERE ue.user_id = $1
-            AND ue.skill_id = $2
+            AND ue.skill_id = (SELECT skill_id FROM idles WHERE id = $2)
             AND sl.experience_required <= ue.experience
             ORDER BY sl.level DESC
             LIMIT 1
@@ -74,22 +74,23 @@ export async function stopIdle(userId, idleId) {
             SELECT i.bonus AS bonus, i.skill_id AS skill_id
             FROM items i
             JOIN user_items ui ON ui.item_id = i.id
-            WHERE user_id = $1
+            WHERE ui.user_id = $1
+            AND i.skill_id = (SELECT skill_id FROM idles WHERE id = $2)
             AND ui.equipped IS TRUE
         ),
         factors AS (
-            SELECT 
-                GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed, 
+            SELECT
+                GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed,
                 i.resource_id
             FROM idle_levels il
             JOIN idles i ON i.id = $2
             JOIN user_skill_level usl ON TRUE
             JOIN item_bonus ib ON ib.skill_id = i.skill_id
             WHERE il.idle_id = $2
-            AND il.level = (SELECT level FROM locked)
+            AND il.level = (SELECT idle_level FROM locked)
         ),
         calculations AS (
-            SELECT 
+            SELECT
                 l.started,
                 f.speed,
                 ib.skill_id AS skill_id,
@@ -104,7 +105,7 @@ export async function stopIdle(userId, idleId) {
         ),
         updated_resources AS (
             UPDATE user_resources ur
-            SET amount = ur.amount + (c.increment * c.bonus) 
+            SET amount = ur.amount + (c.increment * c.bonus)
             FROM calculations c
             WHERE user_id = $1
             AND ur.resource_id = c.resource_Id
@@ -121,7 +122,7 @@ export async function stopIdle(userId, idleId) {
             UPDATE user_idles
             SET active = FALSE
             WHERE user_id = $1
-            AND idle_id = $2
+            AND idle_id = $1
         )
         SELECT
             ur.amount AS resource_amount,
@@ -130,11 +131,13 @@ export async function stopIdle(userId, idleId) {
             c.now_unix,
             ur.resource_id
         FROM updated_resources ur
-        CROSS JOIN calculations c;`;
+        CROSS JOIN calculations c;
+    `;
 
-        const { rows } = await client.query(sql, [userId, idleId]);
+        const res = await client.query(sql, [userId, idleId]);
+        console.log("stopped res", res);
         await client.query("COMMIT");
-        return rows[0];
+        return res.rows[0];
     } catch (err) {
         console.log("ROLLBACK?");
         await client.query("ROLLBACK");
