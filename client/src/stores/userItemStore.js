@@ -55,7 +55,14 @@ function createUserItemStore() {
                     });
                 });
             });
-            $socket.on("purchased");
+            $socket.on(ItemServerEvent.BOUGHT, (data) => {
+                console.log("bought", data);
+                update((items) => {
+                    return items.map((item) => {
+                        if (item.item_id !== data.itemId) return item;
+                    });
+                });
+            });
         }
     });
 
@@ -69,6 +76,10 @@ function createUserItemStore() {
         unquip: async (itemId) => {
             const socket = get(socketStore);
             socket.emit(ItemClientEvent.UNEQIUP, { itemId });
+        },
+        buy: async (itemId) => {
+            const socket = get(socketStore);
+            socket.emit(ItemClientEvent.BUY, { itemId });
         },
     };
 }
