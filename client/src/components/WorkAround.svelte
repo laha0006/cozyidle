@@ -6,9 +6,15 @@
     import { userItemStore } from "../stores/userItemStore.js";
     import { itemsStore } from "../stores/itemsStore.js";
     import { userSkillsStore } from "../stores/userSkillsStore.js";
+    import { userResourcesStore } from "../stores/userResourcesStore.js";
 
     onMount(() => {
-        $socketStore, $idleStore, $userItemStore, $itemsStore, $userSkillsStore;
         setUserIfAuthenticated();
+        $socketStore,
+            $idleStore,
+            $userItemStore,
+            $itemsStore,
+            $userSkillsStore,
+            $userResourcesStore;
     });
 </script>
