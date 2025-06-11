@@ -60,7 +60,10 @@ function createUserItemStore() {
                 update((items) => {
                     return items.map((item) => {
                         if (item.item_id !== data.itemId) return item;
-                        return item;
+                        return {
+                            ...item,
+                            owned: true,
+                        };
                     });
                 });
             });
