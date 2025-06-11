@@ -1,5 +1,9 @@
 <script>
     import { userItemStore } from "../../stores/userItemStore.js";
+
+    function buy(itemId) {
+        userItemStore.buy(itemId);
+    }
 </script>
 
 {#each $userItemStore as item}
@@ -9,7 +13,7 @@
             {item.price}
         </div>
         <div>
-            <button> buy </button>
+            <button onclick={() => buy(item.item_id)}> buy </button>
         </div>
     {/if}
 {/each}
