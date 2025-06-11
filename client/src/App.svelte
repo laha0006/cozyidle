@@ -1,6 +1,8 @@
 <script>
     import { onMount } from "svelte";
 
+    import "./util/skillLevel.js";
+
     import { Router, Route } from "svelte-tiny-router";
     import { SvelteToast } from "@zerodevx/svelte-toast";
 
