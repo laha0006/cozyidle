@@ -1,6 +1,7 @@
-import { writable } from "svelte/store";
+import { get, writable } from "svelte/store";
 import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch";
+import { getLevel } from "../util/skillLevel.js";
 
 function createUserSkillsStore() {
     const { set, update, subscribe } = writable(null);
@@ -8,11 +9,17 @@ function createUserSkillsStore() {
     user.subscribe(async ($user) => {
         if ($user) {
             console.log("init skills store");
-            const skills = await getFetchWithRefresh(
+            const res = await getFetchWithRefresh(
                 "/api/users/" + $user.id + "/skills"
             );
-            console.log("userSkills,", skills);
-            set(skills);
+            const skills = res.data;
+            const skillsWithLevels = skills.map((skill) => {
+                return {
+                    ...skill,
+                    level: getLevel(skill.id, skill.experience),
+                };
+            });
+            set(skillsWithLevels);
         }
     });
 
@@ -20,17 +27,20 @@ function createUserSkillsStore() {
         subscribe,
         set,
         giveExperience: (skillId, amount) => {
-            console.log("gain!");
             update((skills) => {
+                console.log("skills: ", skills);
                 return skills.map((skill) => {
-                    console.log("map!");
                     if (skill.id !== skillId) return skill;
+                    const newExperience = skill.experience + amount;
                     return {
                         ...skill,
-                        experience: experience + amount,
+                        experience: newExperience,
+                        level: getLevel(skill.id, newExperience),
                     };
                 });
             });
+            const skills = get(userSkillsStore);
+            console.log("UPDATED:", skills);
         },
     };
 }
