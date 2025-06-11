@@ -17,6 +17,11 @@ export function authenticateToken(req, res, next) {
                 return res.status(401).send({ message: err.message });
             }
             const userFromDatabase = await getUser(decoded);
+            if (!userFromDatabase) {
+                return res
+                    .status(401)
+                    .send({ message: "User not found in database" });
+            }
             req.user = {
                 id: userFromDatabase.id,
                 username: userFromDatabase.username,
