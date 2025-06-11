@@ -111,9 +111,11 @@ CREATE TABLE IF NOT EXISTS user_experiences (
 INSERT INTO skills(name) VALUES('Fishing');
 INSERT INTO skills(name) VALUES('Hunting');
 INSERT INTO skills(name) VALUES('Logging');
+INSERT INTO skills(name) VALUES('Commerce');
 INSERT INTO resources (name, skill_id) VALUES('Salmon', 1);
 INSERT INTO resources (name, skill_id) VALUES('Boar', 2);
 INSERT INTO resources (name, skill_id) VALUES('Oak', 3);
+INSERT INTO resources (name, skill_id) VALUES('Gold', 4);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 1, 1);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Boar Hunting', 2, 2);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Oak Logging', 3, 3);
