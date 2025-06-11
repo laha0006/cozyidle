@@ -29,6 +29,7 @@ export async function idleDispatch(event, socket, data) {
                 const { idleId } = data;
 
                 const stopped = await stopIdle(userId, idleId);
+                console.log("stopped:", stopped);
                 if (!stopped) {
                     console.log("bro it's already stopped");
                     return;
