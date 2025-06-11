@@ -325,6 +325,32 @@ export async function unequipItem(userId, itemId) {
     }
 }
 
+export async function skillCheck(userId, skillId, requiredLevel) {
+    const sql = `
+        SELECT sl.level AS skill_level
+            FROM user_experiences ue
+            JOIN skill_levels sl ON sl.skill_id = ue.skill_id
+            WHERE ue.user_id = $1
+            AND ue.skill_id = $2
+            AND sl.experience_required <= ue.experience
+            ORDER BY sl.level DESC
+            LIMIT 1
+    `;
+    const client = await db.connect();
+    try {
+        const res = await client.query(sql, [userId, skillId]);
+        const userLevel = res.rows[0].skill_level;
+        if (userLevel < requiredLevel) {
+            throw new Error("You do not have the required skill level!");
+        }
+        return true;
+    } catch (error) {
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 export async function buyItem(userId, itemId) {
     const alreadyOwnedSql = `
         SELECT item_id 
@@ -334,7 +360,7 @@ export async function buyItem(userId, itemId) {
     `;
 
     const priceSql = `
-        SELECT price FROM items
+        SELECT price, skill_requirement, skill_id FROM items
         WHERE id = $1
     `;
 
@@ -351,6 +377,10 @@ export async function buyItem(userId, itemId) {
             throw new Error("You already own this item!");
         }
         const priceRes = await client.query(priceSql, [itemId]);
+        const skillReq = priceRes.rows[0].skill_requirement;
+        const skillId = priceRes.rows[0].skill_id;
+        const skillRes = await skillCheck(userId, skillId, skillReq);
+
         const price = priceRes.rows[0].price;
         const deductResourcesRes = await deductResource(userId, 4, price);
         const buy = await client.query(buySql, values);
