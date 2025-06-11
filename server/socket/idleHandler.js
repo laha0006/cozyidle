@@ -27,7 +27,7 @@ export async function idleDispatch(event, socket, data) {
         case IdleClientEvent.STOP:
             {
                 const { idleId } = data;
-
+                console.log("idle ID FOR STOP:", idleId);
                 const stopped = await stopIdle(userId, idleId);
                 console.log("stopped:", stopped);
                 if (!stopped) {

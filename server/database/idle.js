@@ -81,11 +81,13 @@ export async function stopIdle(userId, idleId) {
         factors AS (
             SELECT
                 GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed,
-                i.resource_id
+                i.resource_id,
+                i.skill_id,
+                COALESCE(ib.bonus, 0) AS bonus
             FROM idle_levels il
             JOIN idles i ON i.id = $2
             JOIN user_skill_level usl ON TRUE
-            JOIN item_bonus ib ON ib.skill_id = i.skill_id
+            LEFT JOIN item_bonus ib ON ib.skill_id = i.skill_id
             WHERE il.idle_id = $2
             AND il.level = (SELECT idle_level FROM locked)
         ),
@@ -93,15 +95,14 @@ export async function stopIdle(userId, idleId) {
             SELECT
                 l.started,
                 f.speed,
-                ib.skill_id AS skill_id,
+                f.skill_id AS skill_id,
                 f.resource_id AS resource_id,
-                ib.bonus + 1 AS bonus,
+                f.bonus + 1 AS bonus,
                 GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
                 EXTRACT(EPOCH FROM NOW()) AS now_unix
             FROM locked l
             CROSS JOIN factors f
-            CROSS JOIN item_bonus ib
         ),
         updated_resources AS (
             UPDATE user_resources ur
@@ -122,7 +123,7 @@ export async function stopIdle(userId, idleId) {
             UPDATE user_idles
             SET active = FALSE
             WHERE user_id = $1
-            AND idle_id = $1
+            AND idle_id = $2
         )
         SELECT
             ur.amount AS resource_amount,
@@ -208,13 +209,13 @@ export async function updateIdles(userId) {
                 GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))), 2) AS speed,
                 i.resource_id,
                 l.idle_id,
-                ib.bonus AS bonus,
+                COALESCE(ib.bonus, 0) AS bonus,
                 i.skill_id
             FROM idle_levels il
             JOIN idles i ON i.id = il.idle_id
             JOIN locked l ON l.idle_id = i.id AND l.idle_level = il.level
             JOIN user_skill_level usl ON usl.skill_id = i.skill_id
-            JOIN item_bonus ib ON ib.skill_id = i.skill_id
+            LEFT JOIN item_bonus ib ON ib.skill_id = i.skill_id
         ), 
         calculations AS (
             SELECT

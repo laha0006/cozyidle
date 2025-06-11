@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authenticateToken } from "../middleware/auth.js";
 import db from "../database/connection.js";
+import { updateIdles } from "../database/idle.js";
 const router = Router();
 
 router.use(authenticateToken);
@@ -64,11 +65,29 @@ router.get("/:userId/skills", async (req, res) => {
     `;
 
     try {
-        const res = await db.query(sql, [userId]);
-        res.send({ data: res.rows });
+        // await updateIdles(userId);
+        const result = await db.query(sql, [userId]);
+        res.send({ data: result.rows });
     } catch (error) {
         console.log(error);
     }
+});
+
+router.get("/:userId/resources", async (req, res) => {
+    console.log("resources!");
+    const sql = `
+    SELECT
+        ur.amount,
+        r.name,
+        r.id
+    FROM user_resources ur
+    JOIN resources r
+        ON r.id = ur.resource_id
+    `;
+
+    const result = await db.query(sql);
+    const data = result.rows;
+    res.send({ data });
 });
 
 export default router;
