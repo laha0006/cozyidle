@@ -2,6 +2,7 @@ import { derived, get, writable } from "svelte/store";
 import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
 import { socketStore } from "./socketStore.js";
+import { userSkillsStore } from "./userSkillsStore.js";
 
 const IdleServerEvent = Object.freeze({
     INIT: "idle:server:init",
@@ -41,6 +42,15 @@ function createIdleStore() {
                         resourceId,
                         resource + incrementCount * idle.increment
                     );
+                    // if (incrementCount > 0) {
+                    //     const skills = get(userSkillsStore);
+                    //     if (skills) {
+                    //         skills.giveExperience(
+                    //             idle.skill_id,
+                    //             incrementCount * idle.increment
+                    //         );
+                    //     }
+                    // }
                     return {
                         ...idle,
                         amount: resource + incrementCount,

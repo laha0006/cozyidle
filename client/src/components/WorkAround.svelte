@@ -5,9 +5,10 @@
     import { socketStore } from "../stores/socketStore.js";
     import { userItemStore } from "../stores/userItemStore.js";
     import { itemsStore } from "../stores/itemsStore.js";
+    import { userSkillsStore } from "../stores/userSkillsStore.js";
 
     onMount(() => {
-        $socketStore, $idleStore, $userItemStore, $itemsStore;
+        $socketStore, $idleStore, $userItemStore, $itemsStore, $userSkillsStore;
         setUserIfAuthenticated();
     });
 </script>

@@ -30,11 +30,6 @@
     function stop() {
         idleStore.stop(idle.idle_id);
     }
-
-    $effect(() => {
-        if ($socketStore) {
-        }
-    });
 </script>
 
 <div class="my-5">

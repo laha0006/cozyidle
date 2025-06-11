@@ -5,10 +5,6 @@
     import IdleCard from "../IdleCard/IdleCard.svelte";
     import { idleStore } from "../../stores/idleStore.js";
 
-    function test() {
-        idleStore.start(100);
-    }
-
     $effect(() => {
         // console.log($idleStore);
         // if ($idleStore) {
