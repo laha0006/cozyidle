@@ -281,9 +281,13 @@ export async function deductResource(userId, resourceId, amount) {
     const values = [userId, resourceId, amount];
     try {
         const res = await db.query(sql, values);
+        console.log("deduct:", res.rows);
+        if (res.rows.length < 1) {
+            throw Error("not enough resources!");
+        }
         return res.rows[0];
     } catch (error) {
-        console.log(error);
+        throw error;
     }
 }
 
@@ -315,6 +319,45 @@ export async function unequipItem(userId, itemId) {
         }
     } catch (error) {
         db.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
+export async function buyItem(userId, itemId) {
+    const alreadyOwnedSql = `
+        SELECT item_id 
+        FROM user_items
+        WHERE user_id = $1
+        AND item_id = $2
+    `;
+
+    const priceSql = `
+        SELECT price FROM items
+        WHERE id = $1
+    `;
+
+    const buySql = `
+        INSERT INTO user_items(user_id, item_id) VALUES($1, $2);
+    `;
+
+    const values = [userId, itemId];
+    const client = await db.connect();
+    try {
+        client.query("BEGIN");
+        const owned = await client.query(alreadyOwnedSql, values);
+        if (owned.rows.length > 0) {
+            throw new Error("You already own this item!");
+        }
+        const priceRes = await client.query(priceSql, [itemId]);
+        const price = priceRes.rows[0].price;
+        const deductResourcesRes = await deductResource(userId, 4, price);
+        const buy = await client.query(buySql, values);
+        await client.query("COMMIT");
+        return buy;
+    } catch (error) {
+        await client.query("ROLLBACK");
         throw error;
     } finally {
         client.release();
