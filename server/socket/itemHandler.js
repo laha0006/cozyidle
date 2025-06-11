@@ -30,6 +30,7 @@ export async function itemDispatch(event, socket, data) {
             break;
         case ItemClientEvent.BUY:
             {
+                console.log("BUY!");
             }
             break;
     }
