@@ -20,6 +20,7 @@ function createIdleStore() {
 
     const resources = new Map();
     let rafLoopId;
+    let skillsReady = false;
 
     function loop() {
         update((idles) => {
@@ -42,15 +43,14 @@ function createIdleStore() {
                         resourceId,
                         resource + incrementCount * idle.increment
                     );
-                    // if (incrementCount > 0) {
-                    //     const skills = get(userSkillsStore);
-                    //     if (skills) {
-                    //         skills.giveExperience(
-                    //             idle.skill_id,
-                    //             incrementCount * idle.increment
-                    //         );
-                    //     }
-                    // }
+                    if (incrementCount > 0 && userSkillsStore) {
+                        console.log("idle:", idle);
+                        userSkillsStore.giveExperience(
+                            idle.skill_id,
+                            incrementCount * idle.increment
+                        );
+                    }
+
                     return {
                         ...idle,
                         amount: resource + incrementCount,
@@ -123,6 +123,7 @@ function createIdleStore() {
                 if (resources.get(idle.resource_id)) return;
                 resources.set(idle.resource_id, idle.amount);
             });
+            console.log("Idles:", idles);
             set(idles);
             loop();
         } else {
