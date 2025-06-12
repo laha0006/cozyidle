@@ -18,16 +18,6 @@ export const ItemServerEvent = Object.freeze({
 function createUserItemStore() {
     const { subscribe, set, update } = writable(null);
 
-    const userUnsub = user.subscribe(async ($user) => {
-        if ($user) {
-            const userItems = await getFetchWithRefresh(
-                "/api/users/" + $user.id + "/items"
-            );
-            set(userItems.data);
-            console.log("items:", userItems);
-        }
-    });
-
     const socketUnsub = socketStore.subscribe(async ($socket) => {
         if ($socket) {
             $socket.on(ItemServerEvent.EQUIPPED, (data) => {

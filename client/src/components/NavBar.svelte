@@ -58,10 +58,10 @@
 >
 <button onclick={goToItem}>Item</button>
 <button onclick={goToStore}>Store</button>
-{#if !$user}
-    <button onclick={goToLogin}> Login</button>
-    <button onclick={goToSignup}> Signup</button>
-{:else}
+{#if $user}
     <button onclick={handleLogout}> Log out</button>
     {$user.id}
+{:else}
+    <button onclick={goToLogin}> Login</button>
+    <button onclick={goToSignup}> Signup</button>
 {/if}

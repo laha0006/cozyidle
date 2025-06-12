@@ -29,9 +29,8 @@ function createIdleStore() {
         update((idles) => {
             return idles.map((idle) => {
                 const resourceId = idle.resource_id;
-                const resource = resources.get(resourceId);
                 if (!idle.active) {
-                    return { ...idle, amount: resource };
+                    return idle;
                 } else {
                     const now = Date.now();
                     const speed = idle.speed * 1000;
@@ -42,18 +41,19 @@ function createIdleStore() {
                     const incrementCount = Math.floor(
                         (now - idle.lastIncrement) / speed
                     );
-                    resources.set(
-                        resourceId,
-                        resource + incrementCount * idle.increment
-                    );
+
                     if (incrementCount > 0 && userSkillsStore) {
+                        console.log("idle.lastIncrement", idle.lastIncrement);
+                        console.log(
+                            "math:",
+                            idle.lastIncrement + incrementCount * speed
+                        );
                         userSkillsStore.giveExperience(
                             idle.skill_id,
                             incrementCount * idle.increment
                         );
                     }
                     if (incrementCount > 0 && userResourcesStore) {
-                        console.log("idle.increment:", idle.increment);
                         userResourcesStore.add(
                             resourceId,
                             incrementCount * idle.increment
@@ -61,9 +61,9 @@ function createIdleStore() {
                     }
                     return {
                         ...idle,
-                        amount: resource + incrementCount,
+                        amount: idle.amount + incrementCount * idle.increment,
                         lastIncrement:
-                            idle.lastIncrement + incrementCount * speed,
+                            incrementCount > 0 ? now : idle.lastIncrement,
                         progress,
                     };
                 }
@@ -74,7 +74,6 @@ function createIdleStore() {
 
     const socketUnsub = socketStore.subscribe(async ($socketStore) => {
         if ($socketStore) {
-            console.log(">>> socket");
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 const { idleId, resourceId, resource_amount, started } = data;
                 const startedTime = Math.floor(+started);
@@ -93,7 +92,8 @@ function createIdleStore() {
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
                 const { idleId, resourceId, resource_amount } = data;
-                resources.set(resourceId, resource_amount);
+                console.log("amount:", resource_amount);
+                userResourcesStore.setResource(resourceId, resource_amount);
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idle_id !== idleId) return idle;
@@ -104,45 +104,12 @@ function createIdleStore() {
         }
     });
 
-    const userUnsub = user.subscribe(async ($user) => {
-        if ($user) {
-            const preFetchTime = Date.now();
-            const init = await getFetchWithRefresh(
-                "/api/users/" + $user.id + "/idles"
-            );
-
-            const clientNow = Date.now();
-            const latency = (clientNow - preFetchTime) / 2;
-
-            const idles = init.data.map((idle) => {
-                const startedTime = Math.floor(+idle.started);
-                const serverNow = Math.floor(+idle.now_unix);
-                const timeDiff = serverNow - clientNow;
-                const clientAdjustTime = startedTime - (timeDiff + latency);
-                return {
-                    ...idle,
-                    lastIncrement: clientAdjustTime,
-                    progress: 0,
-                };
-            });
-            idles.forEach((idle) => {
-                if (resources.get(idle.resource_id)) return;
-                resources.set(idle.resource_id, idle.amount);
-            });
-            set(idles);
-            loop();
-        } else {
-            if (rafLoopId) {
-                cancelAnimationFrame(rafLoopId);
-                rafLoopId = null;
-            }
-            set([]);
-        }
-    });
-
     return {
         subscribe,
         set,
+        loop: () => {
+            loop();
+        },
         start: async (idleId) => {
             const socket = get(socketStore);
             socket.emit(IdleClientEvent.START, { idleId: idleId });

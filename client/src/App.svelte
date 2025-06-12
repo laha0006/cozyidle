@@ -7,6 +7,7 @@
 
     import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import { authGuard } from "./util/guards.js";
+    import "./stores/init.js";
 
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";

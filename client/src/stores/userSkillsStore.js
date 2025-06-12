@@ -8,22 +8,6 @@ console.log("user Skills store script");
 function createUserSkillsStore() {
     const { set, update, subscribe } = writable(null);
 
-    user.subscribe(async ($user) => {
-        if ($user) {
-            const res = await getFetchWithRefresh(
-                "/api/users/" + $user.id + "/skills"
-            );
-            const skills = res.data;
-            const skillsWithLevels = skills.map((skill) => {
-                return {
-                    ...skill,
-                    level: getLevel(skill.id, skill.experience),
-                };
-            });
-            set(skillsWithLevels);
-        }
-    });
-
     return {
         subscribe,
         set,
