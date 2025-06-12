@@ -25,6 +25,9 @@ function createUserResourcesStore() {
         subscribe,
         set,
         add: (resourceId, amount) => {
+            console.log("ADD!");
+            console.log("resourceId:", resourceId);
+            console.log("amount:", amount);
             update((resources) => {
                 const newMap = new Map(resources);
                 const resource = resources.get(resourceId);

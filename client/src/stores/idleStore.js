@@ -53,6 +53,7 @@ function createIdleStore() {
                         );
                     }
                     if (incrementCount > 0 && userResourcesStore) {
+                        console.log("idle.increment:", idle.increment);
                         userResourcesStore.add(
                             resourceId,
                             incrementCount * idle.increment
@@ -73,10 +74,10 @@ function createIdleStore() {
 
     const socketUnsub = socketStore.subscribe(async ($socketStore) => {
         if ($socketStore) {
+            console.log(">>> socket");
             $socketStore.on(IdleServerEvent.INIT, (data) => {
                 const { idleId, resourceId, resource_amount, started } = data;
                 const startedTime = Math.floor(+started);
-                resources.set(resourceId, resource_amount);
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idle_id !== idleId) return idle;
