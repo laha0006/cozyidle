@@ -3,20 +3,19 @@ import {
     postFetch,
     postFetchWithRefresh,
     getFetchWithRefresh,
-} from "../util/fetch";
+} from "../util/fetch.js";
+console.log("user store script");
 
 export const user = writable(null);
 
 export async function setUserIfAuthenticated() {
-    // console.log("setUserIf");
+    console.log("set user");
     try {
         const json = await getFetchWithRefresh("/api/users");
         if (!get(user)) {
-            // console.log("SETTING USER");
             user.set(json.user);
         }
     } catch (error) {
-        // console.log(error.message);
         user.set(null);
     }
 }
@@ -29,6 +28,3 @@ export async function refreshUser() {
         user.set(null);
     }
 }
-// user.subscribe((value) => {
-//     console.log("changed value:", value);
-// });

@@ -3,7 +3,7 @@ import { writable, derived, get } from "svelte/store";
 import { refreshUser, setUserIfAuthenticated, user } from "./userStore.js";
 import { toast } from "@zerodevx/svelte-toast";
 import { error } from "../util/toasts.js";
-
+console.log("socket store script");
 let socket;
 export const socketStore = derived(user, async ($user, set) => {
     if ($user) {
@@ -19,14 +19,9 @@ export const socketStore = derived(user, async ($user, set) => {
             error(data.message);
         });
 
-        socket.on("connect", () => {
-            // console.log("Socket connected!");
-        });
+        socket.on("connect", () => {});
         socket.on("connect_error", (error) => {
-            // console.log("Socket error:", error);
-            // console.log("msg:", error.message);
             if (error.message === "jwt expired") {
-                // console.log("refreshing user");
                 refreshUser();
             }
         });

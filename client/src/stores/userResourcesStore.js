@@ -12,14 +12,30 @@ function createUserResourcesStore() {
                 "/api/users/" + $user.id + "/resources"
             );
             const resources = result.data;
-            console.log("resources:", resources);
-            set(resources);
+            const resourceMap = new Map();
+            resources.forEach((r) => {
+                if (resourceMap.get(r.id)) return;
+                resourceMap.set(r.id, { amount: r.amount, name: r.name });
+            });
+            set(resourceMap);
         }
     });
 
     return {
         subscribe,
         set,
+        add: (resourceId, amount) => {
+            update((resources) => {
+                const newMap = new Map(resources);
+                const resource = resources.get(resourceId);
+                const updatedResource = {
+                    ...resource,
+                    amount: resource.amount + amount,
+                };
+                newMap.set(resourceId, updatedResource);
+                return newMap;
+            });
+        },
     };
 }
 

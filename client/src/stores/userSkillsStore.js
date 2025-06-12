@@ -3,12 +3,13 @@ import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch";
 import { getLevel } from "../util/skillLevel.js";
 
+console.log("user Skills store script");
+
 function createUserSkillsStore() {
     const { set, update, subscribe } = writable(null);
 
     user.subscribe(async ($user) => {
         if ($user) {
-            console.log("init skills store");
             const res = await getFetchWithRefresh(
                 "/api/users/" + $user.id + "/skills"
             );
@@ -28,7 +29,6 @@ function createUserSkillsStore() {
         set,
         giveExperience: (skillId, amount) => {
             update((skills) => {
-                console.log("skills: ", skills);
                 return skills.map((skill) => {
                     if (skill.id !== skillId) return skill;
                     const newExperience = skill.experience + amount;
@@ -40,7 +40,6 @@ function createUserSkillsStore() {
                 });
             });
             const skills = get(userSkillsStore);
-            console.log("UPDATED:", skills);
         },
     };
 }

@@ -29,10 +29,8 @@ function createUserItemStore() {
     });
 
     const socketUnsub = socketStore.subscribe(async ($socket) => {
-        console.log("!!");
         if ($socket) {
             $socket.on(ItemServerEvent.EQUIPPED, (data) => {
-                console.log("equipped:", data);
                 update((items) => {
                     return items.map((item) => {
                         if (item.item_id !== data.itemId) return item;
@@ -44,7 +42,6 @@ function createUserItemStore() {
                 });
             });
             $socket.on(ItemServerEvent.UNEQUIPPED, (data) => {
-                console.log("unequip", data);
                 update((items) => {
                     return items.map((item) => {
                         if (item.item_id !== data.itemId) return item;
@@ -56,7 +53,6 @@ function createUserItemStore() {
                 });
             });
             $socket.on(ItemServerEvent.BOUGHT, (data) => {
-                console.log("bought", data);
                 update((items) => {
                     return items.map((item) => {
                         if (item.item_id !== data.itemId) return item;
