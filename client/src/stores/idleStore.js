@@ -3,6 +3,9 @@ import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
 import { socketStore } from "./socketStore.js";
 import { userSkillsStore } from "./userSkillsStore.js";
+import { userResourcesStore } from "./userResourcesStore.js";
+
+console.log("idle store script");
 
 const IdleServerEvent = Object.freeze({
     INIT: "idle:server:init",
@@ -44,13 +47,17 @@ function createIdleStore() {
                         resource + incrementCount * idle.increment
                     );
                     if (incrementCount > 0 && userSkillsStore) {
-                        console.log("idle:", idle);
                         userSkillsStore.giveExperience(
                             idle.skill_id,
                             incrementCount * idle.increment
                         );
                     }
-
+                    if (incrementCount > 0 && userResourcesStore) {
+                        userResourcesStore.add(
+                            resourceId,
+                            incrementCount * idle.increment
+                        );
+                    }
                     return {
                         ...idle,
                         amount: resource + incrementCount,
@@ -105,13 +112,11 @@ function createIdleStore() {
 
             const clientNow = Date.now();
             const latency = (clientNow - preFetchTime) / 2;
-            console.log("latency: ", latency);
 
             const idles = init.data.map((idle) => {
                 const startedTime = Math.floor(+idle.started);
                 const serverNow = Math.floor(+idle.now_unix);
                 const timeDiff = serverNow - clientNow;
-                console.log("timeDiff:", timeDiff);
                 const clientAdjustTime = startedTime - (timeDiff + latency);
                 return {
                     ...idle,
@@ -123,7 +128,6 @@ function createIdleStore() {
                 if (resources.get(idle.resource_id)) return;
                 resources.set(idle.resource_id, idle.amount);
             });
-            console.log("Idles:", idles);
             set(idles);
             loop();
         } else {
