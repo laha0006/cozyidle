@@ -32,29 +32,13 @@ user.subscribe(async ($user) => {
         const idles = idleData.data.map((idle) => {
             const startedTime = Math.floor(+idle.started);
             const serverNow = Math.floor(+idle.now_unix);
-            const timeDiff = serverNow - clientNow;
-            const clientAdjustTime = startedTime - (timeDiff - latency);
-
-            // Debug logging
-            if (idle.idle_id === 1) {
-                console.log("=== TIME CALCULATION DEBUG ===");
-                console.log("startedTime (server):", startedTime);
-                console.log("serverNow:", serverNow);
-                console.log("clientNow:", clientNow);
-                console.log("timeDiff (server-client):", timeDiff);
-                console.log("latency:", latency);
-                console.log("clientAdjustTime:", clientAdjustTime);
-                console.log(
-                    "Time since start (client calc):",
-                    Date.now() - clientAdjustTime
-                );
-                console.log("Speed (ms):", idle.speed * 1000);
-                console.log("===============================");
-            }
+            const timeDiff = serverNow + latency - clientNow;
+            console.log("timeDiff:", timeDiff);
+            const clientAdjustTime = startedTime - timeDiff;
 
             return {
                 ...idle,
-                lastIncrement: clientAdjustTime,
+                lastIncrement: startedTime,
                 progress: 0,
             };
         });

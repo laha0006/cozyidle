@@ -33,7 +33,7 @@ function createIdleStore() {
                     return idle;
                 } else {
                     const now = Date.now();
-                    const speed = idle.speed * 1000;
+                    const speed = idle.speed * 1000 + 100;
                     const progress = Math.min(
                         (now - idle.lastIncrement) / speed,
                         1
@@ -49,12 +49,10 @@ function createIdleStore() {
                         );
                     }
                     if (incrementCount > 0 && userResourcesStore) {
-                        console.log("before add");
                         userResourcesStore.add(
                             resourceId,
                             incrementCount * idle.increment
                         );
-                        console.log("after add");
                     }
                     return {
                         ...idle,
@@ -66,14 +64,19 @@ function createIdleStore() {
                 }
             });
         });
+
         rafLoopId = requestAnimationFrame(loop);
     }
 
     const socketUnsub = socketStore.subscribe(async ($socketStore) => {
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
+                const now = Date.now();
                 const { idleId, resourceId, resource_amount, started } = data;
                 const startedTime = Math.floor(+started);
+                console.log("started: ", startedTime);
+                console.log("now    : ", now);
+                console.log("diff   : ", now - startedTime);
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idle_id !== idleId) return idle;
@@ -89,7 +92,7 @@ function createIdleStore() {
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
                 const { idleId, resourceId, resource_amount } = data;
-                console.log("amount:", resource_amount);
+                // console.log("amount:", resource_amount);
                 userResourcesStore.setResource(resourceId, resource_amount);
                 update((idles) => {
                     return idles.map((idle) => {

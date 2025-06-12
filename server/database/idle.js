@@ -49,6 +49,8 @@ export async function startIdle(userId, idleId) {
 
 export async function stopIdle(userId, idleId) {
     const client = await db.connect();
+    // GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
+
     try {
         await client.query("BEGIN");
 
@@ -98,12 +100,28 @@ export async function stopIdle(userId, idleId) {
                 f.speed,
                 f.skill_id AS skill_id,
                 f.resource_id AS resource_id,
-                f.bonus + 1 AS bonus,
-                GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
+                f.bonus + 1 AS bonus, 
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
-                EXTRACT(EPOCH FROM NOW()) AS now_unix
+                ct.now_unix,
+                ct.elapsed_seconds,
+                CASE 
+                    WHEN ct.elapsed_seconds < f.speed THEN
+                        CASE WHEN ct.elapsed_seconds >= (f.speed - 0.25) THEN 1 ELSE 0 END
+                    ELSE
+                        FLOOR(ct.elapsed_seconds / f.speed) + 
+                        CASE 
+                            WHEN (ct.elapsed_seconds % f.speed) >= (f.speed - 0.25) THEN 1 
+                            ELSE 0 
+                        END
+                END AS increment
             FROM locked l
-            CROSS JOIN factors f
+            CROSS JOIN factors f 
+            CROSS JOIN (
+                    SELECT 
+                        EXTRACT(EPOCH FROM NOW()) AS now_unix,
+                        EXTRACT(EPOCH FROM (NOW() - l.started)) AS elapsed_seconds
+                    FROM locked l
+                ) AS ct
         ),
         updated_resources AS (
             UPDATE user_resources ur
@@ -225,7 +243,16 @@ export async function updateIdles(userId) {
                 f.bonus + 1 AS bonus,
                 l.idle_id As idle_id,
                 f.resource_id AS resource_id,
-                GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
+                CASE 
+                    WHEN EXTRACT(EPOCH FROM (NOW() - l.started)) < f.speed THEN
+                        CASE WHEN EXTRACT(EPOCH FROM (NOW() - l.started)) >= (f.speed - 0.25) THEN 1 ELSE 0 END
+                    ELSE
+                        FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed) + 
+                        CASE 
+                            WHEN (EXTRACT(EPOCH FROM (NOW() - l.started)) % f.speed) >= (f.speed - 0.25) THEN 1 
+                            ELSE 0 
+                        END
+                END AS increment,
                 EXTRACT(EPOCH FROM l.started) AS started_unix,
                 EXTRACT(EPOCH FROM NOW()) AS now_unix
             FROM locked l
