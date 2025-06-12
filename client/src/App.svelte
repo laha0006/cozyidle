@@ -1,12 +1,11 @@
 <script>
-    //svelte
     import { onMount } from "svelte";
 
     import { Router, Route } from "svelte-tiny-router";
     import { SvelteToast } from "@zerodevx/svelte-toast";
 
-    import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import { authGuard } from "./util/guards.js";
+    import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import "./stores/init.js";
 
     import Test from "./components/Test.svelte";
