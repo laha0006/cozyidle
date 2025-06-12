@@ -65,7 +65,7 @@ router.get("/:userId/skills", async (req, res) => {
     `;
 
     try {
-        // await updateIdles(userId);
+        await updateIdles(userId);
         const result = await db.query(sql, [userId]);
         res.send({ data: result.rows });
     } catch (error) {
@@ -74,6 +74,7 @@ router.get("/:userId/skills", async (req, res) => {
 });
 
 router.get("/:userId/resources", async (req, res) => {
+    const { userId } = req.params;
     console.log("resources!");
     const sql = `
     SELECT
@@ -85,6 +86,7 @@ router.get("/:userId/resources", async (req, res) => {
         ON r.id = ur.resource_id
     `;
 
+    await updateIdles(userId);
     const result = await db.query(sql);
     const data = result.rows;
     res.send({ data });
