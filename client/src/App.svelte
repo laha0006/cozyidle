@@ -1,16 +1,12 @@
 <script>
+    //svelte
     import { onMount } from "svelte";
-
-    import "./util/skillLevel.js";
 
     import { Router, Route } from "svelte-tiny-router";
     import { SvelteToast } from "@zerodevx/svelte-toast";
 
     import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import { authGuard } from "./util/guards.js";
-
-    import { idleStore } from "./stores/idleStore.js";
-    import { socketStore } from "./stores/socketStore.js";
 
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
@@ -24,27 +20,6 @@
     import ItemStore from "./components/ItemStore/ItemStore.svelte";
 
     const guards = [authGuard];
-
-    // $effect(() => {
-    //     if ($user) {
-    //         initSocket();
-    //     } else {
-    //         disconnectSocket();
-    //     }
-    // });
-
-    // $effect(() => {
-    //     if ($user) {
-    //         console.log("APP.svelte EFFECT!!!");
-    //     } else {
-    //         console.log("Tested!");
-    //     }
-    // });
-
-    // onMount(() => {
-    //     console.log(">>>>>>>>>>>>>>>>>>>>>>>> ON MOUNTED");
-    //     setUserIfAuthenticated();
-    // });
 </script>
 
 <main class="bg-slate-900 text-white h-screen">
@@ -66,15 +41,11 @@
             </div>
             <Route path="/">
                 <h1 class="">Home</h1>
-                {#if $socketStore}
-                    <h1>Derived yay</h1>
-                {/if}
                 {#if $user}
                     <h1>{$user.id}</h1>
                 {:else}
                     <h1>No user</h1>
                 {/if}
-                {$socketStore}
             </Route>
             <Route path="/login" component={Login} />
             <Route path="/signup" component={Signup} />
