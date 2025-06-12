@@ -3,13 +3,10 @@
     import ProgressBar from "../ProgressBar/ProgressBar.svelte";
     import { socketStore } from "../../stores/socketStore.js";
     import { idleStore } from "../../stores/idleStore.js";
+    import { userResourcesStore } from "../../stores/userResourcesStore.js";
 
     const { idle } = $props();
-
-    onMount(() => {
-        // console.log("idle:", idle);
-        // console.log("acitve:", idle.active);
-    });
+    const resource = $derived($userResourcesStore.get(idle.resource_id));
 
     const IdleServerEvent = Object.freeze({
         INIT: "idle:server:init",
@@ -35,7 +32,7 @@
 <div class="my-5">
     <h1>{idle.idle}</h1>
     <div>
-        {idle.amount}
+        {resource.amount}
     </div>
     <progress class="progress-bar" value={idle.progress}></progress>
     <div>
