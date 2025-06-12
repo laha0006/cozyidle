@@ -40,6 +40,7 @@ export async function startIdle(userId, idleId) {
     const values = [userId, idleId];
     try {
         const res = await db.query(sql, values);
+        console.log("started:", res.rows[0]);
         return res;
     } catch (error) {
         console.log(error);
@@ -136,7 +137,6 @@ export async function stopIdle(userId, idleId) {
     `;
 
         const res = await client.query(sql, [userId, idleId]);
-        console.log("stopped res", res);
         await client.query("COMMIT");
         return res.rows[0];
     } catch (err) {

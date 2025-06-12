@@ -43,28 +43,25 @@ function createIdleStore() {
                     );
 
                     if (incrementCount > 0 && userSkillsStore) {
-                        console.log("idle.lastIncrement", idle.lastIncrement);
-                        console.log(
-                            "math:",
-                            idle.lastIncrement + incrementCount * speed
-                        );
                         userSkillsStore.giveExperience(
                             idle.skill_id,
                             incrementCount * idle.increment
                         );
                     }
                     if (incrementCount > 0 && userResourcesStore) {
+                        console.log("before add");
                         userResourcesStore.add(
                             resourceId,
                             incrementCount * idle.increment
                         );
+                        console.log("after add");
                     }
                     return {
                         ...idle,
                         amount: idle.amount + incrementCount * idle.increment,
                         lastIncrement:
-                            incrementCount > 0 ? now : idle.lastIncrement,
-                        progress,
+                            idle.lastIncrement + incrementCount * speed,
+                        progress: progress,
                     };
                 }
             });
@@ -80,9 +77,9 @@ function createIdleStore() {
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idle_id !== idleId) return idle;
+                        console.log("changed init");
                         return {
                             ...idle,
-                            started: startedTime,
                             active: true,
                             lastIncrement: Date.now(),
                         };

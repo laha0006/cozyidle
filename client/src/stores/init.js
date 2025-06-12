@@ -11,37 +11,53 @@ user.subscribe(async ($user) => {
     if ($user) {
         const userId = $user.id;
 
-        const idlePromise = getFetchWithRefresh(`api/users/${userId}/idles`);
+        const preFetchTime = Date.now();
+        const idleData = await getFetchWithRefresh(`api/users/${userId}/idles`);
+        const clientNow = Date.now();
+        const latency = (clientNow - preFetchTime) / 2;
+        console.log("Latency:", latency);
+
         const resourcesPromise = getFetchWithRefresh(
             `api/users/${userId}/resources`
         );
         const skillsPromise = getFetchWithRefresh(`api/users/${userId}/skills`);
         const itemsPromise = getFetchWithRefresh(`api/users/${userId}/items`);
 
-        const preFetchTime = Date.now();
-        const [idleData, resourcesData, skillsData, itemsdata] =
-            await Promise.all([
-                idlePromise,
-                resourcesPromise,
-                skillsPromise,
-                itemsPromise,
-            ]);
-
-        const clientNow = Date.now();
-        const latency = clientNow - preFetchTime;
+        const [resourcesData, skillsData, itemsdata] = await Promise.all([
+            resourcesPromise,
+            skillsPromise,
+            itemsPromise,
+        ]);
 
         const idles = idleData.data.map((idle) => {
             const startedTime = Math.floor(+idle.started);
             const serverNow = Math.floor(+idle.now_unix);
             const timeDiff = serverNow - clientNow;
-            console.log("time diff:", timeDiff);
-            const clientAdjustTime = startedTime - (timeDiff + latency);
+            const clientAdjustTime = startedTime - (timeDiff - latency);
+
+            // Debug logging
+            if (idle.idle_id === 1) {
+                console.log("=== TIME CALCULATION DEBUG ===");
+                console.log("startedTime (server):", startedTime);
+                console.log("serverNow:", serverNow);
+                console.log("clientNow:", clientNow);
+                console.log("timeDiff (server-client):", timeDiff);
+                console.log("latency:", latency);
+                console.log("clientAdjustTime:", clientAdjustTime);
+                console.log(
+                    "Time since start (client calc):",
+                    Date.now() - clientAdjustTime
+                );
+                console.log("Speed (ms):", idle.speed * 1000);
+                console.log("===============================");
+            }
+
             return {
                 ...idle,
                 lastIncrement: clientAdjustTime,
+                progress: 0,
             };
         });
-        idleStore.set(idles);
 
         const resources = resourcesData.data;
         const resourceMap = new Map();
@@ -63,8 +79,7 @@ user.subscribe(async ($user) => {
         const items = itemsdata.data;
         userItemStore.set(items);
 
+        idleStore.set(idles);
         idleStore.loop();
-
-        console.log("Latency:", latency);
     }
 });

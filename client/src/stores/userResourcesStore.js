@@ -22,6 +22,7 @@ function createUserResourcesStore() {
             });
         },
         add: (resourceId, amount) => {
+            console.log(">>> add <<<");
             update((resources) => {
                 const newMap = new Map(resources);
                 const resource = resources.get(resourceId);
