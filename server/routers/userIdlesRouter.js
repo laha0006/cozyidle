@@ -43,7 +43,7 @@ router.get("/:userId/idles", async (req, res) => {
             ui.active AS active,
             GREATEST(FLOOR((il.speed_seconds * POWER(0.98, usl.skill_level))),2) AS speed,
             ui.level AS level,
-            ib.bonus AS bonus,
+            COALESCE(ib.bonus, 0) AS bonus,
             EXTRACT(EPOCH FROM ui.started) * 1000 AS started
         FROM user_idles ui
             JOIN idles i
