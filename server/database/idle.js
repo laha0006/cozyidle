@@ -32,18 +32,40 @@ export async function initIdleForUser(userId) {
 }
 
 export async function startIdle(userId, idleId) {
+    const checkActiveForSkillSql = `
+        SELECT 1
+        FROM user_idles ui
+        JOIN idles i ON ui.idle_id = i.id
+        WHERE ui.active = TRUE
+        AND i.skill_id = (SELECT skill_id FROM idles WHERE id = $2)
+        AND ui.user_id = $1
+        LIMIT 1
+    `;
+
     const sql = `UPDATE user_idles SET started = NOW(), active = TRUE 
         WHERE user_id = $1
         AND idle_id = $2
         AND active = FALSE 
         RETURNING active, EXTRACT(EPOCH FROM started) AS started_unix`;
     const values = [userId, idleId];
+    const client = await db.connect();
     try {
-        const res = await db.query(sql, values);
-        console.log("started:", res.rows[0]);
+        const checkActiveRes = await client.query(
+            checkActiveForSkillSql,
+            values
+        );
+        console.log("active res rows:", checkActiveRes.rows);
+        if (checkActiveRes.rows.length > 0) {
+            throw new Error("You can only have one active idle per skill");
+        }
+        const res = await client.query(sql, values);
+        await client.query("COMMIT");
         return res;
     } catch (error) {
-        console.log(error);
+        await client.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
     }
 }
 
@@ -172,7 +194,9 @@ export async function getIdle(userId, idleId) {
             r.amount                    AS resource_amount,
             r.id                        AS resource_id,
             l.speed_seconds             AS speed,
-            i.level                     AS level
+            i.level                     AS level,
+            EXTRACT(EPOCH FROM NOW()) * 1000 as server_now,
+            (EXTRACT(EPOCH FROM NOW()) * 1000) - (EXTRACT(EPOCH FROM started) * 1000) AS diff
         FROM user_idles i
             JOIN user_resources r
                 ON r.user_id = i.user_id

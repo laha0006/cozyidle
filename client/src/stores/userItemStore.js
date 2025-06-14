@@ -2,7 +2,6 @@ import { get, writable } from "svelte/store";
 import { user } from "./userStore.js";
 import { socketStore } from "./socketStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
-console.log("user item store script");
 export const ItemClientEvent = Object.freeze({
     EQUIP: "item:client:equip",
     UNEQIUP: "item:client:unequip",

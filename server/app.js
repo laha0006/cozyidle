@@ -21,6 +21,8 @@ import itemsRouter from "./routers/itemsRouter.js";
 app.use("/api", itemsRouter);
 import skillsRouter from "./routers/skillsRouter.js";
 app.use(skillsRouter);
+import timeRouter from "./routers/timeRouter.js";
+app.use(timeRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {

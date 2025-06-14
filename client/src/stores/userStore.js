@@ -4,12 +4,10 @@ import {
     postFetchWithRefresh,
     getFetchWithRefresh,
 } from "../util/fetch.js";
-console.log("user store script");
 
 export const user = writable(null);
 
 export async function setUserIfAuthenticated() {
-    console.log("set user");
     try {
         const json = await getFetchWithRefresh("/api/users");
         if (!get(user)) {

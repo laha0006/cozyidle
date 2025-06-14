@@ -5,8 +5,6 @@ import { socketStore } from "./socketStore.js";
 import { userSkillsStore } from "./userSkillsStore.js";
 import { userResourcesStore } from "./userResourcesStore.js";
 
-console.log("idle store script");
-
 const IdleServerEvent = Object.freeze({
     INIT: "idle:server:init",
     UPDATE: "idle:server:update",
@@ -24,6 +22,7 @@ function createIdleStore() {
     const resources = new Map();
     let rafLoopId;
     let skillsReady = false;
+    let lastLoop;
 
     function loop() {
         update((idles) => {
@@ -33,7 +32,8 @@ function createIdleStore() {
                     return idle;
                 } else {
                     const now = Date.now();
-                    const speed = idle.speed * 1000 + 100;
+                    // const now = Date.now() + idle.offset;
+                    const speed = idle.speed * 1000;
                     const progress = Math.min(
                         (now - idle.lastIncrement) / speed,
                         1
@@ -41,6 +41,10 @@ function createIdleStore() {
                     const incrementCount = Math.floor(
                         (now - idle.lastIncrement) / speed
                     );
+                    if (incrementCount > 0) {
+                        console.log(">now :", now);
+                        console.log(">linc:", idle.lastIncrement);
+                    }
 
                     if (incrementCount > 0 && userSkillsStore) {
                         userSkillsStore.giveExperience(
@@ -60,6 +64,7 @@ function createIdleStore() {
                         lastIncrement:
                             idle.lastIncrement + incrementCount * speed,
                         progress: progress,
+                        og: incrementCount > 0 ? Date.now() : idle.og,
                     };
                 }
             });
@@ -71,20 +76,31 @@ function createIdleStore() {
     const socketUnsub = socketStore.subscribe(async ($socketStore) => {
         if ($socketStore) {
             $socketStore.on(IdleServerEvent.INIT, (data) => {
-                const now = Date.now();
-                const { idleId, resourceId, resource_amount, started } = data;
+                const clientNow = Date.now();
+                const {
+                    idleId,
+                    resourceId,
+                    resource_amount,
+                    started,
+                    server_now,
+                    diff,
+                } = data;
                 const startedTime = Math.floor(+started);
-                console.log("started: ", startedTime);
-                console.log("now    : ", now);
-                console.log("diff   : ", now - startedTime);
+                const serverNow = Math.floor(+server_now);
+                const offset = server_now - clientNow;
+                console.log("diff:", typeof diff);
+                console.log("diff:", +diff);
+                const now = Date.now();
+                console.log("now :", now);
+                console.log("linc:", now + +diff);
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idle_id !== idleId) return idle;
-                        console.log("changed init");
                         return {
                             ...idle,
                             active: true,
                             lastIncrement: Date.now(),
+                            offset,
                         };
                     });
                 });
@@ -92,11 +108,13 @@ function createIdleStore() {
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
                 const { idleId, resourceId, resource_amount } = data;
-                // console.log("amount:", resource_amount);
                 userResourcesStore.setResource(resourceId, resource_amount);
+                console.log("stop:", Date.now());
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idle_id !== idleId) return idle;
+                        console.log(">> stopped started:", idle.started);
+                        console.log("soff:", Date.now() + idle.offset);
                         return { ...idle, active: false, progress: 0 };
                     });
                 });
@@ -116,9 +134,24 @@ function createIdleStore() {
         },
         stop: async (idleId) => {
             const socket = get(socketStore);
+            const store = get(idleStore);
+            const idle = store.find((idle) => idle.idle_id === idleId);
+            const startedTime = Math.floor(+idle.started);
             socket.emit(IdleClientEvent.STOP, { idleId: idleId });
         },
     };
 }
 
 export const idleStore = createIdleStore();
+export const idleBySkillStore = derived(idleStore, ($idleStore, set) => {
+    const idlesBySkill = [];
+    $idleStore.forEach((idle) => {
+        const skill = idle.skill_id;
+        if (!idlesBySkill[skill - 1]) {
+            idlesBySkill[skill - 1] = [idle];
+        } else {
+            idlesBySkill[skill - 1].push(idle);
+        }
+    });
+    set(idlesBySkill);
+});

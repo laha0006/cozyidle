@@ -1,7 +1,6 @@
 import { get, writable } from "svelte/store";
 import { user } from "./userStore";
 import { getFetchWithRefresh } from "../util/fetch";
-console.log("resources script");
 
 function createUserResourcesStore() {
     const { set, update, subscribe } = writable(null);

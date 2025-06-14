@@ -12,16 +12,23 @@ export async function idleDispatch(event, socket, data) {
         case IdleClientEvent.START:
             {
                 const { idleId } = data;
-                await startIdle(userId, idleId);
-                const init = await getIdle(userId, idleId);
-                socket.emit(IdleServerEvent.INIT, {
-                    idleId,
-                    resourceId: init.resource_id,
-                    resource_amount: init.resource_amount,
-                    started: init.started_unix,
-                    speed: init.speed,
-                    level: init.level,
-                });
+                console.log("started!");
+                try {
+                    await startIdle(userId, idleId);
+                    const init = await getIdle(userId, idleId);
+                    socket.emit(IdleServerEvent.INIT, {
+                        idleId,
+                        resourceId: init.resource_id,
+                        resource_amount: init.resource_amount,
+                        started: init.started_unix,
+                        speed: init.speed,
+                        level: init.level,
+                        diff: init.diff,
+                        server_now: init.server_now,
+                    });
+                } catch (error) {
+                    socket.emit("error", { message: error.message });
+                }
             }
             break;
         case IdleClientEvent.STOP:

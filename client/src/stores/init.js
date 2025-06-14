@@ -10,11 +10,13 @@ import { getLevel } from "../util/skillLevel.js";
 user.subscribe(async ($user) => {
     if ($user) {
         const userId = $user.id;
-
         const preFetchTime = Date.now();
-        const idleData = await getFetchWithRefresh(`api/users/${userId}/idles`);
+        const ping = await getFetchWithRefresh("/api/now");
         const clientNow = Date.now();
         const latency = (clientNow - preFetchTime) / 2;
+        console.log("init diff", ping.now + latency - clientNow);
+        const idleData = await getFetchWithRefresh(`api/users/${userId}/idles`);
+        console.log("CLIENT NOW:", clientNow);
         console.log("Latency:", latency);
 
         const resourcesPromise = getFetchWithRefresh(
@@ -31,15 +33,14 @@ user.subscribe(async ($user) => {
 
         const idles = idleData.data.map((idle) => {
             const startedTime = Math.floor(+idle.started);
-            const serverNow = Math.floor(+idle.now_unix);
-            const timeDiff = serverNow + latency - clientNow;
-            console.log("timeDiff:", timeDiff);
-            const clientAdjustTime = startedTime - timeDiff;
-
+            const serverTime = Math.floor(+idle.now_unix);
+            const timeDiff = serverTime - clientNow;
+            const clientAdjustTime = clientNow - (serverTime - startedTime);
+            const diff = Number(idle.diff);
             return {
                 ...idle,
-                lastIncrement: startedTime,
-                progress: 0,
+                lastIncrement: Date.now() - diff,
+                offset: timeDiff,
             };
         });
 
@@ -63,6 +64,7 @@ user.subscribe(async ($user) => {
         const items = itemsdata.data;
         userItemStore.set(items);
 
+        console.log("idles:", idles);
         idleStore.set(idles);
         idleStore.loop();
     }

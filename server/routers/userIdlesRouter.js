@@ -75,12 +75,14 @@ router.get("/:userId/idles", async (req, res) => {
             speed,
             bonus+1 AS increment,
             started,
+            (EXTRACT(EPOCH FROM NOW()) * 1000) - started AS diff,
             level,
             now_unix
         FROM init`;
 
     const { rows } = await db.query(sql, [userId]);
-    rows.started = Number(rows.started);
+    rows[0].started = Number(rows[0].started);
+    console.log("INIT STARTED:", rows[0].started);
     res.send({ data: rows });
 });
 

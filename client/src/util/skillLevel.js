@@ -1,5 +1,4 @@
 import { getFetchWithRefresh } from "./fetch";
-console.log("skill level script");
 const skillLevels = await getFetchWithRefresh("/api/skills/levels");
 
 const levelMap = new Map();

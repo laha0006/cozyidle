@@ -3,8 +3,6 @@ import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch";
 import { getLevel } from "../util/skillLevel.js";
 
-console.log("user Skills store script");
-
 function createUserSkillsStore() {
     const { set, update, subscribe } = writable(null);
 
