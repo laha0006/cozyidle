@@ -39,7 +39,7 @@ user.subscribe(async ($user) => {
             const diff = Number(idle.diff);
             return {
                 ...idle,
-                lastIncrement: Date.now() - diff,
+                lastIncrement: Date.now() - (diff + 100),
                 offset: timeDiff,
             };
         });
