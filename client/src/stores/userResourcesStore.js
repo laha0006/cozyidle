@@ -12,6 +12,9 @@ function createUserResourcesStore() {
             update((resources) => {
                 const newMap = new Map(resources);
                 const resource = resources.get(resourceId);
+                if (amount < resource.amount) {
+                    console.log(">>> DECREMENT <<<");
+                }
                 const updatedResource = {
                     ...resource,
                     amount: amount,

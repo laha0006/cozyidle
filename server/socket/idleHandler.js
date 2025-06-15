@@ -6,13 +6,17 @@ import {
 } from "../database/idle.js";
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
+let startedTime;
+let stoppedTime;
+
 export async function idleDispatch(event, socket, data) {
     const userId = socket.userId;
     switch (event) {
         case IdleClientEvent.START:
             {
                 const { idleId } = data;
-                console.log("started!");
+                startedTime = Date.now();
+                console.log("started!", startedTime);
                 try {
                     await startIdle(userId, idleId);
                     const init = await getIdle(userId, idleId);
@@ -34,6 +38,9 @@ export async function idleDispatch(event, socket, data) {
         case IdleClientEvent.STOP:
             {
                 const { idleId } = data;
+                stoppedTime = Date.now();
+                console.log("stopped!", stoppedTime);
+                console.log("diff   :", stoppedTime - startedTime);
                 console.log("idle ID FOR STOP:", idleId);
                 const stopped = await stopIdle(userId, idleId);
                 console.log("stopped:", stopped);

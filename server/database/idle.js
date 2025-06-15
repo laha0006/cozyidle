@@ -128,11 +128,11 @@ export async function stopIdle(userId, idleId) {
                 ct.elapsed_seconds,
                 CASE 
                     WHEN ct.elapsed_seconds < f.speed THEN
-                        CASE WHEN ct.elapsed_seconds >= (f.speed - 0.25) THEN 1 ELSE 0 END
+                        CASE WHEN ct.elapsed_seconds >= (f.speed - 1.1) THEN 1 ELSE 0 END
                     ELSE
                         FLOOR(ct.elapsed_seconds / f.speed) + 
                         CASE 
-                            WHEN (ct.elapsed_seconds % f.speed) >= (f.speed - 0.25) THEN 1 
+                            WHEN (ct.elapsed_seconds % f.speed) >= (f.speed - 1.1) THEN 1 
                             ELSE 0 
                         END
                 END AS increment
@@ -269,11 +269,11 @@ export async function updateIdles(userId) {
                 f.resource_id AS resource_id,
                 CASE 
                     WHEN EXTRACT(EPOCH FROM (NOW() - l.started)) < f.speed THEN
-                        CASE WHEN EXTRACT(EPOCH FROM (NOW() - l.started)) >= (f.speed - 0.25) THEN 1 ELSE 0 END
+                        CASE WHEN EXTRACT(EPOCH FROM (NOW() - l.started)) >= (f.speed - 1.1) THEN 1 ELSE 0 END
                     ELSE
                         FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed) + 
                         CASE 
-                            WHEN (EXTRACT(EPOCH FROM (NOW() - l.started)) % f.speed) >= (f.speed - 0.25) THEN 1 
+                            WHEN (EXTRACT(EPOCH FROM (NOW() - l.started)) % f.speed) >= (f.speed - 1.1) THEN 1 
                             ELSE 0 
                         END
                 END AS increment,

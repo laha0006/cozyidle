@@ -45,8 +45,7 @@ user.subscribe(async ($user) => {
             }
             return {
                 ...idle,
-                lastIncrement: Date.now() + timeDiff - diff,
-                perf: performance.now() + diff,
+                lastIncrement: startedTime,
                 offset: timeDiff,
             };
         });
