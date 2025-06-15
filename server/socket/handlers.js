@@ -18,41 +18,20 @@ export function registerIdleHandlers(socket) {
             const locks = userLocks.get(userId);
             const { idleId } = data;
             const lock = locks.get(idleId);
-            console.log("LOCK:", lock);
             if (!lock) {
-                console.log("no lock?");
-                locks.set(idleId, { ts: Date.now(), count: 0 });
+                locks.set(idleId, Date.now());
             } else {
                 const now = Date.now();
-                const diff = now - lock.ts;
-                const blocked = lock.blocked;
-                if (blocked) {
-                    const blockDiff = blocked - now;
-                    console.log("blockDiff:", blockDiff);
-                    if (blockDiff < 0) {
-                        lock.blocked = null;
-                        lock.count = 0;
-                    } else {
-                        socket.emit("error", {
-                            message: `Locked for ${blockDiff / 1000} seconds`,
-                        });
-                        return;
-                    }
-                }
-                if (diff < 500) {
-                    console.log("still counting");
-                    lock.count++;
-                    if (lock.count > 5) {
-                        console.log("COUNT:", lock.count);
-                        lock.blocked = Date.now() + 5000;
-                        socket.emit("error", { message: "Take a chill pill!" });
-                        return;
-                    }
+                const diff = now - lock;
+                if (diff < 300) {
+                    socket.emit("error", {
+                        message: "only one action per idle per 300ms!",
+                    });
+                    return;
                 }
             }
             await idleDispatch(event, socket, data); // });
-            const oldLock = locks.get(idleId);
-            locks.set(idleId, { ts: Date.now(), count: oldLock.count });
+            locks.set(idleId, Date.now());
         });
     });
 
