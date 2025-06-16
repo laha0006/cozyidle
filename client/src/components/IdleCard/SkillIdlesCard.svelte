@@ -6,6 +6,7 @@
 
     const { idles } = $props();
     const skillName = $derived(idles[0].skill);
+    const hasOneActive = $derived(idles.some((idle) => idle.active));
     let showList = $state(false);
 
     let selected = $state(idles[0].idle_id);
@@ -42,6 +43,7 @@
         <div class=""></div>
         <div class="my-0 py-0">
             <h1>{skillName}</h1>
+            {hasOneActive}
         </div>
         <div class="">
             <button onclick={toggleShowList}>Select</button>
@@ -57,12 +59,13 @@
                     animate:flip={{
                         duration: 400,
                     }}
-                    disabled={!idlesById.get(id).unlocked}
+                    disabled={!idlesById.get(id).unlocked ||
+                        (hasOneActive && selected !== id)}
                 >
                     <IdleCard
                         idle={idlesById.get(id)}
                         selected={selected === id}
-                        controls={false}
+                        controls={selected === id}
                     />
                 </button>
             {/each}

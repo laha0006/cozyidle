@@ -4,6 +4,7 @@ import { userItemStore } from "./userItemStore";
 import { userSkillsStore } from "./userSkillsStore";
 import { userResourcesStore } from "./userResourcesStore";
 import { getFetchWithRefresh } from "../util/fetch.js";
+import { upgradesStore } from "./upgradesStore.js";
 import { user } from "./userStore.js";
 import { getLevel } from "../util/skillLevel.js";
 
@@ -24,12 +25,15 @@ user.subscribe(async ($user) => {
         );
         const skillsPromise = getFetchWithRefresh(`api/users/${userId}/skills`);
         const itemsPromise = getFetchWithRefresh(`api/users/${userId}/items`);
+        const upgradesPromise = getFetchWithRefresh("/api/idles/upgrades");
 
-        const [resourcesData, skillsData, itemsdata] = await Promise.all([
-            resourcesPromise,
-            skillsPromise,
-            itemsPromise,
-        ]);
+        const [resourcesData, skillsData, itemsdata, upgradesData] =
+            await Promise.all([
+                resourcesPromise,
+                skillsPromise,
+                itemsPromise,
+                upgradesPromise,
+            ]);
         const perfNow = performance.now();
         const idles = idleData.data.map((idle) => {
             if (!idle.active) return idle;
@@ -70,6 +74,18 @@ user.subscribe(async ($user) => {
         const items = itemsdata.data;
         userItemStore.set(items);
 
+        const upgrades = upgradesData.data;
+        const upgradeMap = new Map();
+        upgrades.forEach((upgrade) => {
+            const mapEntry = upgradeMap.get(upgrade.idle_id);
+            if (!mapEntry) {
+                upgradeMap.set(upgrade.idle_id, [upgrade]);
+            } else {
+                mapEntry.push(upgrade);
+            }
+        });
+        upgradesStore.set(upgradeMap);
+        console.log("upgradeMAp:", upgradeMap);
         console.log("idles:", idles);
         idleStore.set(idles);
         idleStore.loop();
