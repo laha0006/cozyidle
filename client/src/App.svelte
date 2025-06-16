@@ -22,7 +22,9 @@
     const guards = [authGuard];
 </script>
 
-<main class="bg-slate-900 text-white h-screen">
+<main
+    class="bg-background text-foreground container overflow-y-auto min-h-screen min-w-screen"
+>
     <div class="text-center text-2xl font-bold">
         <SvelteToast
             options={{
