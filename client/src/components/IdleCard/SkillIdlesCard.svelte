@@ -26,10 +26,16 @@
     const idlesById = $derived(new Map(idles.map((i) => [i.idle_id, i])));
 
     function toggleShowList() {
+        if (idles.length === 1) return;
         showList = !showList;
     }
 
     function selectIdle(idleId) {
+        if (
+            !idlesById.get(idleId).unlocked ||
+            (hasOneActive && selected !== idleId)
+        )
+            return;
         selected = idleId;
         sortedIds = sortedIds.sort((a, b) => {
             if (a === selected) return -1;
@@ -58,7 +64,7 @@
     </div>
     {#if showList}
         <div
-            class="absolute flex flex-col bg-popover border-border z-10 border-b-1 w-full"
+            class="absolute flex flex-col bg-popover border-border z-10 border-b-1 w-full overflow-y-auto hide-scrollbar"
         >
             {#each sortedIds as id (id)}
                 <button
@@ -66,8 +72,6 @@
                     animate:flip={{
                         duration: 400,
                     }}
-                    disabled={!idlesById.get(id).unlocked ||
-                        (hasOneActive && selected !== id)}
                 >
                     <IdleCard
                         idle={idlesById.get(id)}
@@ -78,7 +82,7 @@
             {/each}
         </div>
     {/if}
-    {#if selected && idlesById.has(selected) && !showList}
+    {#if selected && idlesById.has(selected)}
         <div
             clase="flex flex-col bg-popover rounded-b-2xl z-10 border-border border-x-1 border-b-1 w-full"
         >
@@ -86,3 +90,17 @@
         </div>
     {/if}
 </div>
+
+<style>
+    :global(.hide-scrollbar) {
+        /* For Firefox */
+        scrollbar-width: none;
+
+        /* For Chrome, Safari, and Opera */
+        -ms-overflow-style: none; /* IE and Edge */
+    }
+
+    :global(.hide-scrollbar::-webkit-scrollbar) {
+        display: none;
+    }
+</style>

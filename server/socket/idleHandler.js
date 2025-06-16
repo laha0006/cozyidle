@@ -4,6 +4,7 @@ import {
     getIdle,
     startIdle,
     stopIdle,
+    unlockIdle,
 } from "../database/idle.js";
 import { IdleClientEvent, IdleServerEvent } from "./events/idleEvents.js";
 
@@ -66,6 +67,21 @@ export async function idleDispatch(event, socket, data) {
                     console.log(error);
                     console.log(error.message);
                     socket.emit("error", { message: error.message });
+                }
+            }
+            break;
+        case IdleClientEvent.UNLOCK:
+            {
+                const { idleId } = data;
+                try {
+                    await unlockIdle(userId, idleId);
+                    socket.emit(IdleServerEvent.UNLOCKED, { idleId });
+                } catch (error) {
+                    if (error.isForUser) {
+                        socket.emit("error", { message: error.message });
+                    } else {
+                        console.log(error);
+                    }
                 }
             }
             break;

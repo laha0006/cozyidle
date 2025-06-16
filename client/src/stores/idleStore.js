@@ -5,11 +5,13 @@ import { socketStore } from "./socketStore.js";
 import { userSkillsStore } from "./userSkillsStore.js";
 import { userResourcesStore } from "./userResourcesStore.js";
 import { upgradesStore } from "./upgradesStore.js";
+
 export const IdleClientEvent = Object.freeze({
     START: "idle:client:start",
     STOP: "idle:client:stop",
     SYNC: "idle:client:sync",
     UPGRADE: "idle:client:upgrade",
+    UNLOCK: "idle:client:unlock",
 });
 
 export const IdleServerEvent = Object.freeze({
@@ -17,7 +19,9 @@ export const IdleServerEvent = Object.freeze({
     UPDATE: "idle:server:update",
     STOPPED: "idle:server:stopped",
     UPGRADED: "idle:server:upgraded",
+    UNLOCKED: "idle:server:unlocked",
 });
+
 function createIdleStore() {
     const { subscribe, set, update } = writable([]);
 
@@ -117,6 +121,17 @@ function createIdleStore() {
                 });
             });
 
+            $socketStore.on(IdleServerEvent.UNLOCKED, (data) => {
+                console.log("UNLOCKED", data);
+                const { idleId } = data;
+                update((idles) => {
+                    return idles.map((idle) => {
+                        if (idle.idle_id !== idleId) return idle;
+                        return { ...idle, unlocked: true };
+                    });
+                });
+            });
+
             $socketStore.on(IdleServerEvent.UPGRADED, (data) => {
                 const { idleId, price } = data;
                 console.log("data:", data);
@@ -175,6 +190,10 @@ function createIdleStore() {
             console.log("upgradeId", upgradeId);
             const socket = get(socketStore);
             socket.emit(IdleClientEvent.UPGRADE, { upgradeId });
+        },
+        unlock: async (idleId) => {
+            const socket = get(socketStore);
+            socket.emit(IdleClientEvent.UNLOCK, { idleId });
         },
     };
 }

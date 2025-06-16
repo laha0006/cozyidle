@@ -338,11 +338,50 @@ export async function deductResource(userId, resourceId, amount) {
         const res = await db.query(sql, values);
         console.log("deduct:", res.rows);
         if (res.rows.length < 1) {
-            throw Error("not enough resources!");
+            const customError = new Error("not enough resources!");
+            customError.isForUser = true;
+            throw customError;
         }
         return res.rows[0];
     } catch (error) {
         throw error;
+    }
+}
+
+export async function unlockIdle(userId, idleId) {
+    const getInfoSql = `
+    SELECT 
+        il.price, 
+        il.level_requirement AS skill_req,
+        il.resource_id,
+        i.skill_id
+    FROM idles i
+    JOIN idle_levels il ON il.idle_id = i.id
+    WHERE i.id = $1
+    AND il.level = 1
+    `;
+
+    const unlockSql = `
+    UPDATE user_idles
+    SET unlocked = TRUE
+    WHERE user_id = $1
+    AND idle_id = $2
+    `;
+    const values = [userId, idleId];
+    const client = await db.connect();
+    try {
+        await client.query("BEGIN");
+        const info = await client.query(getInfoSql, [idleId]);
+        const { price, skill_req, skill_id, resource_id } = info.rows[0];
+        await skillCheck(userId, skill_id, skill_req);
+        await deductResource(userId, resource_id, price);
+        await client.query(unlockSql, values);
+        await client.query("COMMIT");
+    } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
     }
 }
 
@@ -396,7 +435,11 @@ export async function skillCheck(userId, skillId, requiredLevel) {
         const res = await client.query(sql, [userId, skillId]);
         const userLevel = res.rows[0].skill_level;
         if (userLevel < requiredLevel) {
-            throw new Error("You do not have the required skill level!");
+            const customError = new Error(
+                "You do not have the required skill level!"
+            );
+            customError.isForUser = true;
+            throw customError;
         }
         return true;
     } catch (error) {

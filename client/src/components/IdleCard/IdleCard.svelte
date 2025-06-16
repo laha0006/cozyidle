@@ -32,6 +32,10 @@
         SYNC: "idle:client:sync",
     });
 
+    function unlockIdle() {
+        idleStore.unlock(idle.idle_id);
+    }
+
     function triggerCooldown() {
         if (cooldown) return;
         cooldown = true;
@@ -119,7 +123,7 @@
         </div>
     {:else}
         <div>
-            <button> unlock </button>
+            <button onclick={unlockIdle}> Unlock! </button>
             {idle.level_req}
         </div>
     {/if}

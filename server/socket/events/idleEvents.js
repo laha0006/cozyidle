@@ -3,6 +3,7 @@ export const IdleClientEvent = Object.freeze({
     STOP: "idle:client:stop",
     SYNC: "idle:client:sync",
     UPGRADE: "idle:client:upgrade",
+    UNLOCK: "idle:client:unlock",
 });
 
 export const IdleServerEvent = Object.freeze({
@@ -10,4 +11,5 @@ export const IdleServerEvent = Object.freeze({
     UPDATE: "idle:server:update",
     STOPPED: "idle:server:stopped",
     UPGRADED: "idle:server:upgraded",
+    UNLOCKED: "idle:server:unlocked",
 });
