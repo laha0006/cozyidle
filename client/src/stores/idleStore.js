@@ -22,12 +22,15 @@ function createIdleStore() {
     const resources = new Map();
     let rafLoopId;
     let skillsReady = false;
-    let lastLoop;
+    let lastLoop = Date.now();
     let incNow;
     let startNow;
 
     function loop() {
-        // console.log("once");
+        // if (Date.now() - lastLoop < 20) {
+        //     rafLoopId = requestAnimationFrame(loop);
+        //     return;
+        // }
         update((idles) => {
             return idles.map((idle) => {
                 const resourceId = idle.resource_id;
@@ -36,7 +39,6 @@ function createIdleStore() {
                 } else {
                     // const now = Date.now();
                     const now = Date.now() + idle.offset;
-                    incNow = now;
                     const speed = idle.speed * 1000;
 
                     const progress = Math.min(
@@ -69,7 +71,7 @@ function createIdleStore() {
                 }
             });
         });
-
+        // lastLoop = Date.now();
         rafLoopId = requestAnimationFrame(loop);
     }
 
@@ -140,11 +142,13 @@ export const idleBySkillStore = derived(idleStore, ($idleStore, set) => {
     const idlesBySkill = [];
     $idleStore.forEach((idle) => {
         const skill = idle.skill_id;
+        // console.log("skill:", skill);
         if (!idlesBySkill[skill - 1]) {
             idlesBySkill[skill - 1] = [idle];
         } else {
             idlesBySkill[skill - 1].push(idle);
         }
     });
+    // console.log(idlesBySkill);
     set(idlesBySkill);
 });
