@@ -1,4 +1,5 @@
 import {
+    buyUpgrade,
     deductResource,
     getIdle,
     startIdle,
@@ -55,24 +56,17 @@ export async function idleDispatch(event, socket, data) {
                 });
             }
             break;
-        case IdleClientEvent.SYNC:
+        case IdleClientEvent.UPGRADE:
             {
-                if (socket.idleState !== "active") return;
-                socket.idleState = "updating";
-
-                const { idleId } = data;
-
-                const update = await updateIdle(userId, idleId);
-                console.log("UPDATE: ", update);
-                const buy = await deductResource(userId, idleId, 10);
-                console.log("BUY:", buy);
-
-                socket.idleState = "active";
-                socket.emit(IdleServerEvent.UPDATE, {
-                    idleId,
-                    new_started: update.new_started * 1000,
-                    resource_amount: buy?.resource_amount || undefined,
-                });
+                const { upgradeId } = data;
+                try {
+                    const bought = await buyUpgrade(userId, upgradeId);
+                    socket.emit(IdleServerEvent.UPGRADED, bought);
+                } catch (error) {
+                    console.log(error);
+                    console.log(error.message);
+                    socket.emit("error", { message: error.message });
+                }
             }
             break;
     }

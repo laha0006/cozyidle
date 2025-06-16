@@ -17,8 +17,6 @@ user.subscribe(async ($user) => {
         const latency = (clientNow - preFetchTime) / 2;
         console.log("init diff", ping.now + latency - clientNow);
         const idleData = await getFetchWithRefresh(`api/users/${userId}/idles`);
-        console.log("CLIENT NOW:", clientNow);
-        console.log("Latency:", latency);
 
         const resourcesPromise = getFetchWithRefresh(
             `api/users/${userId}/resources`
@@ -34,19 +32,11 @@ user.subscribe(async ($user) => {
                 itemsPromise,
                 upgradesPromise,
             ]);
-        const perfNow = performance.now();
         const idles = idleData.data.map((idle) => {
             if (!idle.active) return idle;
             const startedTime = Math.floor(+idle.started);
             const serverTime = Math.floor(+idle.now_unix);
             const timeDiff = serverTime - clientNow;
-            const clientAdjustTime = clientNow - (serverTime - startedTime);
-            const diff = Number(idle.diff);
-            if (idle.idle_id === 1) {
-                console.log("perf now       ", perfNow);
-                console.log("diff           ", diff);
-                console.log("perf now + diff", perfNow + diff);
-            }
             return {
                 ...idle,
                 lastIncrement: startedTime,

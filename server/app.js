@@ -24,6 +24,7 @@ app.use(skillsRouter);
 import timeRouter from "./routers/timeRouter.js";
 app.use(timeRouter);
 import upgradesRouter from "./routers/upgradeRouter.js";
+import { buyUpgrade } from "./database/idle.js";
 app.use(upgradesRouter);
 
 const server = http.createServer(app);

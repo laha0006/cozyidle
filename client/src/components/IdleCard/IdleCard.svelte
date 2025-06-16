@@ -7,19 +7,19 @@
     import { upgradesStore } from "../../stores/upgradesStore.js";
     import IdleStartStopButton from "./IdleStartStopButton.svelte";
     import { Spring, spring } from "svelte/motion";
+    import NumberCircle from "../NumberCircle/NumberCircle.svelte";
 
     const { idle, selected = false, controls = true } = $props();
     const resource = $derived($userResourcesStore.get(idle.resource_id));
     const unlocked = $derived(idle.unlocked);
+    const level = $derived(idle.level);
     const upgrades = $derived(
         $upgradesStore
             .get(idle.idle_id)
-            .filter((upgrade) => upgrade.level > level)
+            .filter((upgrade) => upgrade.level === level + 1)
     );
-    const level = $derived(idle.level);
     let cooldown = $state(false);
     let showUpgrades = $state(false);
-
     const IdleServerEvent = Object.freeze({
         INIT: "idle:server:init",
         UPDATE: "idle:server:primary",
@@ -40,8 +40,14 @@
         }, 420);
     }
 
+    function buyUpgrade() {
+        const upgradeId = upgrades[0].id;
+        idleStore.buyUpgrade(upgradeId);
+        toggleShowUpgrades();
+    }
+
     function toggleShowUpgrades() {
-        if (upgrades.length === 0 || !controls) return;
+        if ((!showUpgrades && upgrades.length === 0) || !controls) return;
         showUpgrades = !showUpgrades;
     }
 
@@ -79,40 +85,37 @@
                 });
             }, 100);
         }
-        // console.log("effect!");
-        // if (isFirstRun) {
-        //     console.log("first run!");
-        //     isFirstRun = false;
-        //     return;
-        // }
-        // if (resource.amount) {
-        //     console.log("spring poked!");
-        //     spring.target = 1.2;
-        //     setTimeout(() => {
-        //         spring.target = 1;
-        //     }, 100);
-        // }
     });
 </script>
 
 <div class="relative">
-    <h1 clasS={unlocked ? "text-foreground" : "text-gray-400"}>
-        {idle.idle}
-    </h1>
+    <div class="px-4 flex justify-between relative">
+        <button
+            class="text-chart-3 flex items-center"
+            onclick={toggleShowUpgrades}
+        >
+            <NumberCircle number={level} />
+        </button>
+        <h1 clasS={unlocked ? "text-foreground" : "text-gray-400"}>
+            {idle.idle}
+        </h1>
+        <div></div>
+    </div>
+
     {#if unlocked}
-        <div style="transform: scale({$scale})">
+        <div class="text-primary" style="transform: scale({$scale})">
             {resource.amount}
-            {controls}
         </div>
         <progress class="progress-bar" value={idle.progress}></progress>
-        <div class="flex gap-28">
-            <button onclick={toggleShowUpgrades}>{level}</button>
+        <div class="px-2 flex justify-between">
+            <div></div>
             <IdleStartStopButton
                 active={idle.active}
                 {cooldown}
                 onStart={handleStart}
                 onStop={handleStop}
             />
+            <div></div>
         </div>
     {:else}
         <div>
@@ -121,9 +124,28 @@
         </div>
     {/if}
     {#if showUpgrades}
-        <div class="absolute flex flex-col bg-card w-full">
+        <div
+            class="absolute flex flex-col bg-popover w-full rounded-b-2xl border-b-1 z-5 border-x-1 border-border top-24"
+        >
             {#each upgrades as upgrade}
-                {upgrade.level}
+                <div class="flex px-1 justify-between text-center">
+                    <div class="w-15">
+                        <p>req</p>
+                        <p>{upgrade.level_requirement}</p>
+                    </div>
+                    <div class="w-15">
+                        <p>lvl</p>
+                        <p>{upgrade.level}</p>
+                    </div>
+                    <div class="w-15">
+                        <p>price</p>
+                        <p>{upgrade.price}</p>
+                    </div>
+                    <div class="w-15">
+                        <p>-</p>
+                        <button onclick={buyUpgrade}>buy</button>
+                    </div>
+                </div>
             {/each}
         </div>
     {/if}

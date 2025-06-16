@@ -36,6 +36,18 @@ function createUserResourcesStore() {
                 return newMap;
             });
         },
+        deduct: (resourceId, amount) => {
+            update((resources) => {
+                const newMap = new Map(resources);
+                const resource = resources.get(resourceId);
+                const updatedResource = {
+                    ...resource,
+                    amount: resource.amount - amount,
+                };
+                newMap.set(resourceId, updatedResource);
+                return newMap;
+            });
+        },
     };
 }
 

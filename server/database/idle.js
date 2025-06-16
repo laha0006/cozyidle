@@ -406,6 +406,51 @@ export async function skillCheck(userId, skillId, requiredLevel) {
     }
 }
 
+export async function buyUpgrade(userId, upgradeId) {
+    const checkLevelReq = `
+        SELECT 
+            ui.level AS user_level, 
+            il.level AS idle_level,
+            il.level_requirement AS skill_req,
+            il.price,
+            ui.idle_id,
+            i.skill_id,
+            il.id AS id
+        FROM user_idles ui
+        JOIN idle_levels il ON il.idle_id = ui.idle_id
+        JOIN idles i ON i.id = ui.idle_id
+        AND il.id = $2
+        AND ui.user_id = $1
+    `;
+    const buyUpgradeSql = `
+        UPDATE user_idles ui
+        SET level = ui.level +1
+        WHERE user_id = $1
+        AND idle_id = $2
+    `;
+    const values = [userId, upgradeId];
+    const client = await db.connect();
+    try {
+        console.log("querying...");
+        const info = await db.query(checkLevelReq, values);
+        const { user_level, idle_level, skill_req, skill_id, price, idle_id } =
+            info.rows[0];
+        console.log("buy data:", info.rows[0]);
+        if (user_level + 1 !== idle_level) {
+            throw Error("You need the previous upgrade!");
+        }
+        await skillCheck(userId, skill_id, skill_req);
+        await deductResource(userId, 4, price);
+        await client.query(buyUpgradeSql, [userId, idle_id]);
+        return { price, idleId: idle_id };
+    } catch (error) {
+        await client.query("ROLLBACK");
+        throw error;
+    } finally {
+        client.release();
+    }
+}
+
 export async function buyItem(userId, itemId) {
     const alreadyOwnedSql = `
         SELECT item_id 

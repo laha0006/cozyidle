@@ -3,9 +3,12 @@
     import IdleCard from "./IdleCard.svelte";
     import { fly } from "svelte/transition";
     import { cubicOut } from "svelte/easing";
+    import { userSkillsStore } from "../../stores/userSkillsStore.js";
+    import NumberCircle from "../NumberCircle/NumberCircle.svelte";
 
     const { idles } = $props();
     const skillName = $derived(idles[0].skill);
+    const skillLevel = $derived($userSkillsStore[idles[0].skill_id].level);
     const hasOneActive = $derived(idles.some((idle) => idle.active));
     let showList = $state(false);
 
@@ -39,19 +42,23 @@
 <div
     class="relative max-w-72 my-5 bg-card text-card-foreground border-border border-1 rounded-2xl min-w-72"
 >
-    <div class="flex gap-x-1 justify-around text-center my-0 py-0">
-        <div class=""></div>
-        <div class="my-0 py-0">
-            <h1>{skillName}</h1>
-            {hasOneActive}
+    <div class="flex mt-1 mb-3 px-4 justify-between text-center items-center">
+        <div class="text-chart-3 flex items-center">
+            <NumberCircle number={skillLevel} />
         </div>
         <div class="">
-            <button onclick={toggleShowList}>Select</button>
+            <h1>{skillName}</h1>
+        </div>
+        <div class="">
+            <button onclick={toggleShowList} aria-label="select">
+                <i class="fa-solid fa-bars fa-2xs text-primary align-middle"
+                ></i>
+            </button>
         </div>
     </div>
     {#if showList}
         <div
-            class="absolute flex flex-col bg-popover rounded-b-2xl z-1 border-border border-x-1 border-b-1 w-full"
+            class="absolute flex flex-col bg-popover border-border z-10 border-b-1 w-full"
         >
             {#each sortedIds as id (id)}
                 <button
@@ -71,8 +78,10 @@
             {/each}
         </div>
     {/if}
-    {#if selected && idlesById.has(selected)}
-        <div>
+    {#if selected && idlesById.has(selected) && !showList}
+        <div
+            clase="flex flex-col bg-popover rounded-b-2xl z-10 border-border border-x-1 border-b-1 w-full"
+        >
             <IdleCard idle={idlesById.get(selected)} />
         </div>
     {/if}
