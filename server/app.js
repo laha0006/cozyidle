@@ -23,6 +23,8 @@ import skillsRouter from "./routers/skillsRouter.js";
 app.use(skillsRouter);
 import timeRouter from "./routers/timeRouter.js";
 app.use(timeRouter);
+import upgradesRouter from "./routers/upgradeRouter.js";
+app.use(upgradesRouter);
 
 const server = http.createServer(app);
 const io = new Server(server, {

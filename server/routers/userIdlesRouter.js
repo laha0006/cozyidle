@@ -80,7 +80,8 @@ router.get("/:userId/idles", async (req, res) => {
             (EXTRACT(EPOCH FROM NOW()) * 1000) - started AS diff,
             level,
             now_unix
-        FROM init`;
+        FROM init
+        ORDER BY unlocked DESC, level_req`;
 
     const { rows } = await db.query(sql, [userId]);
     rows[0].started = Number(rows[0].started);
