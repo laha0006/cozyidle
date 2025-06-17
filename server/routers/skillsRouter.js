@@ -20,6 +20,7 @@ router.get("/api/skills/:skillId/leaderboard", async (req, res) => {
         SELECT DISTINCT ON (ue.user_id)
             ue.user_id,
             sl.level,
+            ue.skill_id,
             ue.experience
         FROM
             user_experiences ue
@@ -33,6 +34,7 @@ router.get("/api/skills/:skillId/leaderboard", async (req, res) => {
         )
         SELECT
         user_id,
+        skill_id,
         level,
         experience,
         u.username

@@ -15,7 +15,12 @@ function createLeaderboardStore() {
                 );
             });
             const data = await Promise.all(promises);
-            const leaderBoardMap = new Map();
+            const leaderboardMap = new Map();
+            data.forEach((leaderboard, index) => {
+                leaderboardMap.set(index + 1, leaderboard.data);
+            });
+            console.log("Setting leaderboardMap:", leaderboardMap);
+            set(leaderboardMap);
         }
     });
 
