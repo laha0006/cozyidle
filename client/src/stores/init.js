@@ -5,6 +5,7 @@ import { userSkillsStore } from "./userSkillsStore";
 import { userResourcesStore } from "./userResourcesStore";
 import { getFetchWithRefresh } from "../util/fetch.js";
 import { upgradesStore } from "./upgradesStore.js";
+import { leaderboards } from "./leaderboardStore.js";
 import { user } from "./userStore.js";
 import { getLevel } from "../util/skillLevel.js";
 

@@ -18,6 +18,7 @@
     import IdleOverview from "./components/IdleOverview/IdleOverview.svelte";
     import ItemOverview from "./components/ItemOverview/ItemOverview.svelte";
     import ItemStore from "./components/ItemStore/ItemStore.svelte";
+    import LeaderboardOverview from "./components/Leaderboard/LeaderboardOverview.svelte";
 
     const guards = [authGuard];
 </script>
@@ -56,6 +57,7 @@
             <Route path="/game" component={IdleOverview} />
             <Route path="/item" component={ItemOverview} />
             <Route path="/store" component={ItemStore} />
+            <Route path="/leaderboard" component={LeaderboardOverview} />
         </div>
     </Router>
 </main>

@@ -1,0 +1,28 @@
+import { writable } from "svelte/store";
+import { userSkillsStore } from "./userSkillsStore";
+import { getFetch } from "../util/fetch";
+
+function createLeaderboardStore() {
+    const { set, update, subscribe } = writable(null);
+
+    userSkillsStore.subscribe(async ($skills) => {
+        if ($skills) {
+            const promises = [];
+            $skills.forEach(async (skill) => {
+                console.log("skill;", skill);
+                promises.push(
+                    getFetch("/api/skills/" + skill.id + "/leaderboard")
+                );
+            });
+            const data = await Promise.all(promises);
+            const leaderBoardMap = new Map();
+        }
+    });
+
+    return {
+        subscribe,
+        set,
+    };
+}
+
+export const leaderboards = createLeaderboardStore();

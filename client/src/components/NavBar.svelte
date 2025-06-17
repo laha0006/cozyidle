@@ -15,6 +15,10 @@
         router.navigate("/");
     }
 
+    function goToLeaderboard() {
+        router.navigate("/leaderboard");
+    }
+
     function goToGame() {
         router.navigate("/game");
     }
@@ -58,6 +62,7 @@
 >
 <button onclick={goToItem}>Item</button>
 <button onclick={goToStore}>Store</button>
+<button onclick={goToLeaderboard}>Leaderboards</button>
 {#if $user}
     <button onclick={handleLogout}> Log out</button>
     {$user.id}
