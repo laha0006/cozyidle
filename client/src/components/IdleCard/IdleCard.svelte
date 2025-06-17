@@ -68,14 +68,17 @@
         idleStore.stop(idle.idle_id);
     }
     let isFirstRun = true;
+    let prevAmount;
+    onMount(() => {
+        prevAmount = resource.amount;
+    });
     const scale = spring(1, {
         stiffness: 0.1,
         damping: 0.2,
     });
     let springTimeoutId;
-    // const spring = new Spring(1);
     $effect(() => {
-        if (resource.amount) {
+        if (resource.amount > prevAmount) {
             console.log("poke!");
             clearTimeout(springTimeoutId);
             scale.set(1.2, {
@@ -89,6 +92,7 @@
                 });
             }, 100);
         }
+        prevAmount = resource.amount;
     });
 </script>
 

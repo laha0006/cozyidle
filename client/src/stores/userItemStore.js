@@ -1,4 +1,4 @@
-import { get, writable } from "svelte/store";
+import { derived, get, writable } from "svelte/store";
 import { user } from "./userStore.js";
 import { socketStore } from "./socketStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
@@ -74,3 +74,22 @@ function createUserItemStore() {
 }
 
 export const userItemStore = createUserItemStore();
+
+export const userItemBySkillStore = derived(
+    userItemStore,
+    ($itemStore, set) => {
+        if ($itemStore) {
+            console.log($itemStore);
+            const itemsBySkill = [];
+            $itemStore.forEach((item) => {
+                console.log("item!");
+                if (!itemsBySkill[item.skill_id - 1]) {
+                    itemsBySkill[item.skill_id - 1] = [];
+                }
+                itemsBySkill[item.skill_id - 1].push(item);
+            });
+            console.log("DERIVED ITEM BY SKILL:", itemsBySkill);
+            set(itemsBySkill);
+        }
+    }
+);

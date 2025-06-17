@@ -63,6 +63,7 @@ user.subscribe(async ($user) => {
 
         const items = itemsdata.data;
         userItemStore.set(items);
+        console.log("items:", items);
 
         const upgrades = upgradesData.data;
         const upgradeMap = new Map();

@@ -37,7 +37,9 @@
 
     <Router beforeEach={guards}>
         <WorkAround />
-        <div class="flex justify-center text-2xl text-center flex-col">
+        <div
+            class="flex justify-center text-2xl text-center flex-col items-center"
+        >
             <div>
                 <NavBar />
             </div>
