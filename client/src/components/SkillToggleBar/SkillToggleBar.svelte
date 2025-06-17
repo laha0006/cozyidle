@@ -4,7 +4,7 @@
 </script>
 
 <div
-    class="flex flex-wrap lg:gap-5 gap-1 mb-5 p-1 justify-center items-center bg-card border-border border-1"
+    class="flex flex-wrap text-sm lg:gap-5 gap-1 mb-5 p-1 justify-center items-center bg-card border-border border-1"
 >
     {#each $userSkillsStore as skill}
         <button
