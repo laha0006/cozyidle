@@ -3,10 +3,16 @@
     import { userItemStore } from "../../stores/userItemStore.js";
     import { userSkillsStore } from "../../stores/userSkillsStore.js";
     import ItemCard from "../ItemStore/ItemCard.svelte";
+    import SkillToggleBar from "../SkillToggleBar/SkillToggleBar.svelte";
 
-    let filterId = $state(1);
+    let filterId = $state(0);
     const filteredItems = $derived(
-        $userItemStore?.filter((item) => item.skill_id === filterId)
+        $userItemStore?.filter(
+            (item) => item.skill_id === filterId && !item.owned
+        )
+    );
+    const unownedItems = $derived(
+        $userItemStore?.filter((item) => !item.owned)
     );
 
     function filterBySkill(skillId) {
@@ -19,26 +25,15 @@
     }
 </script>
 
-<div class="">
-    <div
-        class="flex gap-5 mb-5 p-1 justify-center items-center bg-card border-border border-1"
-    >
-        {#each $userSkillsStore as skill}
-            <button
-                class="{filterId === skill.id
-                    ? 'border-border bg-muted'
-                    : 'border-transparent'} border-2 p-1"
-                onclick={() => filterBySkill(skill.id)}
-            >
-                {skill.name}
-            </button>
-        {/each}
-    </div>
-    <div class="flex items-center justify-center">
+<SkillToggleBar {filterId} onToggle={filterBySkill} />
+<div class="flex items-center justify-center gap-2">
+    {#if filterId > 0}
         {#each filteredItems as item}
-            {#if !item.owned}
-                <ItemCard {item} onBuy={() => buy(item.item_id)} />
-            {/if}
+            <ItemCard {item} onBuy={() => buy(item.item_id)} />
         {/each}
-    </div>
+    {:else}
+        {#each unownedItems as item}
+            <ItemCard {item} onBuy={() => buy(item.item_id)} />
+        {/each}
+    {/if}
 </div>

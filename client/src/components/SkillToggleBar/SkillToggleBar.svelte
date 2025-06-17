@@ -16,4 +16,12 @@
             {skill.name}
         </button>
     {/each}
+    <button
+        class="{filterId === 0
+            ? 'border-border bg-muted'
+            : 'border-transparent'} border-2 p-1"
+        onclick={() => onToggle(0)}
+    >
+        all
+    </button>
 </div>

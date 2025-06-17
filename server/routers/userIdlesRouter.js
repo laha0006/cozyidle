@@ -81,7 +81,7 @@ router.get("/:userId/idles", async (req, res) => {
             level,
             now_unix
         FROM init
-        ORDER BY unlocked DESC, level_req`;
+        ORDER BY unlocked DESC,active DESC, level_req`;
 
     const { rows } = await db.query(sql, [userId]);
     rows[0].started = Number(rows[0].started);
