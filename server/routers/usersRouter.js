@@ -84,10 +84,11 @@ router.get("/:userId/resources", async (req, res) => {
     FROM user_resources ur
     JOIN resources r
         ON r.id = ur.resource_id
+    WHERE ur.user_id = $1
     `;
 
     await updateIdles(userId);
-    const result = await db.query(sql);
+    const result = await db.query(sql, [userId]);
     const data = result.rows;
     res.send({ data });
 });

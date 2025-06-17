@@ -51,6 +51,7 @@ user.subscribe(async ($user) => {
             if (resourceMap.get(r.id)) return;
             resourceMap.set(r.id, { amount: r.amount, name: r.name });
         });
+        console.log("resources:", resourceMap);
         userResourcesStore.set(resourceMap);
 
         const skills = skillsData.data;
