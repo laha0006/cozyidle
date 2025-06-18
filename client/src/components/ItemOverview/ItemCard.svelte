@@ -2,12 +2,11 @@
     import { userItemStore } from "../../stores/userItemStore.js";
     const { item } = $props();
     function unequip() {
-        console.log("itemId:", item.item_id);
-        userItemStore.unquip(item.item_id);
+        userItemStore.unquip(item.itemId);
     }
 
     function equip() {
-        userItemStore.equip(item.item_id);
+        userItemStore.equip(item.itemId);
     }
 </script>
 

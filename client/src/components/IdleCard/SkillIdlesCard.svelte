@@ -12,11 +12,11 @@
     const hasOneActive = $derived(idles.some((idle) => idle.active));
     let showList = $state(false);
 
-    let selected = $state(idles[0]?.idle_id);
+    let selected = $state(idles[0]?.idleId);
 
     let sortedIds = $state(
         idles
-            .map((i) => i.idle_id)
+            .map((i) => i.idleId)
             .sort((a, b) => {
                 if (a === selected) return -1;
                 if (b === selected) return 1;

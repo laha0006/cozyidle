@@ -8,7 +8,7 @@
     const currentSkillLevel = $derived($userSkillsStore[skillId - 2]?.level);
     const skillCheck = $derived(currentSkillLevel >= requirement);
 
-    const currentGold = $derived($userResourcesStore.get(1).amount); // 1 is gold
+    const currentGold = $derived($userResourcesStore.get(1)?.amount); // 1 is gold
     const goldCheck = $derived(currentGold >= item.price);
 </script>
 
