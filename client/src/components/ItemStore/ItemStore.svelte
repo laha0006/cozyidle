@@ -16,6 +16,7 @@
     );
 
     function filterBySkill(skillId) {
+        console.log("STORE FILTER ID:", skillId);
         filterId = skillId;
     }
 

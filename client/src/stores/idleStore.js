@@ -202,12 +202,11 @@ export const idleStore = createIdleStore();
 export const idleBySkillStore = derived(idleStore, ($idleStore, set) => {
     const idlesBySkill = [];
     $idleStore.forEach((idle) => {
-        const skill = idle.skill_id;
-        // console.log("skill:", skill);
-        if (!idlesBySkill[skill - 1]) {
-            idlesBySkill[skill - 1] = [idle];
+        const index = idle.skill_id - 2;
+        if (!idlesBySkill[index]) {
+            idlesBySkill[index] = [idle];
         } else {
-            idlesBySkill[skill - 1].push(idle);
+            idlesBySkill[index].push(idle);
         }
     });
     // console.log(idlesBySkill);

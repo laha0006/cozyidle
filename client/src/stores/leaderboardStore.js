@@ -16,7 +16,7 @@ function createLeaderboardStore() {
             const data = await Promise.all(promises);
             const leaderboardMap = new Map();
             data.forEach((leaderboard, index) => {
-                leaderboardMap.set(index + 1, leaderboard.data);
+                leaderboardMap.set(index + 2, leaderboard.data); // + 2 because, first relevant skill is skill_id = 2
             });
             set(leaderboardMap);
         }

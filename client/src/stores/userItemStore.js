@@ -82,11 +82,10 @@ export const userItemBySkillStore = derived(
             console.log($itemStore);
             const itemsBySkill = [];
             $itemStore.forEach((item) => {
-                console.log("item!");
-                if (!itemsBySkill[item.skill_id - 1]) {
-                    itemsBySkill[item.skill_id - 1] = [];
+                if (!itemsBySkill[item.skill_id - 2]) {
+                    itemsBySkill[item.skill_id - 2] = [];
                 }
-                itemsBySkill[item.skill_id - 1].push(item);
+                itemsBySkill[item.skill_id - 2].push(item);
             });
             console.log("DERIVED ITEM BY SKILL:", itemsBySkill);
             set(itemsBySkill);
