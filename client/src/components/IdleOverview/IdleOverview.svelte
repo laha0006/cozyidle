@@ -14,6 +14,7 @@
     >
         {#if $idleBySkillStore}
             {#each $idleBySkillStore as idles, index}
+                {console.log(JSON.stringify(idles))}
                 <SkillIdlesCard {idles} />
             {/each}
         {/if}

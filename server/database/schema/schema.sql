@@ -135,6 +135,16 @@ INSERT INTO idles (name, resource_id, skill_id) VALUES('Iron', 6, 6);
 INSERT INTO skills(name) VALUES('Harvesting');
 INSERT INTO resources (name, value , skill_id) VALUES('Wheat', 2, 7);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Wheat', 7, 7);
+
+
+
+INSERT INTO resources (name, value , skill_id) VALUES('Koi', 10, 2);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Koi', 8, 2);
+
+
+INSERT INTO resources (name, value , skill_id) VALUES('Pig', 10, 3);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Pig', 9, 3);
+
 -- idle level 1
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,1,0,60,0,1);
@@ -142,6 +152,7 @@ INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, pric
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,1,0,60,0,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(7,1,5,60,500,1);
 
 -- idle level 2
 iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,2,10,50,0,1);
