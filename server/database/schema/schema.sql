@@ -125,10 +125,12 @@ INSERT INTO resources (name, value , skill_id) VALUES('Oak',2,4);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Oak Logging', 4, 4);
 
 INSERT INTO skills(name) VALUES('Gathering');
-INSERT INTO resources (name, value , skill_id) VALUES('Mushrooms',2,5);
+INSERT INTO resources (name, value , skill_id) VALUES('Mushroom',2,5);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Mushroom', 5, 5);
 
 INSERT INTO skills(name) VALUES('Mining');
 INSERT INTO resources (name, value , skill_id) VALUES('Iron Ore', 2, 6);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Iron', 6, 6);
 
 INSERT INTO skills(name) VALUES('Harvesting');
 INSERT INTO resources (name, value , skill_id) VALUES('Wheat', 2, 7);
