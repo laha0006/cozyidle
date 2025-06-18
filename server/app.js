@@ -15,8 +15,6 @@ import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
 import usersRouter from "./routers/usersRouter.js";
 app.use("/api/users", usersRouter);
-import userIdlesRouter from "./routers/userIdlesRouter.js";
-app.use("/api/users", userIdlesRouter);
 import itemsRouter from "./routers/itemsRouter.js";
 app.use("/api", itemsRouter);
 import skillsRouter from "./routers/skillsRouter.js";
@@ -24,7 +22,6 @@ app.use(skillsRouter);
 import timeRouter from "./routers/timeRouter.js";
 app.use(timeRouter);
 import upgradesRouter from "./routers/upgradeRouter.js";
-import { buyUpgrade } from "./database/idle.js";
 app.use(upgradesRouter);
 
 const server = http.createServer(app);

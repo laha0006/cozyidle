@@ -1,8 +1,15 @@
 <script>
-    let user = $state(null);
-    user = "Test";
+    import { navigate } from "svelte-routing";
+    import { user } from "../../stores/userStore.js";
+    import { onMount } from "svelte";
+
+    onMount(() => {
+        if (!$user) {
+            navigate("/login");
+        }
+    });
 </script>
 
-{#if user}
+{#if $user}
     <slot />
 {/if}

@@ -1,6 +1,5 @@
 import {
     buyUpgrade,
-    deductResource,
     getIdle,
     startIdle,
     stopIdle,

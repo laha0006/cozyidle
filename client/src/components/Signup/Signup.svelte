@@ -2,8 +2,10 @@
     import { toast } from "@zerodevx/svelte-toast";
     import { signup } from "../../api/auth.js";
     import { postFetch } from "../../util/fetch.js";
-    import { success } from "../../util/toasts.js";
+    import { error, success } from "../../util/toasts.js";
     import { user } from "../../stores/userStore.js";
+    import Button from "../Button/Button.svelte";
+    import { Link } from "svelte-routing";
 
     let formData = {
         username: "",
@@ -11,10 +13,26 @@
         password: "",
     };
 
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
     let showPasswordChecked = false;
 
     async function handleSignup(e) {
         e.preventDefault();
+        if (formData.username.length < 3) {
+            error("Username must be at least 3 characters long.");
+            return;
+        }
+        if (formData.password.length < 6) {
+            error("Password must be at least 6 characters long.");
+            return;
+        }
+        if (!isValidEmail(formData.email)) {
+            error("Please enter a valid email address.");
+            return;
+        }
         try {
             const json = await signup(formData);
             user.set(json.user);
@@ -27,7 +45,7 @@
 </script>
 
 <div class="flex justify-center">
-    <form class="bg-slate-900 rounded p-2">
+    <form class="bg-popover border-border border-1 rounded p-2">
         <div class="flex justify-center">
             <h3 class="text-xl">Sign up</h3>
         </div>
@@ -35,7 +53,7 @@
             <label for="username">Username</label>
             <input
                 bind:value={formData.username}
-                class="caret-white bg-slate-800 rounded focus:outline-none pl-1"
+                class="caret-white bg-muted rounded focus:outline-none pl-1"
                 id="username"
                 name="username"
                 type="text"
@@ -45,7 +63,7 @@
             <label for="email">Email</label>
             <input
                 bind:value={formData.email}
-                class="caret-white bg-slate-800 rounded focus:outline-none pl-1"
+                class="caret-white bg-muted rounded focus:outline-none pl-1"
                 id="email"
                 name="email"
                 type="email"
@@ -55,7 +73,7 @@
             <label for="password">Password</label>
             <input
                 bind:value={formData.password}
-                class="caret-white bg-slate-800 rounded focus:outline-none pl-1"
+                class="caret-white bg-muted rounded focus:outline-none pl-1"
                 id="password"
                 name="password"
                 type={showPasswordChecked ? "text" : "password"}
@@ -69,12 +87,11 @@
                 Show password</label
             >
         </div>
-        <div class="flex justify-center">
-            <button
-                onclick={handleSignup}
-                class="bg-green-800 text-black font-bold rounded py-1 px-2"
-                >Sign up</button
-            >
+        <div class="flex flex-col items-center justify-center">
+            <Button onclick={handleSignup}>Sign up</Button>
+            <div class="flex mt-2 text-center justify-center text-sm">
+                Do not have an account? &nbsp; <Link to="/login">Login</Link>
+            </div>
         </div>
     </form>
 </div>

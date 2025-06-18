@@ -1,4 +1,6 @@
 import db from "./connection.js";
+import { skillCheck } from "./skill.js";
+import { deductResource } from "./resource.js";
 
 export async function initIdleForUser(userId) {
     const userIdlesSql = `
@@ -19,15 +21,15 @@ export async function initIdleForUser(userId) {
             ON CONFLICT (user_id, skill_id) DO NOTHING;
     `;
 
-    console.log("init idle for user");
+    const client = await db.connect();
     try {
-        await db.query(userIdlesSql, [userId]);
-        await db.query(userResourcesSql, [userId]);
-        console.log("user experiences start");
-        await db.query(userExperiencesSql, [userId]);
-        console.log("user experiences end");
-    } catch (err) {
-        console.log(err);
+        await client.query(userIdlesSql, [userId]);
+        await client.query(userResourcesSql, [userId]);
+        await client.query(userExperiencesSql, [userId]);
+    } catch (error) {
+        throw error;
+    } finally {
+        client.release();
     }
 }
 
@@ -71,8 +73,6 @@ export async function startIdle(userId, idleId) {
 
 export async function stopIdle(userId, idleId) {
     const client = await db.connect();
-    // GREATEST(COALESCE(FLOOR(EXTRACT(EPOCH FROM (NOW() - l.started)) / f.speed), 0), 0) AS increment,
-
     try {
         await client.query("BEGIN");
 
@@ -208,9 +208,18 @@ export async function getIdle(userId, idleId) {
         AND ui.idle_id = $2
        `;
     const values = [userId, idleId];
-
-    const res = await db.query(sql, values);
-    return res.rows[0];
+    const client = await db.connect();
+    try {
+        const res = await client.query(sql, values);
+        if (res.rows.length < 0) {
+            throw Error("No idle found");
+        }
+        return res.rows[0];
+    } catch (error) {
+        throw error;
+    } finally {
+        client.release();
+    }
 }
 
 export async function updateIdles(userId) {
@@ -324,30 +333,30 @@ export async function updateIdles(userId) {
     return res.rows[0];
 }
 
-export async function deductResource(userId, resourceId, amount) {
-    const sql = `
-    UPDATE user_resources
-    SET amount = amount - $3
-    WHERE user_id = $1
-        AND resource_id = $2
-        AND amount >= $3 
-    RETURNING amount as resource_amount
-    `;
+// export async function deductResource(userId, resourceId, amount) {
+//     const sql = `
+//     UPDATE user_resources
+//     SET amount = amount - $3
+//     WHERE user_id = $1
+//         AND resource_id = $2
+//         AND amount >= $3
+//     RETURNING amount as resource_amount
+//     `;
 
-    const values = [userId, resourceId, amount];
-    try {
-        const res = await db.query(sql, values);
-        console.log("deduct:", res.rows);
-        if (res.rows.length < 1) {
-            const customError = new Error("not enough resources!");
-            customError.isForUser = true;
-            throw customError;
-        }
-        return res.rows[0];
-    } catch (error) {
-        throw error;
-    }
-}
+//     const values = [userId, resourceId, amount];
+//     try {
+//         const res = await db.query(sql, values);
+//         console.log("deduct:", res.rows);
+//         if (res.rows.length < 1) {
+//             const customError = new Error("not enough resources!");
+//             customError.isForUser = true;
+//             throw customError;
+//         }
+//         return res.rows[0];
+//     } catch (error) {
+//         throw error;
+//     }
+// }
 
 export async function unlockIdle(userId, idleId) {
     const getInfoSql = `
@@ -386,69 +395,35 @@ export async function unlockIdle(userId, idleId) {
     }
 }
 
-export async function unequipItem(userId, itemId) {
-    const checkEquippedSql = `
-        SELECT ui.equipped 
-        FROM user_items ui
-        JOIN items i ON i.id = ui.item_id
-        WHERE user_id = $1
-        AND i.skill_id = (SELECT skill_id FROM items i WHERE i.id = $2)`;
-
-    const unequipItemSql = `
-        UPDATE user_items ui
-        SET equipped = FALSE
-        WHERE user_id = $1
-        AND ui.item_id = $2
-    `;
-
-    const values = [userId, itemId];
-    const client = await db.connect();
-    try {
-        const res = await db.query(checkEquippedSql, values);
-        if (res.rows.length > 0 && !res.rows[0].equipped) {
-            throw Error("You cannot unequip an item that is not equipped");
-        } else if (res.rows.length > 0 && res.rows[0].equipped) {
-            const unequipRes = db.query(unequipItemSql, values);
-            db.query("commit");
-            return unequipRes;
-        }
-    } catch (error) {
-        db.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
-}
-
-export async function skillCheck(userId, skillId, requiredLevel) {
-    const sql = `
-        SELECT sl.level AS skill_level
-            FROM user_experiences ue
-            JOIN skill_levels sl ON sl.skill_id = ue.skill_id
-            WHERE ue.user_id = $1
-            AND ue.skill_id = $2
-            AND sl.experience_required <= ue.experience
-            ORDER BY sl.level DESC
-            LIMIT 1
-    `;
-    const client = await db.connect();
-    try {
-        const res = await client.query(sql, [userId, skillId]);
-        const userLevel = res.rows[0].skill_level;
-        if (userLevel < requiredLevel) {
-            const customError = new Error(
-                "You do not have the required skill level!"
-            );
-            customError.isForUser = true;
-            throw customError;
-        }
-        return true;
-    } catch (error) {
-        throw error;
-    } finally {
-        client.release();
-    }
-}
+// export async function skillCheck(userId, skillId, requiredLevel) {
+//     const sql = `
+//         SELECT sl.level AS skill_level
+//             FROM user_experiences ue
+//             JOIN skill_levels sl ON sl.skill_id = ue.skill_id
+//             WHERE ue.user_id = $1
+//             AND ue.skill_id = $2
+//             AND sl.experience_required <= ue.experience
+//             ORDER BY sl.level DESC
+//             LIMIT 1
+//     `;
+//     const client = await db.connect();
+//     try {
+//         const res = await client.query(sql, [userId, skillId]);
+//         const userLevel = res.rows[0].skill_level;
+//         if (userLevel < requiredLevel) {
+//             const customError = new Error(
+//                 "You do not have the required skill level!"
+//             );
+//             customError.isForUser = true;
+//             throw customError;
+//         }
+//         return true;
+//     } catch (error) {
+//         throw error;
+//     } finally {
+//         client.release();
+//     }
+// }
 
 export async function buyUpgrade(userId, upgradeId) {
     const checkLevelReq = `
@@ -495,85 +470,85 @@ export async function buyUpgrade(userId, upgradeId) {
     }
 }
 
-export async function buyItem(userId, itemId) {
-    const alreadyOwnedSql = `
-        SELECT item_id 
-        FROM user_items
-        WHERE user_id = $1
-        AND item_id = $2
-    `;
+// export async function buyItem(userId, itemId) {
+//     const alreadyOwnedSql = `
+//         SELECT item_id
+//         FROM user_items
+//         WHERE user_id = $1
+//         AND item_id = $2
+//     `;
 
-    const priceSql = `
-        SELECT price, skill_requirement, skill_id FROM items
-        WHERE id = $1
-    `;
+//     const priceSql = `
+//         SELECT price, skill_requirement, skill_id FROM items
+//         WHERE id = $1
+//     `;
 
-    const buySql = `
-        INSERT INTO user_items(user_id, item_id) VALUES($1, $2);
-    `;
+//     const buySql = `
+//         INSERT INTO user_items(user_id, item_id) VALUES($1, $2);
+//     `;
 
-    const values = [userId, itemId];
-    const client = await db.connect();
-    try {
-        client.query("BEGIN");
-        const owned = await client.query(alreadyOwnedSql, values);
-        if (owned.rows.length > 0) {
-            throw new Error("You already own this item!");
-        }
-        const priceRes = await client.query(priceSql, [itemId]);
-        const skillReq = priceRes.rows[0].skill_requirement;
-        const skillId = priceRes.rows[0].skill_id;
-        const skillRes = await skillCheck(userId, skillId, skillReq);
+//     const values = [userId, itemId];
+//     const client = await db.connect();
+//     try {
+//         client.query("BEGIN");
+//         const owned = await client.query(alreadyOwnedSql, values);
+//         if (owned.rows.length > 0) {
+//             throw new Error("You already own this item!");
+//         }
+//         const priceRes = await client.query(priceSql, [itemId]);
+//         const skillReq = priceRes.rows[0].skill_requirement;
+//         const skillId = priceRes.rows[0].skill_id;
+//         const skillRes = await skillCheck(userId, skillId, skillReq);
 
-        const price = priceRes.rows[0].price;
-        const deductResourcesRes = await deductResource(userId, 4, price);
-        const buy = await client.query(buySql, values);
-        await client.query("COMMIT");
-        return buy;
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
-}
+//         const price = priceRes.rows[0].price;
+//         const deductResourcesRes = await deductResource(userId, 4, price);
+//         const buy = await client.query(buySql, values);
+//         await client.query("COMMIT");
+//         return buy;
+//     } catch (error) {
+//         await client.query("ROLLBACK");
+//         throw error;
+//     } finally {
+//         client.release();
+//     }
+// }
 
-export async function equipItem(userId, itemId) {
-    const checkEquippedSql = `
-        SELECT ui.equipped 
-        FROM user_items ui
-        JOIN items i ON i.id = ui.item_id
-        WHERE user_id = $1
-        AND i.skill_id = (SELECT skill_id FROM items i WHERE i.id = $2)`;
-    const equipItemSql = `
-        UPDATE user_items ui
-        SET equipped = TRUE
-        WHERE user_id = $1
-        AND ui.item_id = $2
-        RETURNING ui.item_id
-    `;
+// export async function equipItem(userId, itemId) {
+//     const checkEquippedSql = `
+//         SELECT ui.equipped
+//         FROM user_items ui
+//         JOIN items i ON i.id = ui.item_id
+//         WHERE user_id = $1
+//         AND i.skill_id = (SELECT skill_id FROM items i WHERE i.id = $2)`;
+//     const equipItemSql = `
+//         UPDATE user_items ui
+//         SET equipped = TRUE
+//         WHERE user_id = $1
+//         AND ui.item_id = $2
+//         RETURNING ui.item_id
+//     `;
 
-    const client = await db.connect();
-    const values = [userId, itemId];
-    try {
-        client.query("BEGIN");
+//     const client = await db.connect();
+//     const values = [userId, itemId];
+//     try {
+//         client.query("BEGIN");
 
-        const res = await client.query(checkEquippedSql, values);
+//         const res = await client.query(checkEquippedSql, values);
 
-        if (res.rows.length === 0) {
-            throw Error("You cannot equip an item you do not own.");
-        }
-        if (res.rows[0].equipped) {
-            throw new Error("Item for this skill is already equipped");
-        }
+//         if (res.rows.length === 0) {
+//             throw Error("You cannot equip an item you do not own.");
+//         }
+//         if (res.rows[0].equipped) {
+//             throw new Error("Item for this skill is already equipped");
+//         }
 
-        await client.query(equipItemSql, values);
-        await client.query("COMMIT");
-        return true;
-    } catch (error) {
-        await client.query("ROLLBACK");
-        throw error;
-    } finally {
-        client.release();
-    }
-}
+//         await client.query(equipItemSql, values);
+//         await client.query("COMMIT");
+//         return true;
+//     } catch (error) {
+//         await client.query("ROLLBACK");
+//         throw error;
+//     } finally {
+//         client.release();
+//     }
+// }

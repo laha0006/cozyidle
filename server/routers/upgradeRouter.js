@@ -3,7 +3,7 @@ import db from "../database/connection.js";
 
 const router = Router();
 
-router.get("/api/idles/upgrades", async (req, res) => {
+router.get("/api/upgrades", async (req, res) => {
     const sql = `
         SELECT * FROM idle_levels
         ORDER BY idle_id, level

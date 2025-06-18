@@ -24,7 +24,7 @@ user.subscribe(async ($user) => {
         );
         const skillsPromise = getFetchWithRefresh(`api/users/${userId}/skills`);
         const itemsPromise = getFetchWithRefresh(`api/users/${userId}/items`);
-        const upgradesPromise = getFetchWithRefresh("/api/idles/upgrades");
+        const upgradesPromise = getFetchWithRefresh("/api/upgrades");
 
         const [resourcesData, skillsData, itemsdata, upgradesData] =
             await Promise.all([

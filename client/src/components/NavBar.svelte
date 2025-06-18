@@ -1,57 +1,22 @@
 <script>
-    import { useTinyRouter } from "svelte-tiny-router";
+    import { Link, navigate } from "svelte-routing";
     import { toast } from "@zerodevx/svelte-toast";
 
     import { user } from "../stores/userStore.js";
     import { logout } from "../api/auth.js";
     import { success } from "../util/toasts.js";
     import { onMount } from "svelte";
+    import NavItem from "./NavItem.svelte";
+    import Button from "./Button/Button.svelte";
 
-    const router = useTinyRouter();
-    const currentPath = $derived(router.fullPath);
     let menuOpen = $state(false);
 
     function toggleMenu() {
         menuOpen = !menuOpen;
     }
 
-    function goToHome() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/");
-    }
-
-    function goToLeaderboard() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/leaderboard");
-    }
-
-    function goToGame() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/game");
-    }
-
-    function goToLogin() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/login");
-    }
-
-    function goToSignup() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/signup");
-    }
-
-    function goToItem() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/item");
-    }
-
-    function goToStore() {
-        if (menuOpen) toggleMenu();
-        router.navigate("/store");
-    }
-
     async function handleLogout() {
-        router.navigate("/");
+        navigate("/");
         try {
             const json = await logout();
             if ($user) {
@@ -68,34 +33,38 @@
     <div class="hidden md:block">
         <nav class="flex justify-between w-full mb-2">
             <div>
-                <button onclick={goToHome}> LOGO </button>
+                <Link to="/">LOGO</Link>
             </div>
 
             {#if $user}
                 <div class="flex gap-x-4 min-w-md justify-center">
-                    <button
-                        class={currentPath === "/game" ? "text-green-500" : ""}
-                        onclick={goToGame}
-                    >
-                        Game</button
-                    >
-
-                    <button onclick={goToItem}>Item</button>
-                    <button onclick={goToStore}>Store</button>
-                    <button onclick={goToLeaderboard}>Leaderboards</button>
+                    <Link to="/game" let:active>
+                        <NavItem text="Idles" {active} />
+                    </Link>
+                    <Link to="/item" let:active>
+                        <NavItem text="Items" {active} />
+                    </Link>
+                    <Link to="/store" let:active>
+                        <NavItem text="Store" {active} />
+                    </Link>
+                    <Link to="/leaderboard" let:active>
+                        <NavItem text="LeaderBoard" {active} />
+                    </Link>
                 </div>
-                <div>
+                <div class="flex gap-4">
                     <button onclick={() => console.log("clicked!")}>
                         {$user.username}
                         {$user.id}
                     </button>
-                    <button onclick={handleLogout}> Log out</button>
+                    <Button type="danger" onclick={handleLogout}>
+                        Log out</Button
+                    >
                 </div>
             {:else}
                 <div class="min-w-md"></div>
                 <div>
-                    <button onclick={goToLogin}> Login</button>
-                    <button onclick={goToSignup}> Signup</button>
+                    <Link to="/login">Login</Link>
+                    <Link to="/signup">Signup</Link>
                 </div>
             {/if}
         </nav>
@@ -114,28 +83,23 @@
             <div class="flex items-start justify-center">
                 {#if $user}
                     <div class="flex flex-col gap-y-1 justify-center">
-                        <button
-                            class={currentPath === "/game"
-                                ? "text-green-500"
-                                : ""}
-                            onclick={goToGame}
-                        >
-                            Game</button
-                        >
-
-                        <button onclick={goToItem}>Item</button>
-                        <button onclick={goToStore}>Store</button>
-                        <button onclick={goToLeaderboard}>Leaderboards</button>
-                        <button onclick={() => console.log("clicked!")}>
-                            {$user.username}
-                            {$user.id}
-                        </button>
-                        <button onclick={handleLogout}> Log out</button>
+                        <Link to="/game" let:active onclick={toggleMenu}>
+                            <NavItem text="Idles" {active} />
+                        </Link>
+                        <Link to="/item" let:active onclick={toggleMenu}>
+                            <NavItem text="Items" {active} />
+                        </Link>
+                        <Link to="/store" let:active onclick={toggleMenu}>
+                            <NavItem text="Store" {active} />
+                        </Link>
+                        <Link to="/leaderboard" let:active onclick={toggleMenu}>
+                            <NavItem text="LeaderBoard" {active} />
+                        </Link>
                     </div>
                 {:else}
                     <div class="flex flex-col gap-1 justify-center">
-                        <button onclick={goToLogin}> Login</button>
-                        <button onclick={goToSignup}> Signup</button>
+                        <Link to="/login">Login</Link>
+                        <Link to="/signup">Signup</Link>
                     </div>
                 {/if}
             </div>

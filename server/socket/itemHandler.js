@@ -1,4 +1,4 @@
-import { buyItem, equipItem, unequipItem } from "../database/idle.js";
+import { buyItem, equipItem, unequipItem } from "../database/item.js";
 import { ItemClientEvent, ItemServerEvent } from "./events/itemEvents.js";
 
 export async function itemDispatch(event, socket, data) {
@@ -32,7 +32,7 @@ export async function itemDispatch(event, socket, data) {
             {
                 const { itemId } = data;
                 try {
-                    const bought = await buyItem(userId, itemId);
+                    await buyItem(userId, itemId);
                     socket.emit(ItemServerEvent.BOUGHT, { itemId });
                 } catch (error) {
                     socket.emit("error", { message: error.message });

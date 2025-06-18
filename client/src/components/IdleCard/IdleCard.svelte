@@ -97,19 +97,23 @@
 </script>
 
 <div class="relative">
-    <div class="px-4 flex justify-between relative">
-        <button
-            class="text-chart-3 flex items-center"
-            onclick={toggleShowUpgrades}
-        >
-            <NumberCircle number={level} />
-        </button>
-        <h1 clasS={unlocked ? "text-foreground" : "text-gray-400"}>
-            {idle.idle}
-        </h1>
-        <div></div>
-    </div>
-
+    <button class="container cursor-pointer" onclick={toggleShowUpgrades}>
+        <div class="px-4 flex justify-between">
+            <div class="text-chart-3 flex items-center">
+                <NumberCircle number={level} />
+            </div>
+            <h1 clasS={unlocked ? "text-foreground" : "text-gray-400"}>
+                {idle.idle}
+            </h1>
+            <div class="">
+                {#if showUpgrades}
+                    <i class="fa-solid fa-angle-up fa-2xs"></i>
+                {:else}
+                    <i class="fa-solid fa-angle-down fa-2xs"></i>
+                {/if}
+            </div>
+        </div>
+    </button>
     {#if unlocked}
         <div class="text-primary" style="transform: scale({$scale})">
             {resource.amount}

@@ -56,7 +56,11 @@
             <h1>{skillName}</h1>
         </div>
         <div class="">
-            <button onclick={toggleShowList} aria-label="select">
+            <button
+                class="cursor-pointer"
+                onclick={toggleShowList}
+                aria-label="select"
+            >
                 <i class="fa-solid fa-bars fa-2xs text-primary align-middle"
                 ></i>
             </button>

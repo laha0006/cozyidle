@@ -4,33 +4,39 @@
     import { login } from "../../api/auth.js";
     import { toast } from "@zerodevx/svelte-toast";
     import { success } from "../../util/toasts.js";
+    import { error } from "../../util/toasts.js";
     import { user } from "../../stores/userStore";
+    import { Link } from "svelte-routing";
+    import Button from "../Button/Button.svelte";
     let formData = {
         username: "",
         password: "",
     };
 
+    let showPasswordChecked = false;
+
     async function handleLogin(e) {
         e.preventDefault();
         try {
             const json = await login(formData);
+            navigate("/game");
             user.set(json.user);
             success("Sucesffuly logged in!");
         } catch (error) {
-            toast.push(error.message);
+            error(error.message);
         }
     }
 </script>
 
 <div class="flex justify-center">
-    <form class="bg-slate-900 rounded p-2">
+    <form class="bg-popover rounded border-border border-1 p-2">
         <div class="flex justify-center">
             <h3 class="text-xl">Login</h3>
         </div>
         <div class="flex flex-col text-center">
             <label for="username">Username</label>
             <input
-                class="caret-white bg-slate-800 rounded focus:outline-none pl-1"
+                class="caret-white bg-muted rounded focus:outline-none pl-1"
                 id="username"
                 name="username"
                 type="text"
@@ -40,18 +46,26 @@
         <div class="flex flex-col text-center">
             <label for="password">Password</label>
             <input
-                class="caret-white bg-slate-800 rounded focus:outline-none pl-1"
+                class="caret-white bg-muted rounded focus:outline-none pl-1"
                 id="password"
                 name="password"
-                type="password"
+                type={showPasswordChecked ? "text" : "password"}
                 bind:value={formData.password}
             />
-        </div>
-        <div class="flex justify-center">
-            <button
-                class="bg-green-800 text-black font-bold hover:cursor-pointer rounded py-1 px-2 mt-2"
-                onclick={handleLogin}>Login</button
+            <label for="showPassword" class="text-sm">
+                <input
+                    type="checkbox"
+                    id="showPassword"
+                    bind:checked={showPasswordChecked}
+                />
+                Show password</label
             >
+        </div>
+        <div class="flex flex-col items-center justify-center">
+            <Button type="primary" onclick={handleLogin}>Login</Button>
+            <div class="flex mt-2 text-center justify-center text-sm">
+                Do not have an account? &nbsp; <Link to="/signup">Sign Up</Link>
+            </div>
         </div>
     </form>
 </div>

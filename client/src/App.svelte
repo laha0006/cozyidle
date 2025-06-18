@@ -1,7 +1,8 @@
 <script>
     import { onMount } from "svelte";
 
-    import { Router, Route } from "svelte-tiny-router";
+    // import { Router, Route } from "svelte-tiny-router";
+    import { Router, Route } from "svelte-routing";
     import { SvelteToast } from "@zerodevx/svelte-toast";
 
     // import { authGuard } from "./util/guards.js";
@@ -19,44 +20,12 @@
     import ItemOverview from "./components/ItemOverview/ItemOverview.svelte";
     import ItemStore from "./components/ItemStore/ItemStore.svelte";
     import LeaderboardOverview from "./components/Leaderboard/LeaderboardOverview.svelte";
-    // async function authGuard({ to, from, next }) {
-    //     console.log("GUARD!");
-    //     if (to.path.startsWith("/game") && !isAuthenticated()) {
-    //         //TODO: base64 encode from, is probably a good idea
-    //         console.log("guard");
-    //         next({ path: `/login?from=${to.path}`, replace: true });
-    //     } else {
-    //         console.log("else");
-    //         next();
-    //     }
-    // }
-    console.log("before guard");
-    const authGuard = async ({ to, from, next }) => {
-        console.log(
-            "[authGuard] Navigating from:",
-            from?.path,
-            "to:",
-            to.path,
-            "Query:",
-            to.query
-        );
-        if (to.path.startsWith("/admin") && !isAuthenticated()) {
-            console.log(
-                "Authentication required for admin route, redirecting to login."
-            );
-            // Redirect to login page, replacing the current history entry
-            next({ path: "/login", replace: true });
-        } else {
-            // Continue navigation
-            next();
-        }
-    };
-    const guards = [authGuard];
+    import PrivateRoute from "./components/PrivateRoute/PrivateRoute.svelte";
 </script>
 
 <div class="min-h-screen bg-background text-foreground">
     <div class="container mx-auto">
-        <Router beforeEach={guards}>
+        <Router>
             <div
                 class="flex flex-col bg-background text-foreground overflow-y-auto min-h-screen"
             >
@@ -85,15 +54,24 @@
                                 <h1>No user</h1>
                             {/if}
                         </Route>
-                        <Route path="/login" component={Login} />
-                        <Route path="/signup" component={Signup} />
-                        <Route path="/game" component={IdleOverview} />
-                        <Route path="/item" component={ItemOverview} />
-                        <Route path="/store" component={ItemStore} />
-                        <Route
-                            path="/leaderboard"
-                            component={LeaderboardOverview}
-                        />
+                        <Route path="/login">
+                            <Login />
+                        </Route>
+                        <Route path="/signup">
+                            <Signup />
+                        </Route>
+                        <PrivateRoute path="/game">
+                            <IdleOverview />
+                        </PrivateRoute>
+                        <PrivateRoute path="/item">
+                            <ItemOverview />
+                        </PrivateRoute>
+                        <PrivateRoute path="/store">
+                            <ItemStore />
+                        </PrivateRoute>
+                        <PrivateRoute path="/leaderboard">
+                            <LeaderboardOverview />
+                        </PrivateRoute>
                     </div>
                 </main>
                 <footer>
