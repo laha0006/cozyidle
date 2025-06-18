@@ -9,5 +9,7 @@
     }
 </script>
 
-<SkillToggleBar {filterId} onToggle={handleToggle} />
-<Leaderboard skillId={filterId} />
+<div class="flex flex-col justify-center">
+    <SkillToggleBar {filterId} onToggle={handleToggle} />
+    <Leaderboard skillId={filterId} />
+</div>

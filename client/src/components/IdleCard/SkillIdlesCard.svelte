@@ -48,7 +48,7 @@
 <div
     class="relative max-w-72 my-5 bg-card text-card-foreground border-border border-1 rounded-2xl min-w-72"
 >
-    <div class="flex mt-1 mb-3 px-4 justify-between text-center items-center">
+    <div class="flex mt-1 mb-3 px-4 justify-between text-center">
         <div class="text-chart-3 flex items-center">
             <NumberCircle number={skillLevel} />
         </div>

@@ -25,15 +25,17 @@
     }
 </script>
 
-<SkillToggleBar {filterId} onToggle={filterBySkill} />
-<div class="flex items-center justify-center gap-2">
-    {#if filterId > 0}
-        {#each filteredItems as item}
-            <ItemCard {item} onBuy={() => buy(item.item_id)} />
-        {/each}
-    {:else}
-        {#each unownedItems as item}
-            <ItemCard {item} onBuy={() => buy(item.item_id)} />
-        {/each}
-    {/if}
+<div class="flex flex-col justify-center">
+    <SkillToggleBar {filterId} onToggle={filterBySkill} />
+    <div class="flex items-center justify-center gap-2">
+        {#if filterId > 0}
+            {#each filteredItems as item}
+                <ItemCard {item} onBuy={() => buy(item.item_id)} />
+            {/each}
+        {:else}
+            {#each unownedItems as item}
+                <ItemCard {item} onBuy={() => buy(item.item_id)} />
+            {/each}
+        {/if}
+    </div>
 </div>

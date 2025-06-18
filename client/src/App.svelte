@@ -23,44 +23,57 @@
     const guards = [authGuard];
 </script>
 
-<main
-    class="bg-background text-foreground container overflow-y-auto min-h-screen min-w-screen"
->
-    <div class="text-center text-2xl font-bold">
-        <SvelteToast
-            options={{
-                intro: {
-                    y: -64,
-                },
-            }}
-        />
-    </div>
+<div class="min-h-screen bg-background text-foreground">
+    <div class="container mx-auto">
+        <Router beforeEach={guards}>
+            <div
+                class="flex flex-col bg-background text-foreground overflow-y-auto min-h-screen"
+            >
+                <header class="flex justify-center">
+                    <NavBar />
+                </header>
+                <main class="flex grow bg-background text-foreground flex-col">
+                    <div class="text-center text-2xl font-bold">
+                        <SvelteToast
+                            options={{
+                                intro: {
+                                    y: -64,
+                                },
+                            }}
+                        />
+                    </div>
 
-    <Router beforeEach={guards}>
-        <WorkAround />
-        <div
-            class="flex justify-center text-2xl text-center flex-col items-center"
-        >
-            <div>
-                <NavBar />
+                    <WorkAround />
+                    <div class="flex justify-center text-2xl text-center">
+                        <div></div>
+                        <Route path="/">
+                            <h1 class="">Home</h1>
+                            {#if $user}
+                                <h1>{$user.id}</h1>
+                            {:else}
+                                <h1>No user</h1>
+                            {/if}
+                        </Route>
+                        <Route path="/login" component={Login} />
+                        <Route path="/signup" component={Signup} />
+                        <Route path="/game" component={IdleOverview} />
+                        <Route path="/item" component={ItemOverview} />
+                        <Route path="/store" component={ItemStore} />
+                        <Route
+                            path="/leaderboard"
+                            component={LeaderboardOverview}
+                        />
+                    </div>
+                </main>
+                <footer>
+                    <div class="text-muted">
+                        &copy; All rights reserved 2025
+                    </div>
+                </footer>
             </div>
-            <Route path="/">
-                <h1 class="">Home</h1>
-                {#if $user}
-                    <h1>{$user.id}</h1>
-                {:else}
-                    <h1>No user</h1>
-                {/if}
-            </Route>
-            <Route path="/login" component={Login} />
-            <Route path="/signup" component={Signup} />
-            <Route path="/game" component={IdleOverview} />
-            <Route path="/item" component={ItemOverview} />
-            <Route path="/store" component={ItemStore} />
-            <Route path="/leaderboard" component={LeaderboardOverview} />
-        </div>
-    </Router>
-</main>
+        </Router>
+    </div>
+</div>
 
 <style>
 </style>

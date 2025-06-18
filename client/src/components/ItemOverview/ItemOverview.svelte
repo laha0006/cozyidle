@@ -17,15 +17,17 @@
     }
 </script>
 
-<SkillToggleBar {filterId} onToggle={handleToggle} />
-<div class="flex flex-wrap gap-2">
-    {#if filterId > 0}
-        {#each filteredItems as item}
-            <ItemCard {item} />
-        {/each}
-    {:else}
-        {#each ownedItems as item}
-            <ItemCard {item} />
-        {/each}
-    {/if}
+<div class="flex flex-col justify-center items-center">
+    <SkillToggleBar {filterId} onToggle={handleToggle} />
+    <div class="flex flex-wrap gap-2">
+        {#if filterId > 0}
+            {#each filteredItems as item}
+                <ItemCard {item} />
+            {/each}
+        {:else}
+            {#each ownedItems as item}
+                <ItemCard {item} />
+            {/each}
+        {/if}
+    </div>
 </div>

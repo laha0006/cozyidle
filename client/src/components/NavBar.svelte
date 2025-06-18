@@ -53,20 +53,35 @@
     }
 </script>
 
-<button onclick={goToHome}> Home</button>
-<button
-    class={currentPath === "/game" ? "text-green-500" : ""}
-    onclick={goToGame}
->
-    Game</button
->
-<button onclick={goToItem}>Item</button>
-<button onclick={goToStore}>Store</button>
-<button onclick={goToLeaderboard}>Leaderboards</button>
-{#if $user}
-    <button onclick={handleLogout}> Log out</button>
-    {$user.id}
-{:else}
-    <button onclick={goToLogin}> Login</button>
-    <button onclick={goToSignup}> Signup</button>
-{/if}
+<nav class="flex justify-around gap-1 w-full">
+    <div>
+        <button onclick={goToHome}> LOGO </button>
+    </div>
+
+    {#if $user}
+        <div>
+            <button
+                class={currentPath === "/game" ? "text-green-500" : ""}
+                onclick={goToGame}
+            >
+                Game</button
+            >
+
+            <button onclick={goToItem}>Item</button>
+            <button onclick={goToStore}>Store</button>
+            <button onclick={goToLeaderboard}>Leaderboards</button>
+        </div>
+        <div>
+            <button onclick={() => console.log("clicked!")}>
+                {$user.username}
+                {$user.id}
+            </button>
+            <button onclick={handleLogout}> Log out</button>
+        </div>
+    {:else}
+        <div>
+            <button onclick={goToLogin}> Login</button>
+            <button onclick={goToSignup}> Signup</button>
+        </div>
+    {/if}
+</nav>

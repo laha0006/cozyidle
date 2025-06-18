@@ -9,7 +9,9 @@
 
 <!-- <div class="h-screen overflow-auto-y"> -->
 <div class="flex justify-center">
-    <div class="relative grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+    <div
+        class="relative items-start grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-4"
+    >
         {#if $idleBySkillStore}
             {#each $idleBySkillStore as idles}
                 <SkillIdlesCard {idles} />
