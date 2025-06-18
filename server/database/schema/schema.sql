@@ -134,7 +134,7 @@ INSERT INTO idles (name, resource_id, skill_id) VALUES('Iron', 6, 6);
 
 INSERT INTO skills(name) VALUES('Harvesting');
 INSERT INTO resources (name, value , skill_id) VALUES('Wheat', 2, 7);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('What', 7, 7);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Wheat', 7, 7);
 -- idle level 1
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,1,0,60,0,1);
@@ -793,7 +793,10 @@ INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(7,98,1393
 INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(7,99,1439335);
 INSERT INTO skill_levels (skill_id, level, experience_required) VALUES(7,100,1485837);
 
-INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Fishing Rod',1,1,100,1);
-INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Bow',2,1,100,1);
-INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Axe',3,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Fishing Rod',2,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Bow',3,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Axe',4,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Knife',5,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Pickaxe',6,1,100,1);
+INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Scythe',7,1,100,1);
                                    
