@@ -6,7 +6,7 @@
     const { resourceId, resource } = $props();
 
     let sellAmount = $state(0);
-
+    const sellPrice = $derived(resource?.value * sellAmount);
     function sell() {
         if (sellAmount > resource.amount) {
             error("You do have enough resources to sell!");
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div>
-            {resource.value}*{sellAmount} = {resource.Value * sellAmount} gold
+            sell for: {sellPrice}
         </div>
     {/if}
 </div>

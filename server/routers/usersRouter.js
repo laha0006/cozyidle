@@ -165,6 +165,7 @@ router.get("/:userId/resources", async (req, res) => {
     const sql = `
     SELECT
         ur.amount,
+        r.value,
         r.name,
         r.id
     FROM user_resources ur

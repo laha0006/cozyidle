@@ -53,7 +53,7 @@ user.subscribe(async ($user) => {
         const resourceMap = new Map();
         resources.forEach((r) => {
             if (resourceMap.get(r.id)) return;
-            resourceMap.set(r.id, { amount: r.amount, name: r.name });
+            resourceMap.set(r.id, r);
         });
         console.log("resources:", resourceMap);
         userResourcesStore.set(resourceMap);
