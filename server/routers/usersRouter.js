@@ -7,11 +7,26 @@ const router = Router();
 router.use(authenticateToken);
 
 router.get("/", (req, res) => {
-    res.send({ message: "Auth succesful!", user: req.user });
+    res.send({ message: "is authenticated!", user: req.user });
+});
+
+router.get("/:userId", async (req, res) => {
+    const { userId } = req.params;
+    const sql = `SELECT username FROM users WHERE id = $1`;
+
+    const client = await db.connect();
+    try {
+        const result = await client.query(sql, [userId]);
+        const rows = result.rows;
+        res.send({ data: rows });
+    } catch (error) {
+        res.status(404).send({ message: "Couldn't find profile!" });
+    } finally {
+        client.release();
+    }
 });
 
 router.get("/:userId/idles", async (req, res) => {
-    console.log(">>>> IDLES HIT <<<<");
     const { userId } = req.params;
 
     await updateIdles(userId);

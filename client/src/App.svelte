@@ -28,6 +28,7 @@
     import LeaderboardPage from "./pages/LeaderboardPage.svelte";
     import HomePage from "./pages/HomePage.svelte";
     import ResourcesPage from "./pages/ResourcesPage.svelte";
+    import ProfilePage from "./pages/ProfilePage.svelte";
 </script>
 
 <div class="min-h-screen bg-background text-foreground">
@@ -73,6 +74,9 @@
                         </PrivateRoute>
                         <PrivateRoute path="/game/resources">
                             <ResourcesPage />
+                        </PrivateRoute>
+                        <PrivateRoute path="/game/profile/:userId" let:params>
+                            <ProfilePage {params} />
                         </PrivateRoute>
                         <PrivateRoute path="/game/leaderboard">
                             <LeaderboardPage />

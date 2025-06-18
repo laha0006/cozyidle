@@ -8,6 +8,6 @@
 
 <Route {path} let:params>
     <PrivateRouteGuard>
-        {@render children(params)}
+        <slot {params} />
     </PrivateRouteGuard>
 </Route>

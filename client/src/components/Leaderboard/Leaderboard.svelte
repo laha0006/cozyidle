@@ -2,8 +2,13 @@
     import { onMount } from "svelte";
     import { getFetch } from "../../util/fetch";
     import { leaderboards } from "../../stores/leaderboardStore.js";
+    import { navigate } from "svelte-routing";
     const { skillId } = $props();
     const leaderboard = $derived($leaderboards?.get(skillId));
+
+    function goToProfile(userId) {
+        navigate("/game/profile/" + userId);
+    }
 </script>
 
 <div class="flex justify-center items-center">
@@ -20,7 +25,9 @@
             {#each leaderboard as entry, index}
                 <tr>
                     <td>{index + 1}</td>
-                    <td>{entry.username}</td>
+                    <td onclick={() => goToProfile(entry.user_id)}
+                        >{entry.username}</td
+                    >
                     <td>{entry.level}</td>
                     <td>{entry.experience}</td>
                 </tr>

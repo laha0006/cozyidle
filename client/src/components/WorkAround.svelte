@@ -3,7 +3,7 @@
     import { setUserIfAuthenticated } from "../stores/userStore.js";
     import { socketStore } from "../stores/socketStore.js";
 
-    onMount(() => {
-        setUserIfAuthenticated();
-    });
+    // onMount(() => {
+    //     setUserIfAuthenticated();
+    // });
 </script>
