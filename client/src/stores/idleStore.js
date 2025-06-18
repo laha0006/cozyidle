@@ -39,11 +39,10 @@ function createIdleStore() {
         // }
         update((idles) => {
             return idles.map((idle) => {
-                const resourceId = idle.resource_id;
+                const resourceId = idle.resourceId;
                 if (!idle.active) {
                     return idle;
                 } else {
-                    // const now = Date.now();
                     const now = Date.now() + idle.offset;
                     const speed = idle.speed * 1000;
 
@@ -56,7 +55,7 @@ function createIdleStore() {
                     );
                     if (incrementCount > 0 && userSkillsStore) {
                         userSkillsStore.giveExperience(
-                            idle.skill_id,
+                            idle.skillId,
                             incrementCount * idle.increment
                         );
                     }
@@ -72,12 +71,10 @@ function createIdleStore() {
                         lastIncrement:
                             idle.lastIncrement + incrementCount * speed,
                         progress: progress,
-                        og: incrementCount > 0 ? Date.now() : idle.og,
                     };
                 }
             });
         });
-        // lastLoop = Date.now();
         rafLoopId = requestAnimationFrame(loop);
     }
 
@@ -98,7 +95,7 @@ function createIdleStore() {
                 const offset = server_now - clientNow;
                 update((idles) => {
                     return idles.map((idle) => {
-                        if (idle.idle_id !== idleId) return idle;
+                        if (idle.idleId !== idleId) return idle;
                         return {
                             ...idle,
                             active: true,
@@ -107,7 +104,6 @@ function createIdleStore() {
                         };
                     });
                 });
-                // loop();
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
@@ -115,18 +111,17 @@ function createIdleStore() {
                 userResourcesStore.setResource(resourceId, resource_amount);
                 update((idles) => {
                     return idles.map((idle) => {
-                        if (idle.idle_id !== idleId) return idle;
+                        if (idle.idleId !== idleId) return idle;
                         return { ...idle, active: false, progress: 0 };
                     });
                 });
             });
 
             $socketStore.on(IdleServerEvent.UNLOCKED, (data) => {
-                console.log("UNLOCKED", data);
                 const { idleId } = data;
                 update((idles) => {
                     return idles.map((idle) => {
-                        if (idle.idle_id !== idleId) return idle;
+                        if (idle.idleId !== idleId) return idle;
                         return { ...idle, unlocked: true };
                     });
                 });
@@ -137,12 +132,6 @@ function createIdleStore() {
                 console.log("data:", data);
                 userResourcesStore.deduct(4, price);
                 idleStore.sync();
-                // update((idles) => {
-                //     return idles.map((idle) => {
-                //         if (idle.idle_id !== idleId) return idle;
-                //         return { ...idle, level: idle.level + 1 };
-                //     });
-                // });
             });
         }
     });
@@ -165,7 +154,7 @@ function createIdleStore() {
             const newIdles = idleData.data.map((idle) => {
                 if (!idle.active) return idle;
                 const startedTime = Math.floor(+idle.started);
-                const serverTime = Math.floor(+idle.now_unix);
+                const serverTime = Math.floor(+idle.nowUnix);
                 const timeDiff = serverTime - clientNow;
                 return {
                     ...idle,
@@ -182,7 +171,7 @@ function createIdleStore() {
         stop: async (idleId) => {
             const socket = get(socketStore);
             const store = get(idleStore);
-            const idle = store.find((idle) => idle.idle_id === idleId);
+            const idle = store.find((idle) => idle.idleId === idleId);
             const startedTime = Math.floor(+idle.started);
             socket.emit(IdleClientEvent.STOP, { idleId: idleId });
         },
@@ -202,13 +191,12 @@ export const idleStore = createIdleStore();
 export const idleBySkillStore = derived(idleStore, ($idleStore, set) => {
     const idlesBySkill = [];
     $idleStore.forEach((idle) => {
-        const index = idle.skill_id - 2;
+        const index = idle.skillId - 2;
         if (!idlesBySkill[index]) {
             idlesBySkill[index] = [idle];
         } else {
             idlesBySkill[index].push(idle);
         }
     });
-    // console.log(idlesBySkill);
     set(idlesBySkill);
 });

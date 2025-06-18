@@ -38,7 +38,7 @@ user.subscribe(async ($user) => {
         const idles = idleData.data.map((idle) => {
             if (!idle.active) return idle;
             const startedTime = Math.floor(+idle.started);
-            const serverTime = Math.floor(+idle.now_unix);
+            const serverTime = Math.floor(+idle.nowUnix);
             const timeDiff = serverTime - clientNow;
             return {
                 ...idle,

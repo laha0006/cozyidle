@@ -104,11 +104,32 @@ router.get("/:userId/idles", async (req, res) => {
         FROM init
         ORDER BY unlocked DESC,active DESC, level_req`;
 
-    const { rows } = await db.query(sql, [userId]);
-    rows[0].started = Number(rows[0].started);
-    console.log("UPDATE ROWS:", rows);
-    console.log("INIT STARTED:", rows[0].started);
-    res.send({ data: rows });
+    const result = await db.query(sql, [userId]);
+    const data = result.rows;
+    const cleanedData = data.map(
+        ({
+            skill_level,
+            idle_id,
+            level_req,
+            resource_id,
+            skill_id,
+            now_unix,
+            ...rest
+        }) => {
+            return {
+                ...rest,
+                skillLevel: skill_level,
+                idleId: idle_id,
+                levelReq: level_req,
+                resourceId: resource_id,
+                skillId: skill_id,
+                nowUnix: now_unix,
+            };
+        }
+    );
+    console.log("cleaned idles data:", cleanedData);
+
+    res.send({ data: cleanedData });
 });
 
 router.get("/:userId/items", async (req, res) => {
@@ -128,21 +149,7 @@ router.get("/:userId/items", async (req, res) => {
     JOIN skills s ON s.id = i.skill_id
     LEFT JOIN user_items ui
     ON ui.item_id = i.id AND ui.user_id = $1`;
-    const sql = `
-    SELECT 
-        i.name AS name,
-        s.name AS  skill,
-        i.bonus AS bonus,
-        i.price,
-        i.skill_requirement AS requirement,
-        ui.equipped,
-        i.id AS item_id, 
-        s.id AS skill_id
-    FROM user_items ui
-    JOIN items i ON i.id = ui.item_id
-    JOIN skills s ON s.id = i.skill_id
-    WHERE ui.user_id = $1
-    `;
+
     const client = await db.connect();
     try {
         const result = await client.query(allItemsSql, [userId]);

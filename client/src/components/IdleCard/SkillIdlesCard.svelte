@@ -8,7 +8,7 @@
 
     const { idles } = $props();
     const skillName = $derived(idles[0].skill);
-    const skillLevel = $derived($userSkillsStore[idles[0].skill_id - 2].level);
+    const skillLevel = $derived($userSkillsStore[idles[0].skillId - 2].level);
     const hasOneActive = $derived(idles.some((idle) => idle.active));
     let showList = $state(false);
 
@@ -23,7 +23,7 @@
                 return 0;
             })
     );
-    const idlesById = $derived(new Map(idles.map((i) => [i.idle_id, i])));
+    const idlesById = $derived(new Map(idles.map((i) => [i.idleId, i])));
 
     function toggleShowList() {
         if (idles.length === 1) return;

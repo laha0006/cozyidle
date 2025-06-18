@@ -11,12 +11,12 @@
     import Button from "../Button/Button.svelte";
 
     const { idle, selected = false, controls = true } = $props();
-    const resource = $derived($userResourcesStore.get(idle.resource_id));
+    const resource = $derived($userResourcesStore.get(idle.resourceId));
     const unlocked = $derived(idle.unlocked);
     const level = $derived(idle.level);
     const upgrades = $derived(
         $upgradesStore
-            .get(idle.idle_id)
+            .get(idle.idleId)
             .filter((upgrade) => upgrade.level === level + 1)
     );
     let cooldown = $state(false);
@@ -34,7 +34,7 @@
     });
 
     function unlockIdle() {
-        idleStore.unlock(idle.idle_id);
+        idleStore.unlock(idle.idleId);
     }
 
     function triggerCooldown() {
@@ -59,14 +59,14 @@
     function handleStart() {
         if (!controls) return;
         triggerCooldown();
-        idleStore.start(idle.idle_id);
+        idleStore.start(idle.idleId);
     }
 
     function handleStop() {
         console.log("handle stop!");
         if (!controls) return;
         triggerCooldown();
-        idleStore.stop(idle.idle_id);
+        idleStore.stop(idle.idleId);
     }
     let isFirstRun = true;
     let prevAmount;
@@ -80,7 +80,6 @@
     let springTimeoutId;
     $effect(() => {
         if (resource.amount > prevAmount) {
-            console.log("poke!");
             clearTimeout(springTimeoutId);
             scale.set(1.2, {
                 stiffness: 0.1,
@@ -135,7 +134,7 @@
             <div clasS="flex justify-between text-center gap-1 p-2">
                 <div>
                     <p>req</p>
-                    <p>{idle.level_req}</p>
+                    <p>{idle.levelReq}</p>
                 </div>
                 <div>
                     <p>price</p>
