@@ -109,28 +109,30 @@ CREATE TABLE IF NOT EXISTS user_experiences (
 );
 
 
+INSERT INTO skills(name) VALUES('Commerce');
+INSERT INTO resources (name, value , skill_id) VALUES('Gold',1, 1);
+
 INSERT INTO skills(name) VALUES('Fishing');
+INSERT INTO resources (name, value , skill_id) VALUES('Salmon',2, 2);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon', 2, 2);
+
 INSERT INTO skills(name) VALUES('Hunting');
+INSERT INTO resources (name, value , skill_id) VALUES('Boar Meat',2, 3);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Boar', 3, 3);
+
 INSERT INTO skills(name) VALUES('Logging');
-INSERT INTO skills(name) VALUES('Commerce');
-INSERT INTO skills(name) VALUES('Commerce');
-INSERT INTO skills(name) VALUES('Commerce');
-INSERT INTO skills(name) VALUES('Commerce');
-INSERT INTO resources (name, value , skill_id) VALUES('Salmon',2, 1);
-INSERT INTO resources (name, value , skill_id) VALUES('Boar',2, 2);
-INSERT INTO resources (name, value , skill_id) VALUES('Oak',2,3);
-INSERT INTO resources (name, value , skill_id) VALUES('Gold',1, 4);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 1, 1);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Golden Salmon Fishing', 1, 1);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 1, 4);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 2, 2);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 2, 2);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 2, 2);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 3, 6);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 3, 5);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 3, 4);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Boar Hunting', 2, 2);
-INSERT INTO idles (name, resource_id, skill_id) VALUES('Oak Logging', 3, 3);
+INSERT INTO resources (name, value , skill_id) VALUES('Oak',2,4);
+INSERT INTO idles (name, resource_id, skill_id) VALUES('Oak Logging', 4, 4);
+
+INSERT INTO skills(name) VALUES('Gathering');
+INSERT INTO resources (name, value , skill_id) VALUES('Mushrooms',2,5);
+
+INSERT INTO skills(name) VALUES('Mining');
+INSERT INTO resources (name, value , skill_id) VALUES('Iron Ore', 2, 6);
+
+INSERT INTO skills(name) VALUES('Harvesting');
+INSERT INTO resources (name, value , skill_id) VALUES('Wheat', 2, 7);
+
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,1,0,60,0,1);
