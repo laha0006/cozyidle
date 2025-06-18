@@ -48,7 +48,7 @@ function createUserResourcesStore() {
             $socket.on(ResourceServerEvent.SOLD, (data) => {
                 const { gold, resourceId, amount } = data;
                 deduct(resourceId, amount);
-                setResource(4, gold);
+                setResource(1, gold);
             });
         }
     });

@@ -22,7 +22,7 @@ function createUserItemStore() {
             $socket.on(ItemServerEvent.EQUIPPED, (data) => {
                 update((items) => {
                     return items.map((item) => {
-                        if (item.item_id !== data.itemId) return item;
+                        if (item.itemId !== data.itemId) return item;
                         return {
                             ...item,
                             equipped: true,
@@ -33,7 +33,7 @@ function createUserItemStore() {
             $socket.on(ItemServerEvent.UNEQUIPPED, (data) => {
                 update((items) => {
                     return items.map((item) => {
-                        if (item.item_id !== data.itemId) return item;
+                        if (item.itemId !== data.itemId) return item;
                         return {
                             ...item,
                             equipped: false,
@@ -44,7 +44,7 @@ function createUserItemStore() {
             $socket.on(ItemServerEvent.BOUGHT, (data) => {
                 update((items) => {
                     return items.map((item) => {
-                        if (item.item_id !== data.itemId) return item;
+                        if (item.itemId !== data.itemId) return item;
                         return {
                             ...item,
                             owned: true,

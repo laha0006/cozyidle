@@ -8,7 +8,7 @@
     let filterId = $state(0);
     const filteredItems = $derived(
         $userItemStore?.filter(
-            (item) => item.skill_id === filterId && !item.owned
+            (item) => item.skillId === filterId && !item.owned
         )
     );
     const unownedItems = $derived(
@@ -31,11 +31,11 @@
     <div class="flex flex-wrap items-center justify-center gap-2">
         {#if filterId > 0}
             {#each filteredItems as item}
-                <ItemCard {item} onBuy={() => buy(item.item_id)} />
+                <ItemCard {item} onBuy={() => buy(item.itemId)} />
             {/each}
         {:else}
             {#each unownedItems as item}
-                <ItemCard {item} onBuy={() => buy(item.item_id)} />
+                <ItemCard {item} onBuy={() => buy(item.itemId)} />
             {/each}
         {/if}
     </div>

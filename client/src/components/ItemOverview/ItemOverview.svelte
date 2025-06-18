@@ -7,7 +7,7 @@
     let level = $state(0);
     const filteredItems = $derived(
         $userItemStore?.filter(
-            (item) => item.skill_id === filterId && item.owned
+            (item) => item.skillId === filterId && item.owned
         )
     );
     const ownedItems = $derived($userItemStore?.filter((item) => item.owned));

@@ -7,7 +7,6 @@
     import NumberCircle from "../NumberCircle/NumberCircle.svelte";
 
     const { idles } = $props();
-    console.log("idles in comp:", idles);
     const skillName = $derived(idles[0].skill);
     const skillLevel = $derived($userSkillsStore[idles[0].skill_id - 2].level);
     const hasOneActive = $derived(idles.some((idle) => idle.active));

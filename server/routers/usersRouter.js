@@ -143,9 +143,24 @@ router.get("/:userId/items", async (req, res) => {
     JOIN skills s ON s.id = i.skill_id
     WHERE ui.user_id = $1
     `;
-
-    const { rows } = await db.query(allItemsSql, [userId]);
-    res.send({ data: rows });
+    const client = await db.connect();
+    try {
+        const result = await client.query(allItemsSql, [userId]);
+        const data = result.rows;
+        const cleanedData = data.map(({ item_id, skill_id, ...rest }) => {
+            return {
+                ...rest,
+                itemId: item_id,
+                skillId: skill_id,
+            };
+        });
+        console.log("CLEANED ITEM DATA:", cleanedData);
+        res.send({ data: cleanedData });
+    } catch (error) {
+        throw error;
+    } finally {
+        client.release();
+    }
 });
 
 router.get("/:userId/skills", async (req, res) => {
@@ -176,13 +191,13 @@ router.get("/:userId/skills", async (req, res) => {
 
 router.get("/:userId/resources", async (req, res) => {
     const { userId } = req.params;
-    console.log("resources!");
     const sql = `
     SELECT
         ur.amount,
         r.value,
         r.name,
-        r.id
+        r.id,
+        r.skill_Id
     FROM user_resources ur
     JOIN resources r
         ON r.id = ur.resource_id
@@ -192,7 +207,13 @@ router.get("/:userId/resources", async (req, res) => {
     await updateIdles(userId);
     const result = await db.query(sql, [userId]);
     const data = result.rows;
-    res.send({ data });
+    const cleanedData = data.map(({ skill_id, ...rest }) => {
+        return {
+            ...rest,
+            skillId: skill_id,
+        };
+    });
+    res.send({ data: cleanedData });
 });
 
 export default router;

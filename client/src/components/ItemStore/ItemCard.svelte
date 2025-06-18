@@ -3,12 +3,12 @@
     import { userSkillsStore } from "../../stores/userSkillsStore";
     import { userResourcesStore } from "../../stores/userResourcesStore";
 
-    const skillId = $state(item.skill_id);
+    const skillId = $state(item.skillId);
     const requirement = $state(item.requirement);
-    const currentSkillLevel = $derived($userSkillsStore[skillId - 2].level);
+    const currentSkillLevel = $derived($userSkillsStore[skillId - 2]?.level);
     const skillCheck = $derived(currentSkillLevel >= requirement);
 
-    const currentGold = $derived($userResourcesStore.get(4).amount); // 4 is gold
+    const currentGold = $derived($userResourcesStore.get(1).amount); // 1 is gold
     const goldCheck = $derived(currentGold >= item.price);
 </script>
 

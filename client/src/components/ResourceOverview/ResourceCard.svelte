@@ -4,6 +4,8 @@
     import Button from "../Button/Button.svelte";
 
     const { resourceId, resource } = $props();
+    console.log("resourceID:", resourceId);
+    console.log("resource:", resource);
 
     let sellAmount = $state(0);
     const sellPrice = $derived(resource?.value * sellAmount);
@@ -23,22 +25,20 @@
     <div>
         {resource.amount}
     </div>
-    {#if resourceId !== 4}
-        <div class="flex justify-center">
-            <div class="flex items-center px-2">
-                <input
-                    bind:value={sellAmount}
-                    max={resource.amount}
-                    class="bg-muted px-2 w-20 rounded text-center"
-                    type="number"
-                />
-            </div>
-            <div class="p-2 flex justify-center items-center">
-                <Button type="primary" onclick={sell}>Sell</Button>
-            </div>
+    <div class="flex justify-center">
+        <div class="flex items-center px-2">
+            <input
+                bind:value={sellAmount}
+                max={resource.amount}
+                class="bg-muted px-2 w-20 rounded text-center"
+                type="number"
+            />
         </div>
-        <div>
-            sell for: {sellPrice}
+        <div class="p-2 flex justify-center items-center">
+            <Button type="primary" onclick={sell}>Sell</Button>
         </div>
-    {/if}
+    </div>
+    <div>
+        sell for: {sellPrice}
+    </div>
 </div>

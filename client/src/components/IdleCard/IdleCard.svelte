@@ -8,6 +8,7 @@
     import IdleStartStopButton from "./IdleStartStopButton.svelte";
     import { Spring, spring } from "svelte/motion";
     import NumberCircle from "../NumberCircle/NumberCircle.svelte";
+    import Button from "../Button/Button.svelte";
 
     const { idle, selected = false, controls = true } = $props();
     const resource = $derived($userResourcesStore.get(idle.resource_id));
@@ -130,9 +131,25 @@
             <div></div>
         </div>
     {:else}
-        <div>
-            <button onclick={unlockIdle}> Unlock! </button>
-            {idle.level_req}
+        <div class="flex flex-col justify-center px-2">
+            <div clasS="flex justify-between text-center gap-1 p-2">
+                <div>
+                    <p>req</p>
+                    <p>{idle.level_req}</p>
+                </div>
+                <div>
+                    <p>price</p>
+                    <p>{idle.price}</p>
+                </div>
+                <div>
+                    <p>-</p>
+                    <p>
+                        <Button type="Primary" onclick={unlockIdle}
+                            >Unlock</Button
+                        >
+                    </p>
+                </div>
+            </div>
         </div>
     {/if}
     {#if showUpgrades}
@@ -141,21 +158,21 @@
         >
             {#each upgrades as upgrade}
                 <div class="flex px-1 justify-between text-center">
-                    <div class="w-15">
+                    <div class="w-15 py-2">
                         <p>req</p>
                         <p>{upgrade.level_requirement}</p>
                     </div>
-                    <div class="w-15">
+                    <div class="w-15 py-2">
                         <p>lvl</p>
                         <p>{upgrade.level}</p>
                     </div>
-                    <div class="w-15">
+                    <div class="w-15 py-2">
                         <p>price</p>
                         <p>{upgrade.price}</p>
                     </div>
-                    <div class="w-15">
+                    <div class="w-15 py-2">
                         <p>-</p>
-                        <button onclick={buyUpgrade}>buy</button>
+                        <Button type="primary" onclick={buyUpgrade}>buy</Button>
                     </div>
                 </div>
             {/each}

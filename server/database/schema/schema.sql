@@ -153,6 +153,7 @@ INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, pric
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,1,0,60,0,1);
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(7,1,5,60,500,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(8,1,5,60,500,1);
 
 -- idle level 2
 iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,2,10,50,0,1);
@@ -811,3 +812,4 @@ INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basi
 INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Pickaxe',6,1,100,1);
 INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Scythe',7,1,100,1);
                                    
+INSERT users(username,email,password) VALUES(test, test@mail.dk, '$2b$12$SmgWa9/3fmZRICwaZOxe5OJjO1O9iIJk.z4yqjHz1OD0CQJxY2Nb6');

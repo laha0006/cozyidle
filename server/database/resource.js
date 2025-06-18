@@ -37,7 +37,7 @@ export async function sellResource(userId, resourceId, amount) {
             SET amount = ur.amount + (v.value * $3)
             FROM value v
             WHERE ur.user_id = $1
-            AND ur.resource_id = 4
+            AND ur.resource_id = 1
             RETURNING ur.amount
         ) SELECT
             amount
