@@ -1,13 +1,16 @@
 import { IdleClientEvent } from "./events/idleEvents.js";
 import { ItemClientEvent } from "./events/itemEvents.js";
+import { ResourceClientEvent } from "./events/resourceEvents.js";
 import { idleDispatch } from "./idleHandler.js";
 import { itemDispatch } from "./itemHandler.js";
+import { resourceDispatch } from "./resourceHandler.js";
 
 const userLocks = new Map();
 
 export function registerIdleHandlers(socket) {
     const idleEvents = Object.values(IdleClientEvent);
     const itemEvents = Object.values(ItemClientEvent);
+    const resourceEvents = Object.values(ResourceClientEvent);
     const userId = socket.userId;
     if (!userLocks.get(userId)) {
         userLocks.set(userId, new Map());
@@ -38,6 +41,12 @@ export function registerIdleHandlers(socket) {
     itemEvents.forEach((event) => {
         socket.on(event, async (...args) => {
             await itemDispatch(event, socket, ...args);
+        });
+    });
+
+    resourceEvents.forEach((event) => {
+        socket.on(event, async (...args) => {
+            await resourceDispatch(event, socket, ...args);
         });
     });
 }

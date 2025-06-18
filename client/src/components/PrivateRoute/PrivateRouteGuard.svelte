@@ -1,11 +1,14 @@
 <script>
     import { navigate } from "svelte-routing";
-    import { user } from "../../stores/userStore.js";
+    import { setUserIfAuthenticated, user } from "../../stores/userStore.js";
     import { onMount } from "svelte";
 
-    onMount(() => {
+    onMount(async () => {
         if (!$user) {
-            navigate("/login");
+            await setUserIfAuthenticated();
+            if (!$user) {
+                navigate("/login");
+            }
         }
     });
 </script>

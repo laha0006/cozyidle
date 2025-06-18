@@ -8,6 +8,7 @@
     // import { authGuard } from "./util/guards.js";
     import { user, setUserIfAuthenticated } from "./stores/userStore.js";
     import "./stores/init.js";
+    setUserIfAuthenticated();
 
     import Test from "./components/Test.svelte";
     import NavBar from "./components/NavBar.svelte";
@@ -21,6 +22,12 @@
     import ItemStore from "./components/ItemStore/ItemStore.svelte";
     import LeaderboardOverview from "./components/Leaderboard/LeaderboardOverview.svelte";
     import PrivateRoute from "./components/PrivateRoute/PrivateRoute.svelte";
+    import IdlesPage from "./pages/IdlesPage.svelte";
+    import EquipmentPage from "./pages/EquipmentPage.svelte";
+    import StorePage from "./pages/StorePage.svelte";
+    import LeaderboardPage from "./pages/LeaderboardPage.svelte";
+    import HomePage from "./pages/HomePage.svelte";
+    import ResourcesPage from "./pages/ResourcesPage.svelte";
 </script>
 
 <div class="min-h-screen bg-background text-foreground">
@@ -47,12 +54,7 @@
                     <div class="flex justify-center text-2xl text-center">
                         <div></div>
                         <Route path="/">
-                            <h1 class="">Home</h1>
-                            {#if $user}
-                                <h1>{$user.id}</h1>
-                            {:else}
-                                <h1>No user</h1>
-                            {/if}
+                            <HomePage />
                         </Route>
                         <Route path="/login">
                             <Login />
@@ -60,17 +62,20 @@
                         <Route path="/signup">
                             <Signup />
                         </Route>
-                        <PrivateRoute path="/game">
-                            <IdleOverview />
+                        <PrivateRoute path="/game/idles">
+                            <IdlesPage />
                         </PrivateRoute>
-                        <PrivateRoute path="/item">
-                            <ItemOverview />
+                        <PrivateRoute path="/game/equipment">
+                            <EquipmentPage />
                         </PrivateRoute>
-                        <PrivateRoute path="/store">
-                            <ItemStore />
+                        <PrivateRoute path="/game/store">
+                            <StorePage />
                         </PrivateRoute>
-                        <PrivateRoute path="/leaderboard">
-                            <LeaderboardOverview />
+                        <PrivateRoute path="/game/resources">
+                            <ResourcesPage />
+                        </PrivateRoute>
+                        <PrivateRoute path="/game/leaderboard">
+                            <LeaderboardPage />
                         </PrivateRoute>
                     </div>
                 </main>

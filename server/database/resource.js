@@ -24,3 +24,34 @@ export async function deductResource(userId, resourceId, amount) {
         throw error;
     }
 }
+
+export async function sellResource(userId, resourceId, amount) {
+    const sql = `
+    WITH value AS (SELECT r.value
+        FROM user_resources ur
+        JOIN resources r ON r.id = ur.resource_id
+        WHERE ur.user_id = $1
+        AND resource_id = $2),
+        sell AS (
+            UPDATE user_resources ur
+            SET amount = ur.amount + (v.value * $3)
+            FROM value v
+            WHERE ur.user_id = $1
+            AND ur.resource_id = 4
+            RETURNING ur.amount
+        ) SELECT
+            amount
+        FROM sell
+    `;
+
+    const client = await db.connect();
+    try {
+        await deductResource(userId, resourceId, amount);
+        const goldRes = await client.query(sql, [userId, resourceId, amount]);
+        return { gold: goldRes.rows[0].amount, resourceId, amount };
+    } catch (error) {
+        throw error;
+    } finally {
+        client.release();
+    }
+}

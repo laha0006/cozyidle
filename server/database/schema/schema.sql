@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS skill_levels (
 CREATE TABLE IF NOT EXISTS resources (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    value INTEGER DEFAULT 1,
     skill_id INTEGER REFERENCES skills(id)
 );
 
@@ -115,10 +116,10 @@ INSERT INTO skills(name) VALUES('Commerce');
 INSERT INTO skills(name) VALUES('Commerce');
 INSERT INTO skills(name) VALUES('Commerce');
 INSERT INTO skills(name) VALUES('Commerce');
-INSERT INTO resources (name, skill_id) VALUES('Salmon', 1);
-INSERT INTO resources (name, skill_id) VALUES('Boar', 2);
-INSERT INTO resources (name, skill_id) VALUES('Oak', 3);
-INSERT INTO resources (name, skill_id) VALUES('Gold', 4);
+INSERT INTO resources (name, value , skill_id) VALUES('Salmon',2, 1);
+INSERT INTO resources (name, value , skill_id) VALUES('Boar',2, 2);
+INSERT INTO resources (name, value , skill_id) VALUES('Oak',2,3);
+INSERT INTO resources (name, value , skill_id) VALUES('Gold',1, 4);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 1, 1);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Golden Salmon Fishing', 1, 1);
 INSERT INTO idles (name, resource_id, skill_id) VALUES('Salmon Fishing', 1, 4);

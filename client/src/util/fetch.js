@@ -58,7 +58,8 @@ export async function getFetch(url) {
     let json;
     try {
         json = await response.json();
-    } catch {
+    } catch (error) {
+        console.log(error);
         json = null;
     }
 

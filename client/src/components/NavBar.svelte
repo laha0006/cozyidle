@@ -29,7 +29,7 @@
     }
 </script>
 
-<div class="container text-2xl">
+<div class="container text-2xl mt-2">
     <div class="hidden md:block">
         <nav class="flex justify-between w-full mb-2">
             <div>
@@ -38,17 +38,20 @@
 
             {#if $user}
                 <div class="flex gap-x-4 min-w-md justify-center">
-                    <Link to="/game" let:active>
+                    <Link to="/game/idles" let:active>
                         <NavItem text="Idles" {active} />
                     </Link>
-                    <Link to="/item" let:active>
-                        <NavItem text="Items" {active} />
+                    <Link to="/game/equipment" let:active>
+                        <NavItem text="Equipment" {active} />
                     </Link>
-                    <Link to="/store" let:active>
+                    <Link to="/game/store" let:active>
                         <NavItem text="Store" {active} />
                     </Link>
-                    <Link to="/leaderboard" let:active>
+                    <Link to="/game/leaderboard" let:active>
                         <NavItem text="LeaderBoard" {active} />
+                    </Link>
+                    <Link to="/game/resources" let:active>
+                        <NavItem text="Resources" {active} />
                     </Link>
                 </div>
                 <div class="flex gap-4">
@@ -83,17 +86,32 @@
             <div class="flex items-start justify-center">
                 {#if $user}
                     <div class="flex flex-col gap-y-1 justify-center">
-                        <Link to="/game" let:active onclick={toggleMenu}>
+                        <Link to="/game/idles" let:active onclick={toggleMenu}>
                             <NavItem text="Idles" {active} />
                         </Link>
-                        <Link to="/item" let:active onclick={toggleMenu}>
+                        <Link
+                            to="/game/equipment"
+                            let:active
+                            onclick={toggleMenu}
+                        >
                             <NavItem text="Items" {active} />
                         </Link>
-                        <Link to="/store" let:active onclick={toggleMenu}>
+                        <Link to="/game/store" let:active onclick={toggleMenu}>
                             <NavItem text="Store" {active} />
                         </Link>
-                        <Link to="/leaderboard" let:active onclick={toggleMenu}>
+                        <Link
+                            to="/game/leaderboard"
+                            let:active
+                            onclick={toggleMenu}
+                        >
                             <NavItem text="LeaderBoard" {active} />
+                        </Link>
+                        <Link
+                            to="/game/resources"
+                            let:active
+                            onclick={toggleMenu}
+                        >
+                            <NavItem text="Resources" {active} />
                         </Link>
                     </div>
                 {:else}

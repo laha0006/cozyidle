@@ -11,19 +11,23 @@ import { getLevel } from "../util/skillLevel.js";
 
 user.subscribe(async ($user) => {
     if ($user) {
+        console.log("USER!");
         const userId = $user.id;
         const preFetchTime = Date.now();
         const ping = await getFetchWithRefresh("/api/now");
         const clientNow = Date.now();
         const latency = (clientNow - preFetchTime) / 2;
-        console.log("init diff", ping.now + latency - clientNow);
-        const idleData = await getFetchWithRefresh(`api/users/${userId}/idles`);
+        const idleData = await getFetchWithRefresh(
+            `/api/users/${userId}/idles`
+        );
 
         const resourcesPromise = getFetchWithRefresh(
-            `api/users/${userId}/resources`
+            `/api/users/${userId}/resources`
         );
-        const skillsPromise = getFetchWithRefresh(`api/users/${userId}/skills`);
-        const itemsPromise = getFetchWithRefresh(`api/users/${userId}/items`);
+        const skillsPromise = getFetchWithRefresh(
+            `/api/users/${userId}/skills`
+        );
+        const itemsPromise = getFetchWithRefresh(`/api/users/${userId}/items`);
         const upgradesPromise = getFetchWithRefresh("/api/upgrades");
 
         const [resourcesData, skillsData, itemsdata, upgradesData] =

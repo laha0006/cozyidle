@@ -11,6 +11,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:userId/idles", async (req, res) => {
+    console.log(">>>> IDLES HIT <<<<");
     const { userId } = req.params;
 
     await updateIdles(userId);
@@ -90,6 +91,7 @@ router.get("/:userId/idles", async (req, res) => {
 
     const { rows } = await db.query(sql, [userId]);
     rows[0].started = Number(rows[0].started);
+    console.log("UPDATE ROWS:", rows);
     console.log("INIT STARTED:", rows[0].started);
     res.send({ data: rows });
 });

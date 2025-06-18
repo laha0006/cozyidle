@@ -9,7 +9,6 @@ function createLeaderboardStore() {
         if ($skills) {
             const promises = [];
             $skills.forEach(async (skill) => {
-                console.log("skill;", skill);
                 promises.push(
                     getFetch("/api/skills/" + skill.id + "/leaderboard")
                 );
@@ -19,7 +18,6 @@ function createLeaderboardStore() {
             data.forEach((leaderboard, index) => {
                 leaderboardMap.set(index + 1, leaderboard.data);
             });
-            console.log("Setting leaderboardMap:", leaderboardMap);
             set(leaderboardMap);
         }
     });
