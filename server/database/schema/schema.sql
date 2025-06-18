@@ -812,4 +812,18 @@ INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basi
 INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Pickaxe',6,1,100,1);
 INSERT INTO items (name, skill_id, skill_requirement, price, bonus) VALUES('Basic Scythe',7,1,100,1);
                                    
-INSERT users(username,email,password) VALUES(test, test@mail.dk, '$2b$12$SmgWa9/3fmZRICwaZOxe5OJjO1O9iIJk.z4yqjHz1OD0CQJxY2Nb6');
+INSERT INTO users (username, email, password) VALUES('test', 'test@mail.dk', '$2b$12$SmgWa9/3fmZRICwaZOxe5OJjO1O9iIJk.z4yqjHz1OD0CQJxY2Nb6');
+
+INSERT INTO user_idles (user_id, idle_id, unlocked)
+SELECT 1, i.id, CASE WHEN il.level_requirement = 0 THEN TRUE ELSE FALSE END 
+FROM idles i, idle_levels il
+WHERE i.id = il.id 
+ON CONFLICT (user_id, idle_id) DO NOTHING;
+    
+INSERT INTO user_resources (user_id, resource_id)
+SELECT 1, id FROM resources
+ON CONFLICT (user_id, resource_id) DO NOTHING;
+
+INSERT INTO user_experiences (user_id, skill_id)
+SELECT 1, id FROM skills
+ON CONFLICT (user_id, skill_id) DO NOTHING;
