@@ -3,7 +3,7 @@
 </script>
 
 <div class="w-full bg-background flex flex-col">
-    <div class="w-full py-16 bg-card">
+    <div class="w-full py-16 bg-card rounded-4xl">
         <h1
             class="text-9xl font-bold text-primary tracking-wide text-center w-full"
         >
