@@ -35,7 +35,7 @@ router.get("/:userId/idles", async (req, res) => {
         FROM user_experiences ue
         JOIN skill_levels sl
         ON sl.skill_id = ue.skill_id
-        WHERE ue.user_id = 1
+        WHERE ue.user_id = $1
         AND sl.experience_required <= ue.experience
         ORDER BY sl.skill_id ,sl.level DESC
     ),
