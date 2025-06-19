@@ -7,7 +7,7 @@
 
     import "./stores/init.js";
 
-    import NavBar from "./components/NavBar.svelte";
+    import NavBar from "./components/NavBar/NavBar.svelte";
     import Login from "./components/Login/Login.svelte";
     import Signup from "./components/Signup/Signup.svelte";
     import IdleCard from "./components/IdleCard/IdleCard.svelte";

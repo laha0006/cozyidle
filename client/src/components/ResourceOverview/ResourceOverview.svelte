@@ -22,7 +22,7 @@
     }
 </script>
 
-<div>
+<div class="flex justify-center items-center">
     <SkillToggleBar {filterId} onToggle={handleToggle} />
 </div>
 <div>

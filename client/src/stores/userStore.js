@@ -7,9 +7,9 @@ import {
 
 export const user = writable(null);
 
-export async function setUserIfAuthenticated() {
-    await refreshUser();
-}
+// export async function setUserIfAuthenticated() {
+//     await refreshUser();
+// }
 
 export async function refreshUser() {
     try {

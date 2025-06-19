@@ -4,14 +4,14 @@
     import { Link, navigate } from "svelte-routing";
     import { toast } from "@zerodevx/svelte-toast";
 
-    import { user } from "../stores/userStore.js";
-    import { logout } from "../api/auth.js";
-    import { success } from "../util/toasts.js";
+    import { user } from "../../stores/userStore.js";
+    import { logout } from "../../api/auth.js";
+    import { success } from "../../util/toasts.js";
 
-    import logo from "../assets/logo.png";
+    import logo from "../../assets/logo.png";
 
     import NavItem from "./NavItem.svelte";
-    import Button from "./Button/Button.svelte";
+    import Button from "../Button/Button.svelte";
 
     let menuOpen = $state(false);
 
@@ -67,7 +67,6 @@
                 <div class="flex gap-4">
                     <button
                         onclick={() => {
-                            toggleMenu();
                             navigate("/game/profile/" + $user.id);
                         }}
                     >

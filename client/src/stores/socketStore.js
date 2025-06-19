@@ -1,6 +1,6 @@
 import { io } from "socket.io-client";
 import { writable, derived, get } from "svelte/store";
-import { refreshUser, setUserIfAuthenticated, user } from "./userStore.js";
+import { refreshUser, user } from "./userStore.js";
 import { toast } from "@zerodevx/svelte-toast";
 import { error } from "../util/toasts.js";
 let socket;
