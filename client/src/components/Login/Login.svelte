@@ -1,10 +1,9 @@
 <script>
-    import { Link } from "svelte-routing";
+    import { Link, navigate } from "svelte-routing";
 
     import { postFetch } from "../../util/fetch";
     import { login } from "../../api/auth.js";
-    import { success } from "../../util/toasts.js";
-    import { error } from "../../util/toasts.js";
+    import { success, error } from "../../util/toasts.js";
     import { user } from "../../stores/userStore";
 
     import Button from "../Button/Button.svelte";
@@ -20,11 +19,11 @@
         e.preventDefault();
         try {
             const json = await login(formData);
-            navigate("/game");
+            navigate("/game/idles");
             user.set(json.user);
             success("Sucesffuly logged in!");
-        } catch (error) {
-            error(error.message);
+        } catch (err) {
+            error(err.message);
         }
     }
 </script>

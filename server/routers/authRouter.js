@@ -1,4 +1,6 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import {
     addUser,
     userExists,
@@ -9,8 +11,6 @@ import {
 } from "../database/user.js";
 import { hashPassword } from "../util/hashing.js";
 import { generateTokens } from "../util/jwt.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { authenticateToken } from "../middleware/auth.js";
 import { sendWelcomeMail } from "../util/mail.js";
 

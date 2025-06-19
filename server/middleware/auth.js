@@ -46,6 +46,10 @@ export function socketAuthenticateToken(socket, next) {
                 return next(new Error(err.message));
             }
             const userFromDatabase = await getUser(decoded);
+            if (!userFromDatabase) {
+                console.log("no user from database?");
+                throw Error("no user!");
+            }
             socket.userId = userFromDatabase.id;
             next();
         }
