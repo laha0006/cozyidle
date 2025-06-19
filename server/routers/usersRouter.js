@@ -127,7 +127,6 @@ router.get("/:userId/idles", async (req, res) => {
             };
         }
     );
-    console.log("cleaned idles data:", cleanedData);
 
     res.send({ data: cleanedData });
 });
@@ -161,7 +160,6 @@ router.get("/:userId/items", async (req, res) => {
                 skillId: skill_id,
             };
         });
-        console.log("CLEANED ITEM DATA:", cleanedData);
         res.send({ data: cleanedData });
     } catch (error) {
         throw error;

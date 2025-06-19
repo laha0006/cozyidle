@@ -129,7 +129,6 @@ function createIdleStore() {
 
             $socketStore.on(IdleServerEvent.UPGRADED, (data) => {
                 const { idleId, price } = data;
-                console.log("data:", data);
                 userResourcesStore.deduct(4, price);
                 idleStore.sync();
             });
@@ -176,7 +175,6 @@ function createIdleStore() {
             socket.emit(IdleClientEvent.STOP, { idleId: idleId });
         },
         buyUpgrade: async (upgradeId) => {
-            console.log("upgradeId", upgradeId);
             const socket = get(socketStore);
             socket.emit(IdleClientEvent.UPGRADE, { upgradeId });
         },

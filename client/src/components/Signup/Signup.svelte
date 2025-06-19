@@ -39,7 +39,7 @@
             success(json.message);
         } catch (err) {
             console.log(err);
-            toast.push(err.message);
+            error("something went wrong!");
         }
     }
 </script>

@@ -17,7 +17,6 @@ export async function idleDispatch(event, socket, data) {
             {
                 const { idleId } = data;
                 startedTime = Date.now();
-                console.log("started!", startedTime);
                 try {
                     await startIdle(userId, idleId);
                     const init = await getIdle(userId, idleId);
@@ -40,13 +39,8 @@ export async function idleDispatch(event, socket, data) {
             {
                 const { idleId } = data;
                 stoppedTime = Date.now();
-                console.log("stopped!", stoppedTime);
-                console.log("diff   :", stoppedTime - startedTime);
-                console.log("idle ID FOR STOP:", idleId);
                 const stopped = await stopIdle(userId, idleId);
-                console.log("stopped:", stopped);
                 if (!stopped) {
-                    console.log("bro it's already stopped");
                     return;
                 }
                 socket.emit(IdleServerEvent.STOPPED, {
@@ -63,7 +57,6 @@ export async function idleDispatch(event, socket, data) {
                     const bought = await buyUpgrade(userId, upgradeId);
                     socket.emit(IdleServerEvent.UPGRADED, bought);
                 } catch (error) {
-                    console.log(error);
                     console.log(error.message);
                     socket.emit("error", { message: error.message });
                 }

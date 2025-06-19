@@ -41,27 +41,20 @@ io.use(socketAuthenticateToken);
 const socketStore = new Map();
 
 io.on("connection", (socket) => {
-    console.log("A socket connected", socket.id);
     socketCount++;
     const prevSocket = socketStore.get(socket.userId);
     if (!prevSocket) {
-        console.log("set socket in socketSTore");
         socketStore.set(socket.userId, socket);
     } else {
-        console.log("disconnect, prev socket");
         prevSocket.disconnect(true);
         socketStore.delete(socket.userId);
     }
-    console.log("user id", socket.userId);
-    console.log("count: ", socketCount);
 
     registerIdleHandlers(socket);
 
     socket.on("disconnect", () => {
         socketStore.delete(socket.userId);
         socketCount--;
-        console.log("socket disconnected:", socket.id);
-        console.log("count: ", socketCount);
     });
 });
 

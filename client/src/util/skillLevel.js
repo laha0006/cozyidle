@@ -5,7 +5,6 @@ const levelMap = new Map();
 
 skillLevels.data.forEach((element) => {
     const { skillId, level, experienceReq } = element;
-    console.log("element:", element);
     if (!levelMap.get(skillId)) {
         levelMap.set(skillId, []);
     }

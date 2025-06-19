@@ -4,7 +4,6 @@ import db from "../database/connection.js";
 const router = Router();
 
 router.get("/items", async (req, res) => {
-    console.log("items endpoint");
     const sql = `
         SELECT 
             i.id AS item_id,

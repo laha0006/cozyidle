@@ -56,7 +56,6 @@ export async function startIdle(userId, idleId) {
             checkActiveForSkillSql,
             values
         );
-        console.log("active res rows:", checkActiveRes.rows);
         if (checkActiveRes.rows.length > 0) {
             throw new Error("You can only have one active idle per skill");
         }
@@ -180,7 +179,6 @@ export async function stopIdle(userId, idleId) {
         await client.query("COMMIT");
         return res.rows[0];
     } catch (err) {
-        console.log("ROLLBACK?");
         await client.query("ROLLBACK");
         throw err;
     } finally {
@@ -395,7 +393,6 @@ export async function buyUpgrade(userId, upgradeId) {
     const values = [userId, upgradeId];
     const client = await db.connect();
     try {
-        console.log("querying...");
         const info = await db.query(checkLevelReq, values);
         const { user_level, idle_level, skill_req, skill_id, price, idle_id } =
             info.rows[0];

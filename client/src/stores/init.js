@@ -53,7 +53,6 @@ user.subscribe(async ($user) => {
             if (resourceMap.get(r.id)) return;
             resourceMap.set(r.id, r);
         });
-        console.log("resources:", resourceMap);
         userResourcesStore.set(resourceMap);
 
         const skills = skillsData.data;
@@ -67,7 +66,6 @@ user.subscribe(async ($user) => {
 
         const items = itemsdata.data;
         userItemStore.set(items);
-        console.log("items:", items);
 
         const upgrades = upgradesData.data;
         const upgradeMap = new Map();
@@ -80,8 +78,6 @@ user.subscribe(async ($user) => {
             }
         });
         upgradesStore.set(upgradeMap);
-        console.log("upgradeMAp:", upgradeMap);
-        console.log("idles:", idles);
         idleStore.set(idles);
         idleStore.loop();
     }

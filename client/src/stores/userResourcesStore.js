@@ -44,7 +44,6 @@ function createUserResourcesStore() {
         if ($socket) {
             $socket.on(ResourceServerEvent.SOLD, (data) => {
                 const { gold, resourceId, amount } = data;
-                console.log(" SOLD data", data);
                 deduct(resourceId, amount);
                 setResource(1, gold);
             });
@@ -69,7 +68,6 @@ function createUserResourcesStore() {
         },
         deduct: deduct,
         sell: (resourceId, amount) => {
-            console.log("sell!");
             const socket = get(socketStore);
             socket.emit(ResourceClientEvent.SELL, { resourceId, amount });
         },

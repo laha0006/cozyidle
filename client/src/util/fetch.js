@@ -38,7 +38,6 @@ export async function postFetchWithRefresh(url, data) {
                 const json = await postFetch("/api/refresh");
                 user.set(json.user);
             } catch (refreshError) {
-                console.log("refresh error");
                 user.set(null);
                 throw error;
             }
@@ -59,7 +58,6 @@ export async function getFetch(url) {
     try {
         json = await response.json();
     } catch (error) {
-        console.log(error);
         json = null;
     }
 

@@ -7,16 +7,13 @@
     let skills = $state(null);
     let username = $state("");
     onMount(async () => {
-        console.log("userId", userId);
         const skillsJson = await getFetchWithRefresh(
             "/api/users/" + userId + "/skills"
         );
         const userData = await getFetchWithRefresh(
             "/api/users/" + userId + "/"
         );
-        console.log("userData:", userData);
         username = userData.data[0].username;
-        console.log("username:", username);
 
         const sortByExperience = skillsJson.data.sort((a, b) => {
             return b.experience - a.experience;
