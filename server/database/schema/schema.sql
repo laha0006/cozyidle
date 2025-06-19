@@ -834,3 +834,5 @@ INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 4, 500);
 INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 5, 500);
 INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 6, 500);
 INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 7, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 8, 0);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 9, 0);
