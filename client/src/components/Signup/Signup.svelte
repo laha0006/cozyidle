@@ -1,11 +1,12 @@
 <script>
-    import { toast } from "@zerodevx/svelte-toast";
+    import { Link } from "svelte-routing";
+
     import { signup } from "../../api/auth.js";
     import { postFetch } from "../../util/fetch.js";
     import { error, success } from "../../util/toasts.js";
     import { user } from "../../stores/userStore.js";
+
     import Button from "../Button/Button.svelte";
-    import { Link } from "svelte-routing";
 
     let formData = {
         username: "",

@@ -1,7 +1,7 @@
 <script>
-    import { tweened } from "svelte/motion";
-    import { expoOut, linear } from "svelte/easing";
     import { onMount } from "svelte";
+    import { tweened } from "svelte/motion";
+    import { linear } from "svelte/easing";
 
     let { duration, repeat } = $props();
     const progress = tweened(0, { duration: duration, easing: linear });

@@ -1,7 +1,7 @@
 <script>
-    import { onMount } from "svelte";
     import { userItemStore } from "../../stores/userItemStore.js";
     import { userSkillsStore } from "../../stores/userSkillsStore.js";
+
     import ItemCard from "../ItemStore/ItemCard.svelte";
     import SkillToggleBar from "../SkillToggleBar/SkillToggleBar.svelte";
 

@@ -1,11 +1,8 @@
 <script>
-    import { navigate } from "svelte-routing";
-    import {
-        refreshUser,
-        setUserIfAuthenticated,
-        user,
-    } from "../../stores/userStore.js";
     import { onMount } from "svelte";
+    import { navigate } from "svelte-routing";
+
+    import { user, refreshUser } from "../../stores/userStore.js";
 
     onMount(async () => {
         setTimeout(async () => {

@@ -1,13 +1,14 @@
 <script>
-    import { navigate } from "svelte-tiny-router";
+    import { Link } from "svelte-routing";
+
     import { postFetch } from "../../util/fetch";
     import { login } from "../../api/auth.js";
-    import { toast } from "@zerodevx/svelte-toast";
     import { success } from "../../util/toasts.js";
     import { error } from "../../util/toasts.js";
     import { user } from "../../stores/userStore";
-    import { Link } from "svelte-routing";
+
     import Button from "../Button/Button.svelte";
+
     let formData = {
         username: "",
         password: "",

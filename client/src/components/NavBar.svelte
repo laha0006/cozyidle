@@ -1,11 +1,13 @@
 <script>
+    import { onMount } from "svelte";
+
     import { Link, navigate } from "svelte-routing";
     import { toast } from "@zerodevx/svelte-toast";
 
     import { user } from "../stores/userStore.js";
     import { logout } from "../api/auth.js";
     import { success } from "../util/toasts.js";
-    import { onMount } from "svelte";
+
     import NavItem from "./NavItem.svelte";
     import Button from "./Button/Button.svelte";
 
@@ -16,7 +18,7 @@
     }
 
     async function handleLogout() {
-        navigate("/");
+        navigate("/login");
         try {
             const json = await logout();
             if ($user) {
@@ -24,7 +26,7 @@
             }
             success(json.message);
         } catch (error) {
-            toast.push(error.message);
+            error("something went wrong!");
         }
     }
 </script>

@@ -1,16 +1,17 @@
 <script>
-    import { onDestroy, onMount } from "svelte";
-    import ProgressBar from "../ProgressBar/ProgressBar.svelte";
-    import { socketStore } from "../../stores/socketStore.js";
+    import { onMount } from "svelte";
+    import { spring } from "svelte/motion";
+
     import { idleStore } from "../../stores/idleStore.js";
     import { userResourcesStore } from "../../stores/userResourcesStore.js";
     import { upgradesStore } from "../../stores/upgradesStore.js";
+
     import IdleStartStopButton from "./IdleStartStopButton.svelte";
-    import { Spring, spring } from "svelte/motion";
     import NumberCircle from "../NumberCircle/NumberCircle.svelte";
     import Button from "../Button/Button.svelte";
 
     const { idle, selected = false, controls = true } = $props();
+
     const resource = $derived($userResourcesStore.get(idle.resourceId));
     const unlocked = $derived(idle.unlocked);
     const level = $derived(idle.level);
@@ -67,16 +68,19 @@
         triggerCooldown();
         idleStore.stop(idle.idleId);
     }
+
     let isFirstRun = true;
     let prevAmount;
+    let springTimeoutId;
+
     onMount(() => {
         prevAmount = resource.amount;
     });
+
     const scale = spring(1, {
         stiffness: 0.1,
         damping: 0.2,
     });
-    let springTimeoutId;
     $effect(() => {
         if (resource.amount > prevAmount) {
             clearTimeout(springTimeoutId);

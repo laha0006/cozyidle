@@ -1,6 +1,7 @@
 <script>
     import SkillToggleBar from "../SkillToggleBar/SkillToggleBar.svelte";
     import Leaderboard from "./Leaderboard.svelte";
+
     let filterId = $state(2);
 
     function handleToggle(id) {

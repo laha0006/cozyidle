@@ -1,5 +1,6 @@
 <script>
     import { userItemStore } from "../../stores/userItemStore";
+
     import ItemCard from "./ItemCard.svelte";
     import SkillToggleBar from "../SkillToggleBar/SkillToggleBar.svelte";
 
