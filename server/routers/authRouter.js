@@ -12,6 +12,7 @@ import { generateTokens } from "../util/jwt.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { authenticateToken } from "../middleware/auth.js";
+import { sendWelcomeMail } from "../util/mail.js";
 
 const router = Router();
 
@@ -79,7 +80,7 @@ router.post("/api/signup", async (req, res) => {
     const { accessToken, refreshToken, jti } = generateTokens(user);
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // + 7 days from now
     await insertRefreshToken(userFromDatabase.id, jti, expiresAt);
-
+    sendWelcomeMail(userFromDatabase.email, userFromDatabase.username);
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false,
