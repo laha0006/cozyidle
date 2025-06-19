@@ -6,7 +6,6 @@ export async function itemDispatch(event, socket, data) {
     switch (event) {
         case ItemClientEvent.EQUIP:
             {
-                console.log("EQUIP YEAH");
                 const { itemId } = data;
                 try {
                     await equipItem(userId, itemId);
@@ -18,7 +17,6 @@ export async function itemDispatch(event, socket, data) {
             break;
         case ItemClientEvent.UNEQIUP:
             {
-                console.log("UNEQUIP YEAH!");
                 const { itemId } = data;
                 try {
                     await unequipItem(userId, itemId);
@@ -32,8 +30,8 @@ export async function itemDispatch(event, socket, data) {
             {
                 const { itemId } = data;
                 try {
-                    await buyItem(userId, itemId);
-                    socket.emit(ItemServerEvent.BOUGHT, { itemId });
+                    const buy = await buyItem(userId, itemId);
+                    socket.emit(ItemServerEvent.BOUGHT, { itemId, ...buy });
                 } catch (error) {
                     socket.emit("error", { message: error.message });
                     console.log(error);

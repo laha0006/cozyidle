@@ -31,9 +31,6 @@ function createUserResourcesStore() {
         update((resources) => {
             const newMap = new Map(resources);
             const resource = resources.get(resourceId);
-            if (amount < resource.amount) {
-                console.log(">>> DECREMENT <<<");
-            }
             const updatedResource = {
                 ...resource,
                 amount: amount,
@@ -47,6 +44,7 @@ function createUserResourcesStore() {
         if ($socket) {
             $socket.on(ResourceServerEvent.SOLD, (data) => {
                 const { gold, resourceId, amount } = data;
+                console.log(" SOLD data", data);
                 deduct(resourceId, amount);
                 setResource(1, gold);
             });

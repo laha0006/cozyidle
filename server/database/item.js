@@ -67,10 +67,10 @@ export async function buyItem(userId, itemId) {
         await skillCheck(userId, skillId, skillReq);
 
         const price = priceRes.rows[0].price;
-        await deductResource(userId, 4, price);
+        await deductResource(userId, 1, price);
         const buy = await client.query(buySql, values);
         await client.query("COMMIT");
-        return buy;
+        return { price };
     } catch (error) {
         await client.query("ROLLBACK");
         throw error;

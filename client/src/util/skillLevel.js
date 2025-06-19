@@ -4,12 +4,13 @@ const skillLevels = await getFetchWithRefresh("/api/skills/levels");
 const levelMap = new Map();
 
 skillLevels.data.forEach((element) => {
-    const { skill_id, level, experience_required } = element;
-    if (!levelMap.get(skill_id)) {
-        levelMap.set(skill_id, []);
+    const { skillId, level, experienceReq } = element;
+    console.log("element:", element);
+    if (!levelMap.get(skillId)) {
+        levelMap.set(skillId, []);
     }
-    const current = levelMap.get(skill_id);
-    current[level] = experience_required;
+    const current = levelMap.get(skillId);
+    current[level] = experienceReq;
 });
 
 export function getLevel(skillId, experience) {

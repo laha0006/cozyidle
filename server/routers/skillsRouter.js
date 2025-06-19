@@ -10,7 +10,17 @@ router.get("/api/skills/levels", async (req, res) => {
         FROM skill_levels
     `;
     const result = await db.query(sql);
-    res.send({ data: result.rows });
+    const data = result.rows;
+    const cleanedData = data.map(
+        ({ skill_id, experience_required, ...rest }) => {
+            return {
+                ...rest,
+                skillId: skill_id,
+                experienceReq: experience_required,
+            };
+        }
+    );
+    res.send({ data: cleanedData });
 });
 
 router.get("/api/skills/:skillId/leaderboard", async (req, res) => {
@@ -50,8 +60,15 @@ router.get("/api/skills/:skillId/leaderboard", async (req, res) => {
     const client = await db.connect();
     try {
         const result = await client.query(sql, [skillId]);
-        const leaderboard = result.rows;
-        res.send({ data: leaderboard });
+        const data = result.rows;
+        const cleanedData = data.map(({ user_id, skill_id, ...rest }) => {
+            return {
+                ...rest,
+                userId: user_id,
+                skillId: skill_id,
+            };
+        });
+        res.send({ data: cleanedData });
     } catch (error) {
         throw error;
     } finally {

@@ -159,7 +159,7 @@
                 <div class="flex px-1 justify-between text-center">
                     <div class="w-15 py-2">
                         <p>req</p>
-                        <p>{upgrade.level_requirement}</p>
+                        <p>{upgrade.levelReq}</p>
                     </div>
                     <div class="w-15 py-2">
                         <p>lvl</p>

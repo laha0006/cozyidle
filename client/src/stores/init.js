@@ -72,9 +72,9 @@ user.subscribe(async ($user) => {
         const upgrades = upgradesData.data;
         const upgradeMap = new Map();
         upgrades.forEach((upgrade) => {
-            const mapEntry = upgradeMap.get(upgrade.idle_id);
+            const mapEntry = upgradeMap.get(upgrade.idleId);
             if (!mapEntry) {
-                upgradeMap.set(upgrade.idle_id, [upgrade]);
+                upgradeMap.set(upgrade.idleId, [upgrade]);
             } else {
                 mapEntry.push(upgrade);
             }

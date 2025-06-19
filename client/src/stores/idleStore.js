@@ -85,14 +85,14 @@ function createIdleStore() {
                 const {
                     idleId,
                     resourceId,
-                    resource_amount,
+                    resourceAmount,
                     started,
-                    server_now,
+                    serverNow,
                     diff,
                 } = data;
                 const startedTime = Math.floor(+started);
-                const serverNow = Math.floor(+server_now);
-                const offset = server_now - clientNow;
+                const serverNowFloored = Math.floor(+serverNow);
+                const offset = serverNowFloored - clientNow;
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idleId !== idleId) return idle;
@@ -107,8 +107,8 @@ function createIdleStore() {
             });
 
             $socketStore.on(IdleServerEvent.STOPPED, (data) => {
-                const { idleId, resourceId, resource_amount } = data;
-                userResourcesStore.setResource(resourceId, resource_amount);
+                const { idleId, resourceId, resourceAmount } = data;
+                userResourcesStore.setResource(resourceId, resourceAmount);
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idleId !== idleId) return idle;

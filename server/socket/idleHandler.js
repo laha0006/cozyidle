@@ -24,12 +24,12 @@ export async function idleDispatch(event, socket, data) {
                     socket.emit(IdleServerEvent.INIT, {
                         idleId,
                         resourceId: init.resource_id,
-                        resource_amount: init.resource_amount,
+                        resourceAmount: init.resource_amount,
                         started: init.started_unix,
                         speed: init.speed,
                         level: init.level,
                         diff: init.diff,
-                        server_now: init.server_now,
+                        serverNow: init.server_now,
                     });
                 } catch (error) {
                     socket.emit("error", { message: error.message });
@@ -52,7 +52,7 @@ export async function idleDispatch(event, socket, data) {
                 socket.emit(IdleServerEvent.STOPPED, {
                     idleId,
                     resourceId: stopped.resource_id,
-                    resource_amount: stopped.resource_amount,
+                    resourceAmount: stopped.resource_amount,
                 });
             }
             break;

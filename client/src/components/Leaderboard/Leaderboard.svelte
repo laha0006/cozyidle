@@ -4,7 +4,6 @@
     import { leaderboards } from "../../stores/leaderboardStore.js";
     import { navigate } from "svelte-routing";
     const { skillId } = $props();
-    console.log("leaderboard skill id:", skillId);
     const leaderboard = $derived($leaderboards?.get(skillId));
 
     function goToProfile(userId) {
@@ -26,7 +25,7 @@
             {#each leaderboard as entry, index}
                 <tr>
                     <td>{index + 1}</td>
-                    <td onclick={() => goToProfile(entry.user_id)}
+                    <td onclick={() => goToProfile(entry.userId)}
                         >{entry.username}</td
                     >
                     <td>{entry.level}</td>

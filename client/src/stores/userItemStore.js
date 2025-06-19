@@ -2,6 +2,7 @@ import { derived, get, writable } from "svelte/store";
 import { user } from "./userStore.js";
 import { socketStore } from "./socketStore.js";
 import { getFetchWithRefresh } from "../util/fetch.js";
+import { userResourcesStore } from "./userResourcesStore.js";
 export const ItemClientEvent = Object.freeze({
     EQUIP: "item:client:equip",
     UNEQIUP: "item:client:unequip",
@@ -42,6 +43,7 @@ function createUserItemStore() {
                 });
             });
             $socket.on(ItemServerEvent.BOUGHT, (data) => {
+                userResourcesStore.deduct(1, data.price);
                 update((items) => {
                     return items.map((item) => {
                         if (item.itemId !== data.itemId) return item;
