@@ -367,6 +367,7 @@ export async function unlockIdle(userId, idleId) {
         await client.query(unlockSql, values);
 
         await client.query("COMMIT");
+        return { price };
     } catch (error) {
         await client.query("ROLLBACK");
         throw error;
@@ -412,7 +413,7 @@ export async function buyUpgrade(userId, upgradeId) {
         }
 
         await skillCheck(userId, skill_id, skill_req);
-        await deductResource(userId, 4, price);
+        await deductResource(userId, 1, price);
         await client.query(buyUpgradeSql, [userId, idle_id]);
         await client.query("COMMIT");
 

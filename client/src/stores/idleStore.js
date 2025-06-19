@@ -118,7 +118,9 @@ function createIdleStore() {
             });
 
             $socketStore.on(IdleServerEvent.UNLOCKED, (data) => {
-                const { idleId } = data;
+                const { idleId, price } = data;
+                console.log("unlocked data:", data);
+                userResourcesStore.deduct(1, price);
                 update((idles) => {
                     return idles.map((idle) => {
                         if (idle.idleId !== idleId) return idle;
@@ -129,7 +131,8 @@ function createIdleStore() {
 
             $socketStore.on(IdleServerEvent.UPGRADED, (data) => {
                 const { idleId, price } = data;
-                userResourcesStore.deduct(4, price);
+                console.log("UPGRADED:", data);
+                userResourcesStore.deduct(1, price);
                 idleStore.sync();
             });
         }

@@ -66,8 +66,8 @@ export async function idleDispatch(event, socket, data) {
             {
                 const { idleId } = data;
                 try {
-                    await unlockIdle(userId, idleId);
-                    socket.emit(IdleServerEvent.UNLOCKED, { idleId });
+                    const { price } = await unlockIdle(userId, idleId);
+                    socket.emit(IdleServerEvent.UNLOCKED, { idleId, price });
                 } catch (error) {
                     if (error.isForUser) {
                         socket.emit("error", { message: error.message });
@@ -78,19 +78,4 @@ export async function idleDispatch(event, socket, data) {
             }
             break;
     }
-}
-
-async function startIdleHandler(userId) {
-    await startIdle(userId);
-    const init = await getIdle(userId);
-    return init;
-}
-
-async function updateIdleHandler(userId) {
-    await updateIdle(userId);
-}
-
-async function stopIdleHandler(userId) {
-    await stopIdle(userId);
-    return await getIdle(userId);
 }
