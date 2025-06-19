@@ -50,7 +50,7 @@
                         <NavItem text="Store" {active} />
                     </Link>
                     <Link to="/game/leaderboard" let:active>
-                        <NavItem text="LeaderBoard" {active} />
+                        <NavItem text="Leaderboards" {active} />
                     </Link>
                     <Link to="/game/resources" let:active>
                         <NavItem text="Resources" {active} />
@@ -96,7 +96,7 @@
                             let:active
                             onclick={toggleMenu}
                         >
-                            <NavItem text="Items" {active} />
+                            <NavItem text="Equipment" {active} />
                         </Link>
                         <Link to="/game/store" let:active onclick={toggleMenu}>
                             <NavItem text="Store" {active} />
@@ -106,7 +106,7 @@
                             let:active
                             onclick={toggleMenu}
                         >
-                            <NavItem text="LeaderBoard" {active} />
+                            <NavItem text="Leaderboards" {active} />
                         </Link>
                         <Link
                             to="/game/resources"
