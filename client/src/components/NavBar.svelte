@@ -8,6 +8,8 @@
     import { logout } from "../api/auth.js";
     import { success } from "../util/toasts.js";
 
+    import logo from "../assets/logo.png";
+
     import NavItem from "./NavItem.svelte";
     import Button from "./Button/Button.svelte";
 
@@ -35,7 +37,13 @@
     <div class="hidden md:block">
         <nav class="flex justify-between w-full mb-2">
             <div>
-                <Link to="/">LOGO</Link>
+                <Link to="/"
+                    ><img
+                        src={logo}
+                        alt="logo showing the text CozyIdle"
+                        class="logo"
+                    /></Link
+                >
             </div>
 
             {#if $user}
@@ -57,9 +65,13 @@
                     </Link>
                 </div>
                 <div class="flex gap-4">
-                    <button onclick={() => console.log("clicked!")}>
+                    <button
+                        onclick={() => {
+                            toggleMenu();
+                            navigate("/game/profile/" + $user.id);
+                        }}
+                    >
                         {$user.username}
-                        {$user.id}
                     </button>
                     <Button type="danger" onclick={handleLogout}>
                         Log out</Button
@@ -115,6 +127,17 @@
                         >
                             <NavItem text="Resources" {active} />
                         </Link>
+                        <button
+                            onclick={() => {
+                                toggleMenu();
+                                navigate("/game/profile/" + $user.id);
+                            }}
+                        >
+                            {$user.username}
+                        </button>
+                        <Button type="danger" onclick={handleLogout}>
+                            Log out</Button
+                        >
                     </div>
                 {:else}
                     <div class="flex flex-col gap-1 justify-center">
@@ -126,3 +149,10 @@
         </div>
     {/if}
 </div>
+
+<style>
+    .logo {
+        height: 58px;
+        width: auto;
+    }
+</style>

@@ -3,6 +3,7 @@
 
     import { Router, Route } from "svelte-routing";
     import { SvelteToast } from "@zerodevx/svelte-toast";
+    import { refreshUser } from "./stores/userStore.js";
 
     import "./stores/init.js";
 
@@ -22,6 +23,11 @@
     import HomePage from "./pages/HomePage.svelte";
     import ResourcesPage from "./pages/ResourcesPage.svelte";
     import ProfilePage from "./pages/ProfilePage.svelte";
+
+    onMount(() => {
+        console.log("mounted");
+        refreshUser();
+    });
 </script>
 
 <div class="min-h-screen bg-background text-foreground">
@@ -44,7 +50,6 @@
                         />
                     </div>
 
-                    <!-- <WorkAround /> -->
                     <div class="flex justify-center text-2xl text-center">
                         <div></div>
                         <Route path="/">

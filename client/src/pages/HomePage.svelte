@@ -1,14 +1,11 @@
 <script>
     import { navigate } from "svelte-routing";
+    import logo from "../assets/logo.png";
 </script>
 
-<div class="w-full bg-background flex flex-col">
-    <div class="w-full py-16 bg-card rounded-4xl">
-        <h1
-            class="text-9xl font-bold text-primary tracking-wide text-center w-full"
-        >
-            CozyIdle
-        </h1>
+<div class="w-full bg-background flex flex-col items-center">
+    <div class="flex flex-col justiy-center items-center text-center">
+        <img src={logo} alt="CozyIdle logo" class="logo" />
         <p class="text-2xl text-muted-foreground text-center mt-4">
             A relaxing idle game to progress, grow, and unwind.
         </p>
@@ -36,3 +33,10 @@
         </section>
     </div>
 </div>
+
+<style>
+    .logo {
+        height: 400px;
+        width: 600px;
+    }
+</style>
