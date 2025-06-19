@@ -84,7 +84,7 @@ export const userItemBySkillStore = derived(
             const itemsBySkill = [];
             $itemStore.forEach((item) => {
                 if (!itemsBySkill[item.skillId - 2]) {
-                    itemsBySkill[item.skillId - 2] = [];
+                    itemsBySkill[item.skillId - 2] = []; // - 2 because the first skill of relevance is skillId = 2
                 }
                 itemsBySkill[item.skillId - 2].push(item);
             });

@@ -1,4 +1,5 @@
 import { derived } from "svelte/store";
+
 import { idleStore } from "./idleStore";
 import { userItemStore } from "./userItemStore";
 import { userSkillsStore } from "./userSkillsStore";
@@ -35,6 +36,7 @@ user.subscribe(async ($user) => {
                 itemsPromise,
                 upgradesPromise,
             ]);
+
         const idles = idleData.data.map((idle) => {
             if (!idle.active) return idle;
             const startedTime = Math.floor(+idle.started);
@@ -78,6 +80,7 @@ user.subscribe(async ($user) => {
             }
         });
         upgradesStore.set(upgradeMap);
+
         idleStore.set(idles);
         idleStore.loop();
     }

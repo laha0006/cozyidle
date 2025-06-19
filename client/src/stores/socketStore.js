@@ -1,9 +1,13 @@
-import { io } from "socket.io-client";
 import { writable, derived, get } from "svelte/store";
-import { refreshUser, user } from "./userStore.js";
+
+import { io } from "socket.io-client";
 import { toast } from "@zerodevx/svelte-toast";
+
+import { refreshUser, user } from "./userStore.js";
 import { error } from "../util/toasts.js";
+
 let socket;
+
 export const socketStore = derived(user, async ($user, set) => {
     if ($user) {
         if (socket) {

@@ -1,5 +1,6 @@
 <script>
     import { userResourcesStore } from "../../stores/userResourcesStore.js";
+
     import SkillToggleBar from "../SkillToggleBar/SkillToggleBar.svelte";
     import ResourceCard from "./ResourceCard.svelte";
 
@@ -15,7 +16,6 @@
             })
             .filter((resource) => resource.id === filterId)
     );
-    $inspect(filteredResources);
 
     function handleToggle(id) {
         filterId = id;

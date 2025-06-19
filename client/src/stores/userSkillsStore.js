@@ -1,4 +1,5 @@
 import { get, writable } from "svelte/store";
+
 import { user } from "./userStore.js";
 import { getFetchWithRefresh } from "../util/fetch";
 import { getLevel } from "../util/skillLevel.js";
