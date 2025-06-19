@@ -13,7 +13,6 @@ export async function deductResource(userId, resourceId, amount) {
     const values = [userId, resourceId, amount];
     try {
         const res = await db.query(sql, values);
-        console.log(res.rows);
         if (res.rows.length < 1) {
             const customError = new Error("not enough resources!");
             customError.isForUser = true;

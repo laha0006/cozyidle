@@ -80,7 +80,7 @@ user.subscribe(async ($user) => {
             }
         });
         upgradesStore.set(upgradeMap);
-        console.log("idles:", idles);
+
         idleStore.set(idles);
         idleStore.loop();
     }

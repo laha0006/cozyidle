@@ -25,7 +25,6 @@
     import ProfilePage from "./pages/ProfilePage.svelte";
 
     onMount(() => {
-        console.log("mounted");
         refreshUser();
     });
 </script>
