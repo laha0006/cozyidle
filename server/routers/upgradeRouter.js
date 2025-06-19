@@ -9,14 +9,6 @@ router.get("/api/upgrades", async (req, res) => {
         ORDER BY idle_id, level
     `;
     const result = await db.query(sql);
-    //   id: 1,
-    //     idle_id: 1,
-    //     level: 1,
-    //     level_requirement: 0,
-    //     speed_seconds: 60,
-    //     price: 0,
-    //     resource_id: 1
-    //   },
     const data = result.rows;
     const cleanedData = data.map(
         ({

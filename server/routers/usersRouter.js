@@ -6,10 +6,6 @@ const router = Router();
 
 router.use(authenticateToken);
 
-router.get("/", (req, res) => {
-    res.send({ message: "is authenticated!", user: req.user });
-});
-
 router.get("/:userId", async (req, res) => {
     const { userId } = req.params;
     const sql = `SELECT username FROM users WHERE id = $1`;
