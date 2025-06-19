@@ -148,7 +148,7 @@ function createIdleStore() {
             const latency = (clientNow - preFetchTime) / 2;
             const theUser = get(user);
             const idleData = await getFetchWithRefresh(
-                `api/users/${theUser.id}/idles`
+                `/api/users/${theUser.id}/idles`
             );
             const newIdles = idleData.data.map((idle) => {
                 if (!idle.active) return idle;

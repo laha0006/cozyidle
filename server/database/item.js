@@ -20,16 +20,17 @@ export async function unequipItem(userId, itemId) {
     const values = [userId, itemId];
     const client = await db.connect();
     try {
-        const res = await db.query(checkEquippedSql, values);
+        await client.query("BEGIN");
+        const res = await client.query(checkEquippedSql, values);
         if (res.rows.length > 0 && !res.rows[0].equipped) {
             throw Error("You cannot unequip an item that is not equipped");
         } else if (res.rows.length > 0 && res.rows[0].equipped) {
-            const unequipRes = db.query(unequipItemSql, values);
-            db.query("commit");
+            const unequipRes = client.query(unequipItemSql, values);
+            client.query("COMMIT");
             return unequipRes;
         }
     } catch (error) {
-        db.query("ROLLBACK");
+        client.query("ROLLBACK");
         throw error;
     } finally {
         client.release();
@@ -68,7 +69,8 @@ export async function buyItem(userId, itemId) {
 
         const price = priceRes.rows[0].price;
         await deductResource(userId, 1, price);
-        const buy = await client.query(buySql, values);
+
+        await client.query(buySql, values);
         await client.query("COMMIT");
         return { price };
     } catch (error) {

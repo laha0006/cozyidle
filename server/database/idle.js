@@ -222,8 +222,9 @@ export async function getIdle(userId, idleId) {
 
 export async function updateIdles(userId) {
     const client = await db.connect();
-    await client.query("BEGIN");
-    const sql = `
+    try {
+        await client.query("BEGIN");
+        const sql = `
         WITH locked AS (
             SELECT ui.started AS started,
                    ui.active AS  active,
@@ -323,12 +324,16 @@ export async function updateIdles(userId) {
         FROM updated_resources ur
         LEFT JOIN calculations c ON c.idle_id = ur.idle_id`;
 
-    const values = [userId];
+        const values = [userId];
 
-    const res = await client.query(sql, values);
-    await client.query("COMMIT");
-    client.release();
-    return res.rows[0];
+        const res = await client.query(sql, values);
+        await client.query("COMMIT");
+        return res.rows[0];
+    } catch (error) {
+        await client.query("ROLLBACK");
+    } finally {
+        client.release();
+    }
 }
 
 export async function unlockIdle(userId, idleId) {
@@ -343,22 +348,24 @@ export async function unlockIdle(userId, idleId) {
     WHERE i.id = $1
     AND il.level = 1
     `;
-
     const unlockSql = `
     UPDATE user_idles
     SET unlocked = TRUE
     WHERE user_id = $1
     AND idle_id = $2
     `;
+
     const values = [userId, idleId];
     const client = await db.connect();
     try {
         await client.query("BEGIN");
         const info = await client.query(getInfoSql, [idleId]);
         const { price, skill_req, skill_id, resource_id } = info.rows[0];
+
         await skillCheck(userId, skill_id, skill_req);
         await deductResource(userId, resource_id, price);
         await client.query(unlockSql, values);
+
         await client.query("COMMIT");
     } catch (error) {
         await client.query("ROLLBACK");
@@ -390,18 +397,25 @@ export async function buyUpgrade(userId, upgradeId) {
         WHERE user_id = $1
         AND idle_id = $2
     `;
+
     const values = [userId, upgradeId];
     const client = await db.connect();
     try {
-        const info = await db.query(checkLevelReq, values);
+        await client.query("BEGIN");
+
+        const info = await client.query(checkLevelReq, values);
+
         const { user_level, idle_level, skill_req, skill_id, price, idle_id } =
             info.rows[0];
         if (user_level + 1 !== idle_level) {
             throw Error("You need the previous upgrade!");
         }
+
         await skillCheck(userId, skill_id, skill_req);
         await deductResource(userId, 4, price);
         await client.query(buyUpgradeSql, [userId, idle_id]);
+        await client.query("COMMIT");
+
         return { price, idleId: idle_id };
     } catch (error) {
         await client.query("ROLLBACK");

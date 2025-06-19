@@ -156,33 +156,33 @@ INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, pric
 INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(8,1,5,60,500,1);
 
 -- idle level 2
-iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,2,10,50,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,2,10,50,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,2,10,50,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,2,10,50,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,2,10,50,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,2,10,50,0,1);
+iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,2,10,50,100,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,2,10,50,100,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,2,10,50,100,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,2,10,50,100,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,2,10,50,100,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,2,10,50,100,1);
 -- idle level 3
-iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,3,20,40,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,3,20,40,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,3,20,40,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,3,20,40,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,3,20,40,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,3,20,40,0,1);
+iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,3,20,40,200,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,3,20,40,200,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,3,20,40,200,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,3,20,40,200,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,3,20,40,200,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,3,20,40,200,1);
 -- idle level 4
-iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,4,50,30,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,4,50,30,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,4,50,30,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,4,50,30,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,4,50,30,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,4,50,30,0,1);
+iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,4,50,30,300,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,4,50,30,300,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,4,50,30,300,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,4,50,30,300,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,4,50,30,300,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,4,50,30,300,1);
 -- idle level 5
-iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,5,100,10,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,5,100,10,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,5,100,10,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,5,100,10,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,5,100,10,0,1);
-INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,5,100,10,0,1);
+iNSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(1,5,100,10,500,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(2,5,100,10,500,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(3,5,100,10,500,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(4,5,100,10,500,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(5,5,100,10,500,1);
+INSERT INTO idle_levels (idle_id , level, level_requirement, speed_seconds, price, resource_id ) VALUES(6,5,100,10,500,1);
 
 
 --skill levels 
