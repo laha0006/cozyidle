@@ -1,8 +1,8 @@
 import "dotenv/config";
 import express from "express";
-import { Server } from "socket.io";
 import http from "http";
 import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
 
 const app = express();
 app.use(cookieParser());
@@ -15,8 +15,6 @@ import authRouter from "./routers/authRouter.js";
 app.use(authRouter);
 import usersRouter from "./routers/usersRouter.js";
 app.use("/api/users", usersRouter);
-import itemsRouter from "./routers/itemsRouter.js";
-app.use("/api", itemsRouter);
 import skillsRouter from "./routers/skillsRouter.js";
 app.use(skillsRouter);
 import timeRouter from "./routers/timeRouter.js";
@@ -25,6 +23,7 @@ import upgradesRouter from "./routers/upgradeRouter.js";
 app.use(upgradesRouter);
 
 const server = http.createServer(app);
+
 const io = new Server(server, {
     cors: {
         origin: "http://localhost:5173", // Allow all origins
@@ -34,14 +33,11 @@ const io = new Server(server, {
     },
 });
 
-let socketCount = 0;
-
 io.use(socketAuthenticateToken);
 
 const socketStore = new Map();
 
 io.on("connection", (socket) => {
-    socketCount++;
     const prevSocket = socketStore.get(socket.userId);
     if (!prevSocket) {
         socketStore.set(socket.userId, socket);
@@ -54,7 +50,6 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
         socketStore.delete(socket.userId);
-        socketCount--;
     });
 });
 
