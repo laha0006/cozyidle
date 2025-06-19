@@ -4,7 +4,6 @@
     let filterId = $state(2);
 
     function handleToggle(id) {
-        console.log("Id:", id);
         filterId = id;
     }
 </script>

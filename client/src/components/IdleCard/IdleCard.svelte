@@ -63,7 +63,6 @@
     }
 
     function handleStop() {
-        console.log("handle stop!");
         if (!controls) return;
         triggerCooldown();
         idleStore.stop(idle.idleId);

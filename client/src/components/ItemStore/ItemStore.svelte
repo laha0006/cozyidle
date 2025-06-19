@@ -16,12 +16,10 @@
     );
 
     function filterBySkill(skillId) {
-        console.log("STORE FILTER ID:", skillId);
         filterId = skillId;
     }
 
     function buy(itemId) {
-        console.log("buy!", itemId);
         userItemStore.buy(itemId);
     }
 </script>

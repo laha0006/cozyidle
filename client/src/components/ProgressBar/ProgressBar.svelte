@@ -4,7 +4,6 @@
     import { onMount } from "svelte";
 
     let { duration, repeat } = $props();
-    console.log("init duration: ", duration);
     const progress = tweened(0, { duration: duration, easing: linear });
 
     function reset() {
@@ -18,9 +17,6 @@
 
     $effect(() => {
         if (repeat) {
-            console.log("duration:", duration);
-            console.log("repeat", repeat);
-            console.log("effect start");
             start();
         } else {
             progress.set(0, { duration: 0 });
@@ -33,7 +29,6 @@
                 // onTick();
             }
             if (value === 1 && repeat) {
-                console.log("reset");
                 reset();
             }
             if (value === 1 && !repeat) {

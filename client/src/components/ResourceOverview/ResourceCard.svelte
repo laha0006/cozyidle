@@ -4,8 +4,6 @@
     import Button from "../Button/Button.svelte";
 
     const { resourceId, resource } = $props();
-    console.log("resourceID:", resourceId);
-    console.log("resource:", resource);
 
     let sellAmount = $state(0);
     const sellPrice = $derived(resource?.value * sellAmount);

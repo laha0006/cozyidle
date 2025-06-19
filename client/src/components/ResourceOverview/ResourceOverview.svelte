@@ -18,7 +18,6 @@
     $inspect(filteredResources);
 
     function handleToggle(id) {
-        console.log("FILTER ID:", id);
         filterId = id;
     }
 </script>
