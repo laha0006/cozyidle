@@ -836,3 +836,57 @@ INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 6, 500);
 INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 7, 500);
 INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 8, 0);
 INSERT INTO user_resources(user_id, resource_id, amount) VALUES(1, 9, 0);
+
+
+
+INSERT INTO users (username, email, password) VALUES('chris', 'chris@mail.dk', '$2b$12$SmgWa9/3fmZRICwaZOxe5OJjO1O9iIJk.z4yqjHz1OD0CQJxY2Nb6');
+
+INSERT INTO user_idles (user_id, idle_id, unlocked)
+SELECT 2, i.id, CASE WHEN il.level_requirement = 0 THEN TRUE ELSE FALSE END 
+FROM idles i, idle_levels il
+WHERE i.id = il.id 
+ON CONFLICT (user_id, idle_id) DO NOTHING;
+
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 2, 1000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 3, 6000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 4, 1200);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 5, 9000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 6, 1500);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 7, 4000);
+
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 1, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 2, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 3, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 4, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 5, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 6, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 7, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 8, 0);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 9, 0);
+
+
+
+INSERT INTO users (username, email, password) VALUES('rustDev', 'anders@mail.dk', '$2b$12$SmgWa9/3fmZRICwaZOxe5OJjO1O9iIJk.z4yqjHz1OD0CQJxY2Nb6');
+
+INSERT INTO user_idles (user_id, idle_id, level, unlocked)
+SELECT 3, i.id, 5, CASE WHEN il.level_requirement = 0 THEN TRUE ELSE FALSE END 
+FROM idles i, idle_levels il
+WHERE i.id = il.id 
+ON CONFLICT (user_id, idle_id) DO NOTHING;
+
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 2, 54000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 3, 65000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 4, 12000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 5, 90000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 6, 15000);
+INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 7, 40000);
+
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 1, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 2, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 3, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 4, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 5, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 6, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 7, 500);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 8, 0);
+INSERT INTO user_resources(user_id, resource_id, amount) VALUES(3, 9, 0);

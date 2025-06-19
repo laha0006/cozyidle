@@ -18,7 +18,7 @@ export async function addUser(user) {
 export async function getUser(user) {
     const username = user.username;
 
-    const sql = "SELECT * FROM users WHERE username = $1";
+    const sql = "SELECT * FROM users WHERE username ILIKE $1";
     const values = [username];
 
     const res = await db.query(sql, values);
