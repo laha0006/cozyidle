@@ -844,8 +844,7 @@ INSERT INTO users (username, email, password) VALUES('chris', 'chris@mail.dk', '
 INSERT INTO user_idles (user_id, idle_id, unlocked)
 SELECT 2, i.id, CASE WHEN il.level_requirement = 0 THEN TRUE ELSE FALSE END 
 FROM idles i, idle_levels il
-WHERE i.id = il.id 
-ON CONFLICT (user_id, idle_id) DO NOTHING;
+WHERE i.id = il.id;
 
 INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 2, 1000);
 INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(2, 3, 6000);
@@ -869,10 +868,9 @@ INSERT INTO user_resources(user_id, resource_id, amount) VALUES(2, 9, 0);
 INSERT INTO users (username, email, password) VALUES('rustDev', 'anders@mail.dk', '$2b$12$SmgWa9/3fmZRICwaZOxe5OJjO1O9iIJk.z4yqjHz1OD0CQJxY2Nb6');
 
 INSERT INTO user_idles (user_id, idle_id, level, unlocked)
-SELECT 3, i.id, 5, CASE WHEN il.level_requirement = 0 THEN TRUE ELSE FALSE END 
+SELECT 3, i.id, 5, CASE WHEN il.idle_id < 7 THEN TRUE ELSE FALSE END
 FROM idles i, idle_levels il
-WHERE i.id = il.id 
-ON CONFLICT (user_id, idle_id) DO NOTHING;
+WHERE i.id = il.id;
 
 INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 2, 54000);
 INSERT INTO user_experiences(user_id, skill_id, experience ) VALUES(3, 3, 65000);
